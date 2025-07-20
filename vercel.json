@@ -1,5 +1,7 @@
 {
   "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "functions": {
     "src/app/api/scrape-openlane/route.ts": {
       "maxDuration": 30
