@@ -14,7 +14,6 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
 
   useEffect(() => {
     // Check for tokens in URL hash (for some auth flows)
@@ -56,6 +55,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
+      const supabase = createClient()
       const { error } = await supabase.auth.updateUser({
         password: password
       })
