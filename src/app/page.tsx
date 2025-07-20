@@ -471,7 +471,7 @@ export default function Home() {
               <Link href="/request-car">Începe Cererea Ta</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link href="/submit-openlane">Trimite Link OpenLane</Link>
+              <Link href="/request-car?tab=openlane">Trimite Link OpenLane</Link>
             </Button>
           </div>
 

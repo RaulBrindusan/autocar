@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import { Car, Link2 } from "lucide-react"
 import { CarSelectionForm } from "@/components/car-selection/CarSelectionForm"
@@ -8,6 +9,16 @@ import { OpenLaneForm } from "@/components/car-selection/OpenLaneForm"
 
 export default function RequestCarPage() {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const searchParams = useSearchParams()
+  
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'openlane') {
+      setSelectedIndex(1) // Switch to OpenLane tab (index 1)
+    } else if (tab === 'car') {
+      setSelectedIndex(0) // Switch to Car Selection tab (index 0)
+    }
+  }, [searchParams])
 
   const tabs = [
     {
