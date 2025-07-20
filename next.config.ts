@@ -17,6 +17,18 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'www.openlane.eu',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'openlane.eu',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.copart.com',
         port: '',
         pathname: '/**',

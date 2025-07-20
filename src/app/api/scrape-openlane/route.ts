@@ -138,52 +138,184 @@ export async function POST(request: NextRequest) {
 
 async function scrapeOpenLane(page: import('playwright').Page) {
   try {
-    // Extract basic car information
-    const title = await page.textContent('h1').catch(() => '') || ''
+    // Wait for page to load completely
+    await page.waitForLoadState('networkidle')
     
-    // Try to extract make, model, year from title
-    const titleParts = title.split(' ')
-    const year = titleParts.find((part: string) => /^\d{4}$/.test(part)) || ''
-    const make = titleParts[0] || ''
-    const model = titleParts.slice(1, titleParts.indexOf(year)).join(' ') || ''
-
-    // Extract price
-    const price = await page.textContent('[data-testid="current-bid"], .price, .bid-amount').catch(() => '') || 'N/A'
-
-    // Extract mileage
-    const mileage = await page.textContent('[data-testid="mileage"], .mileage').catch(() => '') || 'N/A'
-
-    // Extract condition
-    const condition = await page.textContent('[data-testid="condition"], .condition').catch(() => '') || 'Unknown'
-
-    // Extract VIN
-    const vin = await page.textContent('[data-testid="vin"], .vin').catch(() => '') || ''
-
-    // Extract location
-    const location = await page.textContent('[data-testid="location"], .location').catch(() => '') || ''
-
-    // Extract description
-    const description = await page.textContent('[data-testid="description"], .description').catch(() => '') || ''
-
-    // Extract images
-    const images = await page.$$eval('img[src*="vehicle"], img[src*="car"]', (imgs: HTMLImageElement[]) => 
-      imgs.map(img => img.src).filter(src => src.includes('vehicle') || src.includes('car')).slice(0, 10)
-    ).catch(() => [])
-
-    return {
+    // Extract comprehensive car information from OpenLane
+    console.log('Extracting OpenLane car data...')
+    
+    // Basic information from header/title
+    const title = await page.textContent('h1, .car-title, .vehicle-title').catch(() => '') || ''
+    console.log('Title found:', title)
+    
+    // Extract price information
+    const price = await page.evaluate(() => {
+      // Look for price in various possible selectors
+      const priceSelectors = [
+        '.price-current', '.current-price', '.bid-amount', '.price-display',
+        '[class*="price"]', '[class*="bid"]', '[data-testid*="price"]',
+        'span:has-text("EUR")', 'div:has-text("EUR")'
+      ]
+      
+      for (const selector of priceSelectors) {
+        try {
+          const element = document.querySelector(selector)
+          if (element && element.textContent?.includes('EUR')) {
+            return element.textContent.trim()
+          }
+        } catch (e) {}
+      }
+      return 'N/A'
+    })
+    
+    // Extract images - comprehensive search
+    const images = await page.evaluate(() => {
+      const imageUrls = new Set<string>()
+      
+      // Find all images related to the car
+      const imgElements = document.querySelectorAll('img')
+      imgElements.forEach(img => {
+        const src = img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src')
+        if (src && (
+          src.includes('openlane') || 
+          src.includes('carimgs') || 
+          src.includes('vehicle') ||
+          src.includes('auto') ||
+          img.alt?.toLowerCase().includes('car') ||
+          img.alt?.toLowerCase().includes('vehicle')
+        )) {
+          imageUrls.add(src)
+        }
+      })
+      
+      return Array.from(imageUrls).slice(0, 15)
+    })
+    
+    // Extract detailed specifications from the page
+    const specifications = await page.evaluate(() => {
+      const specs: Record<string, string> = {}
+      
+      // Common specification selectors and patterns
+      const specSelectors = [
+        '.specifications', '.specs', '.vehicle-details', '.car-details',
+        '.technical-data', '.fahrzeugdaten', '.vehicle-info'
+      ]
+      
+      // Try to find specification containers
+      for (const selector of specSelectors) {
+        const container = document.querySelector(selector)
+        if (container) {
+          // Extract key-value pairs from the container
+          const rows = container.querySelectorAll('tr, .spec-row, .detail-row')
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td, .spec-label, .spec-value, .detail-label, .detail-value')
+            if (cells.length >= 2) {
+              const key = cells[0].textContent?.trim()
+              const value = cells[1].textContent?.trim()
+              if (key && value) {
+                specs[key] = value
+              }
+            }
+          })
+        }
+      }
+      
+      // Also try to extract from any visible text patterns
+      const allText = document.body.textContent || ''
+      
+      // Extract specific details using regex patterns
+      const patterns: Record<string, RegExp> = {
+        'Kilometraj': /(?:Kilometraj|Mileage|km)[\s:]*([0-9,.\s]+\s*km)/i,
+        'Anul': /(?:Anul|Year|Baujahr)[\s:]*([0-9]{4})/i,
+        'Prima înregistrare': /(?:Prima înregistrare|First registration|Erstzulassung)[\s:]*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i,
+        'Combustibil': /(?:Combustibil|Fuel|Kraftstoff)[\s:]*([^\n\r]{3,30})/i,
+        'Transmisie': /(?:Transmisie|Transmission|Getriebe)[\s:]*([^\n\r]{3,30})/i,
+        'Putere': /(?:Putere|Power|Leistung)[\s:]*([0-9,.\s]+\s*(?:kW|HP|PS))/i,
+        'Capacitate': /(?:Capacitate|Engine|Motor)[\s:]*([0-9,.\s]+\s*(?:cc|l))/i,
+        'Culoare': /(?:Culoare|Color|Farbe)[\s:]*([^\n\r]{3,20})/i,
+        'Usi': /(?:Uși|Doors|Türen)[\s:]*([0-9]+)/i,
+        'Locuri': /(?:Locuri|Seats|Sitze)[\s:]*([0-9]+)/i
+      }
+      
+      for (const [key, pattern] of Object.entries(patterns)) {
+        const match = allText.match(pattern)
+        if (match && match[1]) {
+          specs[key] = match[1].trim()
+        }
+      }
+      
+      return specs
+    })
+    
+    // Extract VIN if available
+    const vin = await page.evaluate(() => {
+      const vinPatterns = [
+        /VIN[\s:]*([A-HJ-NPR-Z0-9]{17})/i,
+        /(?:Numar de sasiu|Chassis)[\s:]*([A-HJ-NPR-Z0-9\*]{10,})/i
+      ]
+      
+      const text = document.body.textContent || ''
+      for (const pattern of vinPatterns) {
+        const match = text.match(pattern)
+        if (match && match[1]) {
+          return match[1].trim()
+        }
+      }
+      return ''
+    })
+    
+    // Parse extracted data
+    const make = title.split(' ')[0] || specifications['Marca'] || ''
+    
+    // Extract year - prioritize "Prima înregistrare" over other sources
+    let year = new Date().getFullYear()
+    if (specifications['Prima înregistrare']) {
+      // Extract year from date format DD/MM/YYYY
+      const dateMatch = specifications['Prima înregistrare'].match(/[0-9]{2}\/[0-9]{2}\/([0-9]{4})/)
+      if (dateMatch) {
+        year = parseInt(dateMatch[1])
+      }
+    } else if (specifications['Anul']) {
+      const yearMatch = specifications['Anul'].match(/\b(20\d{2})\b/)
+      if (yearMatch) {
+        year = parseInt(yearMatch[1])
+      }
+    } else {
+      // Fallback to title parsing
+      const titleYearMatch = title.match(/\b(20\d{2})\b/)
+      if (titleYearMatch) {
+        year = parseInt(titleYearMatch[1])
+      }
+    }
+    
+    // Create comprehensive description
+    const detailsArray = []
+    for (const [key, value] of Object.entries(specifications)) {
+      if (value && value !== 'N/A') {
+        detailsArray.push(`${key}: ${value}`)
+      }
+    }
+    const description = detailsArray.join('\n')
+    
+    const result = {
       title: title.trim(),
       make: make.trim(),
-      model: model.trim(),
-      year: parseInt(year) || new Date().getFullYear(),
+      model: title.replace(make, '').replace(/\b20\d{2}\b/, '').trim(),
+      year,
       price: price.trim(),
-      mileage: mileage.trim(),
-      condition: condition.trim(),
+      mileage: specifications['Kilometraj'] || 'N/A',
+      condition: specifications['Conditie'] || 'Unknown',
       vin: vin.trim(),
       images,
       description: description.trim(),
-      location: location.trim(),
-      seller: 'OpenLane'
+      location: specifications['Locatie'] || '',
+      seller: 'OpenLane',
+      specifications
     }
+    
+    console.log('Extracted OpenLane data:', result)
+    return result
+    
   } catch (error) {
     console.error('OpenLane scraping error:', error)
     throw new Error('Failed to extract data from OpenLane')

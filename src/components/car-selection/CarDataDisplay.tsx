@@ -16,6 +16,7 @@ interface CarData {
   description: string
   location: string
   seller: string
+  specifications?: Record<string, string>
 }
 
 interface CarDataDisplayProps {
@@ -148,6 +149,21 @@ export function CarDataDisplay({ carData }: CarDataDisplayProps) {
               <p className="text-sm font-medium text-gray-900">Vânzător</p>
               <p className="text-sm text-gray-600">{carData.seller}</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Detailed Specifications */}
+      {carData.specifications && Object.keys(carData.specifications).length > 0 && (
+        <div className="border-t border-gray-200 p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Specificații Detaliate</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Object.entries(carData.specifications).map(([key, value]) => (
+              <div key={key} className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-sm font-medium text-gray-600">{key}:</span>
+                <span className="text-sm text-gray-900">{value}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
