@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import { Car, Link2 } from "lucide-react"
 import { CarSelectionForm } from "@/components/car-selection/CarSelectionForm"
 import { OpenLaneForm } from "@/components/car-selection/OpenLaneForm"
 
-export default function RequestCarPage() {
+function RequestCarContent() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const searchParams = useSearchParams()
   
@@ -90,5 +90,26 @@ export default function RequestCarPage() {
         </TabGroup>
       </div>
     </div>
+  )
+}
+
+export default function RequestCarPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Comandă Mașina Ta
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Se încarcă...
+            </p>
+          </div>
+        </div>
+      </div>
+    }>
+      <RequestCarContent />
+    </Suspense>
   )
 }
