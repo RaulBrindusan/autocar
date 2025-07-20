@@ -6,7 +6,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type')
-  const next = searchParams.get('next') ?? '/'
+  const code = searchParams.get('code')
+  const redirect_to = searchParams.get('redirect_to')
+  const next = searchParams.get('next') ?? redirect_to ?? '/dashboard'
 
   if (token_hash && type) {
     const supabase = await createClient()
@@ -17,7 +19,19 @@ export async function GET(request: NextRequest) {
     })
     
     if (!error) {
-      // redirect user to specified redirect URL or root of app
+      // redirect user to specified redirect URL or dashboard
+      return NextResponse.redirect(new URL(next, request.url))
+    }
+  }
+
+  // Handle OAuth callback
+  if (code) {
+    const supabase = await createClient()
+    
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (!error) {
+      // redirect user to specified redirect URL or dashboard
       return NextResponse.redirect(new URL(next, request.url))
     }
   }

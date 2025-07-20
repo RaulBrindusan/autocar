@@ -1,12 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr'
 
 export function createClient() {
-  // Fallback values for missing environment variables during build
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+  // Get environment variables - these should now be loaded from .env
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn('Missing Supabase environment variables. Using placeholder values.')
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables. Please check your .env file.')
   }
 
   return createBrowserClient(supabaseUrl, supabaseAnonKey)

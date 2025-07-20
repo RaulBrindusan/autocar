@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/Button"
-import { Mail, Lock, User, AlertCircle } from "lucide-react"
+import { Mail, Lock, User, AlertCircle, Phone } from "lucide-react"
 
 interface AuthFormProps {
   mode: "login" | "signup"
@@ -13,6 +13,8 @@ interface AuthFormProps {
 export function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [phone, setPhone] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
@@ -25,6 +27,13 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null)
     setMessage(null)
 
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      setError("Serviciul de autentificare nu este configurat corect.")
+      setLoading(false)
+      return
+    }
+
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
@@ -32,6 +41,10 @@ export function AuthForm({ mode }: AuthFormProps) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              full_name: fullName,
+              phone: phone,
+            },
           },
         })
         
@@ -39,22 +52,48 @@ export function AuthForm({ mode }: AuthFormProps) {
         
         setMessage("Te rugăm să verifici emailul pentru a-ți confirma contul.")
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error, data } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         
         if (error) throw error
         
-        router.push("/")
+        // Check user role and redirect accordingly
+        if (data.user) {
+          const { data: profile } = await supabase
+            .from("users")
+            .select("role")
+            .eq("id", data.user.id)
+            .single()
+          
+          if (profile?.role === 'admin') {
+            router.push("/admin")
+          } else {
+            router.push("/dashboard")
+          }
+        } else {
+          router.push("/dashboard")
+        }
+        
         router.refresh()
       }
     } catch (error: any) {
-      setError(error.message)
+      console.error('Auth error:', error)
+      
+      // Handle specific error types
+      if (error.message?.includes('fetch')) {
+        setError("Nu se poate conecta la serviciul de autentificare. Verifică conexiunea la internet.")
+      } else if (error.message?.includes('Invalid API key')) {
+        setError("Cheie API invalidă. Contactează administratorul.")
+      } else {
+        setError(error.message || "A apărut o eroare neașteptată.")
+      }
     } finally {
       setLoading(false)
     }
   }
+
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -92,6 +131,26 @@ export function AuthForm({ mode }: AuthFormProps) {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {mode === "signup" && (
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                Nume Complet
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Ion Popescu"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email
@@ -110,6 +169,26 @@ export function AuthForm({ mode }: AuthFormProps) {
             </div>
           </div>
 
+          {mode === "signup" && (
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Telefon
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+40 123 456 789"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
               Parolă
@@ -127,6 +206,17 @@ export function AuthForm({ mode }: AuthFormProps) {
                 minLength={6}
               />
             </div>
+            {mode === "login" && (
+              <div className="text-right mt-2">
+                <button
+                  type="button"
+                  onClick={() => router.push("/forgot-password")}
+                  className="text-sm text-blue-700 hover:text-blue-800 font-medium"
+                >
+                  Ai uitat parola?
+                </button>
+              </div>
+            )}
           </div>
 
           <Button 
