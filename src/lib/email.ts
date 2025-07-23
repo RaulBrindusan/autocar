@@ -179,7 +179,7 @@ Trimis de pe autocar.codemint.ro
     console.log('Email message created, sending...')
     const result = await apiInstance.sendTransacEmail(emailMessage)
     
-    console.log('Car request email sent successfully via Brevo API:', result.messageId)
+    console.log('Car request email sent successfully via Brevo API:', result.body?.messageId)
     return result
   } catch (error) {
     console.error('Failed to send car request email via Brevo API:', error)
@@ -295,7 +295,7 @@ Trimis de pe autocar.codemint.ro
 
     const result = await apiInstance.sendTransacEmail(emailMessage)
     
-    console.log('OpenLane email sent successfully via Brevo API:', result.messageId)
+    console.log('OpenLane email sent successfully via Brevo API:', result.body?.messageId)
     return result
   } catch (error) {
     console.error('Failed to send OpenLane email via Brevo API:', error)
