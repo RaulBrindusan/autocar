@@ -7,8 +7,8 @@ console.log('EMAIL_FROM:', process.env.EMAIL_FROM)
 // Initialize Brevo API client
 function createBrevoClient() {
   const apiInstance = new TransactionalEmailsApi()
-  // Use type assertion to access protected property
-  ;(apiInstance as any).authentications['api-key'].apiKey = process.env.BREVO_API_KEY || ''
+  // Use the original working method with type assertion to bypass TypeScript protection
+  ;(apiInstance as any).authentications.apiKey.apiKey = process.env.BREVO_API_KEY || ''
   return apiInstance
 }
 
