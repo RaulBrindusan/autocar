@@ -46,12 +46,12 @@ export async function GET(request: NextRequest) {
 
     const result = await apiInstance.sendTransacEmail(emailMessage)
     
-    console.log('Test email sent successfully via Brevo API:', result.messageId)
+    console.log('Test email sent successfully via Brevo API:', result.body?.messageId)
 
     return NextResponse.json({
       success: true,
       message: 'Test email sent successfully via Brevo API',
-      messageId: result.messageId,
+      messageId: result.body?.messageId,
       config: {
         method: 'Brevo API',
         apiKeySet: process.env.BREVO_API_KEY ? true : false,

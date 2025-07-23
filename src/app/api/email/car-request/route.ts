@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     console.log('Car request email sent successfully')
     return NextResponse.json({ 
       success: true, 
-      messageId: result?.messageId 
+      messageId: result?.body?.messageId 
     })
   } catch (error) {
     console.error('Error in car request email API:', error)

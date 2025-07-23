@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     console.log('OpenLane email sent successfully')
     return NextResponse.json({ 
       success: true, 
-      messageId: result?.messageId 
+      messageId: result?.body?.messageId 
     })
   } catch (error) {
     console.error('Error in OpenLane email API:', error)
