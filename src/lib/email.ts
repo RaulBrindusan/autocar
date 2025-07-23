@@ -7,7 +7,7 @@ console.log('EMAIL_FROM:', process.env.EMAIL_FROM)
 // Initialize Brevo API client
 function createBrevoClient() {
   const apiInstance = new TransactionalEmailsApi()
-  apiInstance.authentications.apiKey.apiKey = process.env.BREVO_API_KEY || ''
+  apiInstance.setApiKey('api-key', process.env.BREVO_API_KEY || '')
   return apiInstance
 }
 
