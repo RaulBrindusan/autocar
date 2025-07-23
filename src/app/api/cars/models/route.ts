@@ -12,7 +12,23 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Try NHTSA API first
+    // European brands that we have comprehensive data for - use our data directly
+    const europeanBrands = [
+      'Škoda', 'Skoda', 'SEAT', 'Opel', 'Dacia', 'Peugeot', 'Renault', 
+      'Citroën', 'Citroen', 'Alfa Romeo', 'Fiat', 'BMW', 'Mercedes-Benz', 
+      'Audi', 'Volkswagen', 'Porsche', 'Volvo', 'Jaguar', 'Land Rover', 'MINI'
+    ]
+
+    // If it's a European brand, use our comprehensive data directly
+    if (europeanBrands.includes(make)) {
+      const fallbackModels = getFallbackModels(make)
+      return NextResponse.json({
+        success: true,
+        models: fallbackModels
+      })
+    }
+
+    // For other brands, try NHTSA API first
     try {
       const response = await fetch(
         `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/${encodeURIComponent(make)}?format=json`,
@@ -26,7 +42,7 @@ export async function GET(request: NextRequest) {
       if (response.ok) {
         const data = await response.json()
         
-        if (data.Results && Array.isArray(data.Results)) {
+        if (data.Results && Array.isArray(data.Results) && data.Results.length > 0) {
           return NextResponse.json({
             success: true,
             models: data.Results.map((model: { Model_ID: number; Model_Name: string }) => ({
@@ -132,10 +148,27 @@ function getFallbackModels(make: string) {
       "Cooper", "Cooper S", "Cooper SE", "Countryman", "Clubman", "Convertible", "John Cooper Works"
     ],
     "Škoda": [
-      "Citigo", "Fabia", "Scala", "Octavia", "Superb", "Kamiq", "Karoq", "Kodiaq", "Enyaq"
+      "Citigo", "Citigo-e iV", "Fabia", "Fabia Monte Carlo", "Scala", "Scala Monte Carlo",
+      "Octavia", "Octavia Combi", "Octavia Scout", "Octavia RS", "Octavia iV",
+      "Superb", "Superb Combi", "Superb Scout", "Superb iV", "Superb Sportline",
+      "Kamiq", "Kamiq Monte Carlo", "Karoq", "Karoq Scout", "Karoq Sportline",
+      "Kodiaq", "Kodiaq Scout", "Kodiaq Sportline", "Kodiaq RS", "Enyaq iV",
+      "Enyaq Coupe iV", "Enyaq RS iV", "Slavia", "Kushaq", "Rapid", "Roomster"
+    ],
+    "Skoda": [
+      "Citigo", "Citigo-e iV", "Fabia", "Fabia Monte Carlo", "Scala", "Scala Monte Carlo",
+      "Octavia", "Octavia Combi", "Octavia Scout", "Octavia RS", "Octavia iV",
+      "Superb", "Superb Combi", "Superb Scout", "Superb iV", "Superb Sportline",
+      "Kamiq", "Kamiq Monte Carlo", "Karoq", "Karoq Scout", "Karoq Sportline",
+      "Kodiaq", "Kodiaq Scout", "Kodiaq Sportline", "Kodiaq RS", "Enyaq iV",
+      "Enyaq Coupe iV", "Enyaq RS iV", "Slavia", "Kushaq", "Rapid", "Roomster"
     ],
     "SEAT": [
-      "Mii", "Ibiza", "Leon", "Toledo", "Arona", "Ateca", "Tarraco", "Alhambra"
+      "Mii", "Mii Electric", "Ibiza", "Ibiza FR", "Ibiza Cupra", "Ibiza ST",
+      "Leon", "Leon ST", "Leon FR", "Leon Cupra", "Leon Cupra R", "Leon e-Hybrid",
+      "Toledo", "Arona", "Arona FR", "Ateca", "Ateca FR", "Ateca Cupra",
+      "Tarraco", "Tarraco FR", "Alhambra", "Altea", "Altea XL", "Altea Freetrack",
+      "Exeo", "Exeo ST", "Cordoba", "Born", "Formentor", "Formentor VZ"
     ],
     "Lexus": [
       "IS", "ES", "GS", "LS", "LC", "RC", "UX", "NX", "RX", "GX", "LX", "LFA"
@@ -163,6 +196,54 @@ function getFallbackModels(make: string) {
     ],
     "Mitsubishi": [
       "Mirage", "Lancer", "Outlander", "Outlander Sport", "Eclipse Cross", "Pajero"
+    ],
+    "Opel": [
+      "Corsa", "Corsa-e", "Astra", "Astra Sports Tourer", "Insignia", "Insignia Sports Tourer",
+      "Grandland", "Grandland X", "Crossland", "Crossland X", "Mokka", "Mokka-e",
+      "Combo", "Combo-e Life", "Zafira", "Zafira Life", "Vivaro", "Vivaro-e",
+      "Movano", "Movano-e", "Adam", "Karl", "Antara", "Meriva", "Tigra", "Calibra"
+    ],
+    "Dacia": [
+      "Sandero", "Sandero Stepway", "Logan", "Logan MCV", "Duster", "Spring", "Jogger",
+      "Lodgy", "Dokker", "Pick-Up", "Solenza", "Nova", "SuperNova", "1310", "1300"
+    ],
+    "Peugeot": [
+      "108", "208", "208 GTi", "e-208", "2008", "e-2008", "308", "308 SW", "308 GTi",
+      "3008", "3008 Hybrid", "508", "508 SW", "508 PSE", "5008", "e-Expert", "Expert",
+      "Traveller", "e-Traveller", "Boxer", "e-Boxer", "Partner", "Rifter", "Bipper",
+      "RCZ", "407", "607", "807", "1007", "4007", "4008", "206", "307", "406", "306"
+    ],
+    "Renault": [
+      "Twingo", "Twingo Electric", "Clio", "Clio RS", "Captur", "Captur E-Tech",
+      "Megane", "Megane RS", "Megane E-Tech", "Scenic", "Scenic E-Tech", "Kadjar",
+      "Koleos", "Arkana", "Austral", "Talisman", "Espace", "Grand Scenic",
+      "Kangoo", "Kangoo E-Tech", "Trafic", "Master", "Master E-Tech", "ZOE",
+      "Fluence", "Laguna", "Vel Satis", "Avantime", "Wind", "Sport Spider", "Alpine A110"
+    ],
+    "Citroën": [
+      "C1", "C3", "C3 Aircross", "ë-C3", "C4", "ë-C4", "ë-C4 X", "C5 X", "C5 Aircross",
+      "Berlingo", "ë-Berlingo", "SpaceTourer", "ë-SpaceTourer", "Jumpy", "ë-Jumpy",
+      "Jumper", "ë-Jumper", "Ami", "C3 Pluriel", "C4 Picasso", "C4 SpaceTourer",
+      "Grand C4 Picasso", "C5", "C6", "C8", "DS3", "DS4", "DS5", "Xsara", "Saxo", "AX"
+    ],
+    "Citroen": [
+      "C1", "C3", "C3 Aircross", "ë-C3", "C4", "ë-C4", "ë-C4 X", "C5 X", "C5 Aircross",
+      "Berlingo", "ë-Berlingo", "SpaceTourer", "ë-SpaceTourer", "Jumpy", "ë-Jumpy",
+      "Jumper", "ë-Jumper", "Ami", "C3 Pluriel", "C4 Picasso", "C4 SpaceTourer",
+      "Grand C4 Picasso", "C5", "C6", "C8", "DS3", "DS4", "DS5", "Xsara", "Saxo", "AX"
+    ],
+    "Alfa Romeo": [
+      "Giulia", "Giulia Quadrifoglio", "Stelvio", "Stelvio Quadrifoglio", "Giulietta",
+      "Tonale", "Tonale Quadrifoglio", "MiTo", "4C", "4C Spider", "Brera", "Spider",
+      "GT", "GTV", "166", "159", "156", "147", "145", "33", "75", "164", "155",
+      "Arna", "Montreal", "Junior Zagato", "8C Competizione", "8C Spider"
+    ],
+    "Fiat": [
+      "500", "500e", "500X", "500L", "500C", "Panda", "Panda Cross", "Tipo",
+      "Tipo Cross", "Tipo Station Wagon", "Punto", "Punto Evo", "Grande Punto",
+      "Qubo", "Doblo", "Doblo Cargo", "Fiorino", "Ducato", "e-Ducato", "Talento",
+      "Fullback", "Sedici", "Croma", "Stilo", "Marea", "Brava", "Bravo", "Tempra",
+      "Uno", "Palio", "Seicento", "Cinquecento", "Linea", "Albea", "Multipla", "Ulysse"
     ]
   }
 

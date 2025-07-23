@@ -5,8 +5,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/Button"
-import { Link2, ExternalLink, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { Link2, ExternalLink, AlertCircle, CheckCircle2, Loader2, User, Phone } from "lucide-react"
 import { CarDataDisplay } from "./CarDataDisplay"
+import toast from "react-hot-toast"
 
 const openLaneSchema = z.object({
   url: z.string()
@@ -14,6 +15,8 @@ const openLaneSchema = z.object({
     .refine((url) => url.includes("openlane") || url.includes("copart"), {
       message: "URL-ul trebuie să fie de la OpenLane sau Copart"
     }),
+  name: z.string().min(1, "Numele este obligatoriu"),
+  phone: z.string().min(1, "Numărul de telefon este obligatoriu"),
   additionalNotes: z.string().optional()
 })
 
@@ -98,17 +101,39 @@ export function OpenLaneForm() {
   const onSubmit = async (data: OpenLaneData) => {
     try {
       if (carData) {
-        // Submit the car data along with the form data
-        console.log('Submitting car request:', { ...data, carData })
-        // TODO: Send to backend
-        alert('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.')
+        // Send email notification with car data
+        const emailResponse = await fetch('/api/email/openlane', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: data.url,
+            carData,
+            name: data.name,
+            phone: data.phone,
+            additionalNotes: data.additionalNotes
+          })
+        })
+
+        if (!emailResponse.ok) {
+          throw new Error('Failed to send email notification')
+        }
+
+        toast.success('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.', {
+          duration: 5000,
+          position: 'top-center',
+        })
       } else {
         // Just extract the data first
         await extractCarData(data.url)
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      alert('A apărut o eroare. Te rugăm să încerci din nou.')
+      toast.error('A apărut o eroare. Te rugăm să încerci din nou.', {
+        duration: 4000,
+        position: 'top-center',
+      })
     }
   }
 
@@ -228,6 +253,45 @@ export function OpenLaneForm() {
           </div>
         )}
 
+        {/* Name and Phone - only show after data is extracted */}
+        {carData && (
+          <>
+            {/* Name Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <User className="h-4 w-4 inline mr-1" />
+                Numele *
+              </label>
+              <input
+                type="text"
+                {...register('name')}
+                placeholder="Numele tău complet"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              )}
+            </div>
+
+            {/* Phone Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Phone className="h-4 w-4 inline mr-1" />
+                Numărul de Telefon *
+              </label>
+              <input
+                type="tel"
+                {...register('phone')}
+                placeholder="ex: +40 720 123 456"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+              )}
+            </div>
+          </>
+        )}
+
         {/* Additional Notes */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -240,6 +304,17 @@ export function OpenLaneForm() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
           />
         </div>
+
+        {/* Submit Button - only show when car data is available */}
+        {carData && (
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-green-600 hover:bg-green-700 transition-all duration-300 hover:scale-105 hover:shadow-lg py-4 text-lg font-semibold"
+          >
+            {isSubmitting ? "Se trimite..." : "Trimite Cererea"}
+          </Button>
+        )}
 
       </form>
     </div>

@@ -6,9 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Select from "react-select"
 import { Button } from "@/components/ui/Button"
-import { Car, DollarSign, Settings, Calendar } from "lucide-react"
+import { Car, DollarSign, Settings, Calendar, User, Phone } from "lucide-react"
+import toast from "react-hot-toast"
 
 const carSelectionSchema = z.object({
+  name: z.string().min(1, "Numele este obligatoriu"),
+  phone: z.string().min(1, "Numărul de telefon este obligatoriu"),
   make: z.string().min(1, "Selectează marca"),
   model: z.string().min(1, "Selectează modelul"),
   year: z.number().min(1990, "Anul trebuie să fie după 1990").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
@@ -51,14 +54,44 @@ export function CarSelectionForm() {
     { value: "sunroof", label: "Trapă" },
     { value: "navigation", label: "Sistem de navigație" },
     { value: "heated-seats", label: "Scaune încălzite" },
+    { value: "cooled-seats", label: "Scaune ventilate" },
+    { value: "heated-steering", label: "Volan încălzit" },
     { value: "bluetooth", label: "Bluetooth" },
     { value: "backup-camera", label: "Cameră de mers înapoi" },
+    { value: "360-camera", label: "Cameră 360°" },
     { value: "cruise-control", label: "Cruise control" },
+    { value: "adaptive-cruise", label: "Cruise control adaptiv" },
     { value: "keyless", label: "Pornire fără cheie" },
+    { value: "keyless-entry", label: "Acces fără cheie" },
     { value: "premium-audio", label: "Sistem audio premium" },
     { value: "xenon", label: "Faruri Xenon/LED" },
+    { value: "matrix-led", label: "Faruri Matrix LED" },
     { value: "parking-sensors", label: "Senzori de parcare" },
-    { value: "climate-control", label: "Climatizare automată" }
+    { value: "auto-park", label: "Parcare automată" },
+    { value: "climate-control", label: "Climatizare automată" },
+    { value: "dual-zone-climate", label: "Climatizare bi-zonă" },
+    { value: "tri-zone-climate", label: "Climatizare tri-zonă" },
+    { value: "lane-assist", label: "Asistent de bandă" },
+    { value: "blind-spot", label: "Monitor unghi mort" },
+    { value: "collision-warning", label: "Avertizare coliziune" },
+    { value: "emergency-brake", label: "Frânare de urgență" },
+    { value: "traffic-sign", label: "Recunoaștere indicatoare" },
+    { value: "wireless-charging", label: "Încărcare wireless" },
+    { value: "apple-carplay", label: "Apple CarPlay" },
+    { value: "android-auto", label: "Android Auto" },
+    { value: "heads-up-display", label: "Head-up Display" },
+    { value: "panoramic-roof", label: "Plafonul panoramic" },
+    { value: "electric-seats", label: "Scaune electrice" },
+    { value: "memory-seats", label: "Scaune cu memorie" },
+    { value: "massage-seats", label: "Scaune cu masaj" },
+    { value: "sport-suspension", label: "Suspensie sport" },
+    { value: "air-suspension", label: "Suspensie pneumatică" },
+    { value: "awd", label: "Tracțiune integrală" },
+    { value: "sport-mode", label: "Moduri de conducere" },
+    { value: "start-stop", label: "Sistem Start-Stop" },
+    { value: "eco-mode", label: "Mod Eco" },
+    { value: "night-vision", label: "Vedere nocturnă" },
+    { value: "ambient-lighting", label: "Iluminare ambientală" }
   ]
 
   // Generate years (current year down to 1990)
@@ -175,12 +208,34 @@ export function CarSelectionForm() {
 
   const onSubmit = async (data: CarSelectionData) => {
     try {
-      console.log('Car selection data:', data)
-      // TODO: Send data to backend
-      alert('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.')
+      // Prepare submission data
+      const submissionData = {
+        ...data
+      }
+      
+      // Send email notification
+      const emailResponse = await fetch('/api/email/car-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData)
+      })
+
+      if (!emailResponse.ok) {
+        throw new Error('Failed to send email notification')
+      }
+
+      toast.success('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.', {
+        duration: 5000,
+        position: 'top-center',
+      })
     } catch (error) {
       console.error('Error submitting form:', error)
-      alert('A apărut o eroare. Te rugăm să încerci din nou.')
+      toast.error('A apărut o eroare. Te rugăm să încerci din nou.', {
+        duration: 4000,
+        position: 'top-center',
+      })
     }
   }
 
@@ -297,6 +352,40 @@ export function CarSelectionForm() {
             classNamePrefix="react-select"
             instanceId="features-select"
           />
+        </div>
+
+        {/* Name Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <User className="h-4 w-4 inline mr-1" />
+            Numele *
+          </label>
+          <input
+            type="text"
+            {...register('name')}
+            placeholder="Numele tău complet"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+          )}
+        </div>
+
+        {/* Phone Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Phone className="h-4 w-4 inline mr-1" />
+            Numărul de Telefon *
+          </label>
+          <input
+            type="tel"
+            {...register('phone')}
+            placeholder="ex: +40 720 123 456"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+          />
+          {errors.phone && (
+            <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+          )}
         </div>
 
         {/* Additional Notes */}
