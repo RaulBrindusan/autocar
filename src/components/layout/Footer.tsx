@@ -42,18 +42,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-blue-100 hover:text-white transition-colors">
-                  Despre Noi
-                </Link>
-              </li>
-              <li>
                 <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
                   Comandă Mașină
-                </Link>
-              </li>
-              <li>
-                <Link href="/estimate" className="text-blue-100 hover:text-white transition-colors">
-                  Calculator Costuri
                 </Link>
               </li>
             </ul>
@@ -84,12 +74,9 @@ export function Footer() {
             © {new Date().getFullYear()} AutoCar. Toate drepturile rezervate.
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <Link href="/privacy" className="text-blue-200 hover:text-white text-sm transition-colors">
-              Politica de Confidențialitate
-            </Link>
-            <Link href="/terms" className="text-blue-200 hover:text-white text-sm transition-colors">
-              Termeni și Condiții
-            </Link>
+            <span className="text-blue-200 text-sm">
+              contact@codemint.ro
+            </span>
           </div>
         </div>
       </div>

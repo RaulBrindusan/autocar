@@ -12,8 +12,6 @@ const navigation = [
   { name: "Acasă", href: "/" },
   { name: "Comandă Mașină", href: "/request-car?tab=car" },
   { name: "Trimite OpenLane", href: "/request-car?tab=openlane" },
-  { name: "Calculator Costuri", href: "/estimate" },
-  { name: "Despre Noi", href: "/about" },
 ]
 
 export function Header() {

@@ -248,8 +248,8 @@ export default function Home() {
               </div>
 
               <Button asChild className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                <Link href="/estimate">
-                  Calculator Detaliat <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/request-car">
+                  Comandă Mașină <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
