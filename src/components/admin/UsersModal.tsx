@@ -33,9 +33,7 @@ const userSchema = z.object({
   email: z.string().email('Email invalid'),
   full_name: z.string().min(1, 'Numele este obligatoriu'),
   phone: z.string().optional(),
-  role: z.enum(['user', 'admin'], { 
-    errorMap: () => ({ message: 'Selectează rolul' })
-  })
+  role: z.enum(['user', 'admin'])
 })
 
 type UserFormData = z.infer<typeof userSchema>

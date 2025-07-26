@@ -255,7 +255,7 @@ export function UsersGrid() {
                 placeholder="Caută utilizatori..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64 placeholder-black"
               />
             </div>
 
@@ -265,7 +265,7 @@ export function UsersGrid() {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value as 'all' | 'user' | 'admin')}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white w-full sm:w-auto"
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white w-full sm:w-auto text-black"
               >
                 <option value="all">Toate rolurile</option>
                 <option value="user">Utilizatori</option>
@@ -281,7 +281,7 @@ export function UsersGrid() {
                 setSortBy(newSortBy)
                 setSortOrder(newSortOrder)
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto text-black"
             >
               <option value="created_at-desc">Cei mai noi</option>
               <option value="created_at-asc">Cei mai vechi</option>
