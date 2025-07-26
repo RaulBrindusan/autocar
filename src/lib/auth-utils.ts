@@ -33,13 +33,42 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
   
   const supabase = await createClient()
   
-  const { data: profile } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .single()
-  
-  return profile
+  // Use our RLS-bypassing function to get the role first
+  try {
+    const { data: userRole, error: roleError } = await supabase
+      .rpc('get_user_role', { user_id: user.id })
+    
+    if (roleError) {
+      console.error('Error getting user role:', roleError)
+      return null
+    }
+    
+    // Try to get full profile, but fallback to basic info if RLS blocks it
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single()
+    
+    if (profile && !profileError) {
+      return profile
+    } else {
+      // If RLS blocks the full profile query, construct one from auth user data
+      console.log('RLS blocked profile query, using auth user data + role')
+      return {
+        id: user.id,
+        email: user.email || '',
+        full_name: user.user_metadata?.full_name || null,
+        phone: user.user_metadata?.phone || null,
+        role: userRole as UserRole,
+        created_at: user.created_at || '',
+        updated_at: user.updated_at || ''
+      }
+    }
+  } catch (error) {
+    console.error('Error in getCurrentUserProfile:', error)
+    return null
+  }
 }
 
 export async function requireAuth() {
@@ -87,13 +116,41 @@ export async function getCurrentUserProfileClient(): Promise<UserProfile | null>
   
   if (!user) return null
   
-  const { data: profile } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .single()
-  
-  return profile
+  try {
+    // Use RLS-bypassing function first
+    const { data: userRole, error: roleError } = await supabase
+      .rpc('get_user_role', { user_id: user.id })
+    
+    if (roleError) {
+      console.error('Error getting user role (client):', roleError)
+      return null
+    }
+    
+    // Try to get full profile
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single()
+    
+    if (profile && !profileError) {
+      return profile
+    } else {
+      // Fallback to constructed profile
+      return {
+        id: user.id,
+        email: user.email || '',
+        full_name: user.user_metadata?.full_name || null,
+        phone: user.user_metadata?.phone || null,
+        role: userRole as UserRole,
+        created_at: user.created_at || '',
+        updated_at: user.updated_at || ''
+      }
+    }
+  } catch (error) {
+    console.error('Error in getCurrentUserProfileClient:', error)
+    return null
+  }
 }
 
 export function hasRole(profile: UserProfile | null, role: UserRole): boolean {

@@ -61,15 +61,26 @@ export function AuthForm({ mode }: AuthFormProps) {
         
         // Check user role and redirect accordingly
         if (data.user) {
-          const { data: profile } = await supabase
-            .from("users")
-            .select("role")
-            .eq("id", data.user.id)
-            .single()
-          
-          if (profile?.role === 'admin') {
-            router.push("/admin")
-          } else {
+          try {
+            // Use the RLS-bypassing function to get user role
+            const { data: roleResult, error: roleError } = await supabase
+              .rpc('get_user_role', { user_id: data.user.id })
+            
+            if (roleError) {
+              console.error('Role fetch error:', roleError)
+              router.push("/dashboard")
+            } else {
+              const userRole = roleResult
+              console.log('User role:', userRole)
+              
+              if (userRole === 'admin') {
+                router.push("/admin")
+              } else {
+                router.push("/dashboard")
+              }
+            }
+          } catch (roleError) {
+            console.error('Error checking user role:', roleError)
             router.push("/dashboard")
           }
         } else {

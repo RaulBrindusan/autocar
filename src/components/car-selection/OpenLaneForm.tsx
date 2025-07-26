@@ -260,12 +260,12 @@ export function OpenLaneForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <User className="h-4 w-4 inline mr-1" />
-                Numele *
+                Nume Prenume *
               </label>
               <input
                 type="text"
                 {...register('name')}
-                placeholder="Numele tău complet"
+                placeholder="Nume și prenume"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
               />
               {errors.name && (

@@ -63,12 +63,36 @@ function translateFeatures(features: string[]): string[] {
   return features.map(feature => featureTranslations[feature] || feature)
 }
 
+// Fuel type and transmission translation maps
+const fuelTypeTranslations: { [key: string]: string } = {
+  "benzina": "Benzină",
+  "motorina": "Motorină", 
+  "hybrid": "Hibrid",
+  "electric": "Electric",
+  "gpl": "GPL",
+  "cng": "CNG",
+  "mild-hybrid": "Mild Hybrid",
+  "plug-in-hybrid": "Plug-in Hybrid"
+}
+
+const transmissionTranslations: { [key: string]: string } = {
+  "manuala": "Manuală",
+  "automata": "Automată",
+  "semiautomata": "Semiautomată",
+  "cvt": "CVT", 
+  "dsg": "DSG",
+  "tiptronic": "Tiptronic"
+}
+
 export interface CarRequestEmailData {
   name: string
   phone: string
   make: string
   model: string
   year: number
+  fuelType?: string
+  transmission?: string
+  maxMileage?: number
   budget: number
   features?: string[]
   additionalNotes?: string
@@ -104,6 +128,19 @@ export async function sendCarRequestEmail(data: CarRequestEmailData) {
     ? `\n\nNote adiționale:\n${data.additionalNotes}`
     : ''
 
+  // Build optional fields text
+  const optionalFields = []
+  if (data.fuelType) {
+    optionalFields.push(`• Tip combustibil: ${fuelTypeTranslations[data.fuelType] || data.fuelType}`)
+  }
+  if (data.transmission) {
+    optionalFields.push(`• Transmisie: ${transmissionTranslations[data.transmission] || data.transmission}`)
+  }
+  if (data.maxMileage) {
+    optionalFields.push(`• Kilometraj maxim: ${data.maxMileage.toLocaleString()} km`)
+  }
+  const optionalFieldsText = optionalFields.length ? `\n${optionalFields.join('\n')}` : ''
+
   const emailContent = `
 Cerere nouă de mașină prin formularul de selecție:
 
@@ -114,7 +151,7 @@ DETALII CLIENT:
 DETALII MAȘINĂ:
 • Marca: ${data.make}
 • Model: ${data.model}
-• An: ${data.year}
+• An: ${data.year}${optionalFieldsText}
 • Buget: €${data.budget.toLocaleString()}${featuresText}${notesText}
 
 ---
@@ -137,6 +174,9 @@ Trimis de pe autocar.codemint.ro
           <li style="margin: 8px 0;"><strong>Marca:</strong> ${data.make}</li>
           <li style="margin: 8px 0;"><strong>Model:</strong> ${data.model}</li>
           <li style="margin: 8px 0;"><strong>An:</strong> ${data.year}</li>
+          ${data.fuelType ? `<li style="margin: 8px 0;"><strong>Tip combustibil:</strong> ${fuelTypeTranslations[data.fuelType] || data.fuelType}</li>` : ''}
+          ${data.transmission ? `<li style="margin: 8px 0;"><strong>Transmisie:</strong> ${transmissionTranslations[data.transmission] || data.transmission}</li>` : ''}
+          ${data.maxMileage ? `<li style="margin: 8px 0;"><strong>Kilometraj maxim:</strong> ${data.maxMileage.toLocaleString()} km</li>` : ''}
           <li style="margin: 8px 0;"><strong>Buget:</strong> €${data.budget.toLocaleString()}</li>
         </ul>
         ${translatedFeatures.length ? `

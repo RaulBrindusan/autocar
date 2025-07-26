@@ -8,7 +8,24 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type')
   const code = searchParams.get('code')
   const redirect_to = searchParams.get('redirect_to')
-  const next = searchParams.get('next') ?? redirect_to ?? '/dashboard'
+
+  async function getRedirectPath(supabase: any) {
+    if (redirect_to) return redirect_to
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: userRole } = await supabase
+          .rpc('get_user_role', { user_id: user.id })
+        
+        return userRole === 'admin' ? '/admin' : '/dashboard'
+      }
+    } catch (error) {
+      console.error('Error getting user role in callback:', error)
+    }
+    
+    return '/dashboard'
+  }
 
   if (token_hash && type) {
     const supabase = await createClient()
@@ -19,8 +36,8 @@ export async function GET(request: NextRequest) {
     })
     
     if (!error) {
-      // redirect user to specified redirect URL or dashboard
-      return NextResponse.redirect(new URL(next, request.url))
+      const redirectPath = await getRedirectPath(supabase)
+      return NextResponse.redirect(new URL(redirectPath, request.url))
     }
   }
 
@@ -31,8 +48,8 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // redirect user to specified redirect URL or dashboard
-      return NextResponse.redirect(new URL(next, request.url))
+      const redirectPath = await getRedirectPath(supabase)
+      return NextResponse.redirect(new URL(redirectPath, request.url))
     }
   }
 

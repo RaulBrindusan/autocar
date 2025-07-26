@@ -1,0 +1,174 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { 
+  LayoutDashboard,
+  Users, 
+  Car, 
+  FileText, 
+  BarChart3, 
+  Settings,
+  Calculator,
+  ExternalLink,
+  Menu,
+  X,
+  LogOut
+} from "lucide-react"
+
+interface SidebarItem {
+  name: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  count?: number
+}
+
+const sidebarItems: SidebarItem[] = [
+  {
+    name: "Dashboard",
+    href: "/admin",
+    icon: LayoutDashboard
+  },
+  {
+    name: "Cereri Mașini",
+    href: "/admin/car-requests",
+    icon: Car
+  },
+  {
+    name: "Clienti",
+    href: "/admin/clients",
+    icon: Users
+  },
+  {
+    name: "Utilizatori",
+    href: "/admin/users",
+    icon: Users
+  },
+  {
+    name: "Estimări Costuri",
+    href: "/admin/cost-estimates",
+    icon: Calculator
+  },
+  {
+    name: "OpenLane Links",
+    href: "/admin/openlane-submissions",
+    icon: ExternalLink
+  },
+  {
+    name: "Rapoarte",
+    href: "/admin/reports",
+    icon: BarChart3
+  },
+  {
+    name: "Configurări",
+    href: "/admin/settings",
+    icon: Settings
+  }
+]
+
+export function AdminSidebar() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const pathname = usePathname()
+
+  return (
+    <>
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="bg-white p-2 rounded-lg shadow-md border border-gray-200"
+        >
+          <Menu className="h-6 w-6 text-gray-600" />
+        </button>
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static lg:inset-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+            <div className="flex items-center space-x-2">
+              <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center">
+                <Car className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900">AutoCar</span>
+            </div>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Admin badge */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="flex items-center space-x-2">
+                <div className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center">
+                  <Settings className="h-4 w-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-red-900">Panou Admin</p>
+                  <p className="text-xs text-red-700">Gestionare sistem</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            {sidebarItems.map((item) => {
+              const isActive = pathname === item.href
+              const Icon = item.icon
+              
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`
+                    flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200
+                    ${isActive 
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }
+                  `}
+                >
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <span className="font-medium">{item.name}</span>
+                  {item.count && (
+                    <span className="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+                      {item.count}
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
+          </nav>
+
+          {/* Footer */}
+          <div className="border-t border-gray-200 p-4">
+            <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <LogOut className="h-5 w-5 text-gray-400" />
+              <span className="font-medium">Ieșire</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

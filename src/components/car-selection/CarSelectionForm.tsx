@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Select from "react-select"
 import { Button } from "@/components/ui/Button"
-import { Car, DollarSign, Settings, Calendar, User, Phone } from "lucide-react"
+import { Car, DollarSign, Settings, Calendar, User, Phone, Fuel, Cog, Gauge } from "lucide-react"
 import toast from "react-hot-toast"
 
 const carSelectionSchema = z.object({
@@ -14,7 +14,10 @@ const carSelectionSchema = z.object({
   phone: z.string().min(1, "Numărul de telefon este obligatoriu"),
   make: z.string().min(1, "Selectează marca"),
   model: z.string().min(1, "Selectează modelul"),
-  year: z.number().min(1990, "Anul trebuie să fie după 1990").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
+  year: z.number().min(1985, "Anul trebuie să fie după 1985").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
+  fuelType: z.string().optional(),
+  transmission: z.string().optional(),
+  maxMileage: z.number().optional(),
   budget: z.number().min(1000, "Bugetul minim este €1,000").max(500000, "Bugetul maxim este €500,000"),
   features: z.array(z.string()).optional(),
   additionalNotes: z.string().optional()
@@ -36,6 +39,8 @@ export function CarSelectionForm() {
   const [selectedMake, setSelectedMake] = useState<Option | null>(null)
   const [selectedModel, setSelectedModel] = useState<Option | null>(null)
   const [selectedYear, setSelectedYear] = useState<Option | null>(null)
+  const [selectedFuelType, setSelectedFuelType] = useState<Option | null>(null)
+  const [selectedTransmission, setSelectedTransmission] = useState<Option | null>(null)
   const [selectedFeatures, setSelectedFeatures] = useState<Option[]>([])
 
   const {
@@ -94,11 +99,49 @@ export function CarSelectionForm() {
     { value: "ambient-lighting", label: "Iluminare ambientală" }
   ]
 
-  // Generate years (current year down to 1990)
+  // Fuel type options
+  const fuelTypeOptions: Option[] = [
+    { value: "benzina", label: "Benzină" },
+    { value: "motorina", label: "Motorină" },
+    { value: "hybrid", label: "Hibrid" },
+    { value: "electric", label: "Electric" },
+    { value: "gpl", label: "GPL" },
+    { value: "cng", label: "CNG" },
+    { value: "mild-hybrid", label: "Mild Hybrid" },
+    { value: "plug-in-hybrid", label: "Plug-in Hybrid" },
+    { value: "hydrogen", label: "Hidrogen" },
+    { value: "ethanol", label: "Etanol" },
+    { value: "lpg", label: "LPG" },
+    { value: "flex-fuel", label: "Flex Fuel" },
+    { value: "bi-fuel", label: "Bi-Fuel" },
+    { value: "range-extender", label: "Range Extender" }
+  ]
+
+  // Transmission options
+  const transmissionOptions: Option[] = [
+    { value: "manuala", label: "Manuală" },
+    { value: "automata", label: "Automată" },
+    { value: "semiautomata", label: "Semiautomată" },
+    { value: "cvt", label: "CVT" },
+    { value: "dsg", label: "DSG" },
+    { value: "tiptronic", label: "Tiptronic" },
+    { value: "multitronic", label: "Multitronic" },
+    { value: "s-tronic", label: "S-Tronic" },
+    { value: "pdk", label: "PDK" },
+    { value: "zf-8hp", label: "ZF 8HP" },
+    { value: "torque-converter", label: "Torque Converter" },
+    { value: "dual-clutch", label: "Dual Clutch" },
+    { value: "single-speed", label: "Single Speed (Electric)" },
+    { value: "e-cvt", label: "e-CVT" },
+    { value: "amt", label: "AMT" },
+    { value: "imt", label: "iMT" }
+  ]
+
+  // Generate years (current year down to 1985)
   useEffect(() => {
     const currentYear = new Date().getFullYear()
     const yearOptions = []
-    for (let year = currentYear; year >= 1990; year--) {
+    for (let year = currentYear; year >= 1985; year--) {
       yearOptions.push({ value: year.toString(), label: year.toString() })
     }
     setYears(yearOptions)
@@ -206,6 +249,20 @@ export function CarSelectionForm() {
     setValue('features', options.map(opt => opt.value))
   }
 
+  const handleFuelTypeChange = (option: Option | null) => {
+    setSelectedFuelType(option)
+    if (option) {
+      setValue('fuelType', option.value)
+    }
+  }
+
+  const handleTransmissionChange = (option: Option | null) => {
+    setSelectedTransmission(option)
+    if (option) {
+      setValue('transmission', option.value)
+    }
+  }
+
   const onSubmit = async (data: CarSelectionData) => {
     try {
       // Prepare submission data
@@ -224,6 +281,24 @@ export function CarSelectionForm() {
 
       if (!emailResponse.ok) {
         throw new Error('Failed to send email notification')
+      }
+
+      // Save to database after successful email
+      const dbResponse = await fetch('/api/car-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData)
+      })
+
+      if (!dbResponse.ok) {
+        const errorText = await dbResponse.text()
+        console.error('Failed to save to database, but email was sent successfully. Error:', errorText)
+        // Still show success message since email was sent
+      } else {
+        const dbResult = await dbResponse.json()
+        console.log('Successfully saved to database with ID:', dbResult.id)
       }
 
       toast.success('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.', {
@@ -316,6 +391,60 @@ export function CarSelectionForm() {
           )}
         </div>
 
+        {/* Fuel Type Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Fuel className="h-4 w-4 inline mr-1" />
+            Tipul de Combustibil (opțional)
+          </label>
+          <Select
+            options={fuelTypeOptions}
+            value={selectedFuelType}
+            onChange={handleFuelTypeChange}
+            placeholder="Selectează tipul de combustibil..."
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable
+            instanceId="fuel-type-select"
+          />
+        </div>
+
+        {/* Transmission Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Cog className="h-4 w-4 inline mr-1" />
+            Tipul de Transmisie (opțional)
+          </label>
+          <Select
+            options={transmissionOptions}
+            value={selectedTransmission}
+            onChange={handleTransmissionChange}
+            placeholder="Selectează tipul de transmisie..."
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable
+            instanceId="transmission-select"
+          />
+        </div>
+
+        {/* Max Mileage Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Gauge className="h-4 w-4 inline mr-1" />
+            Kilometrajul Maxim (opțional)
+          </label>
+          <input
+            type="number"
+            {...register('maxMileage', { valueAsNumber: true })}
+            placeholder="ex: 150000"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+            min="0"
+            max="500000"
+            step="1000"
+          />
+          <p className="text-gray-500 text-sm mt-1">în kilometri</p>
+        </div>
+
         {/* Budget Input */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -358,12 +487,12 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <User className="h-4 w-4 inline mr-1" />
-            Numele *
+            Nume Prenume *
           </label>
           <input
             type="text"
             {...register('name')}
-            placeholder="Numele tău complet"
+            placeholder="Nume și prenume"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
           />
           {errors.name && (
