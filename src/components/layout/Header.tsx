@@ -34,6 +34,11 @@ export function Header() {
         
         if (user) {
           console.log('Header: Authenticated user ID:', user.id) // Debug log
+          
+          // Check auth context
+          const { data: authCheck } = await supabase.auth.getSession()
+          console.log('Header: Auth session exists:', !!authCheck.session)
+          
           const { data: profile, error: profileError } = await supabase
             .from("users")
             .select("*")
@@ -41,7 +46,12 @@ export function Header() {
             .single()
           
           if (profileError) {
-            console.error('Header: Error fetching user profile:', profileError)
+            console.error('Header: Error fetching user profile:', {
+              code: profileError.code,
+              message: profileError.message,
+              details: profileError.details,
+              hint: profileError.hint
+            })
             // Create user if they don't exist
             if (profileError.code === 'PGRST116') {
               try {

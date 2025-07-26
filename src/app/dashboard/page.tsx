@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Acțiuni Rapide</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button asChild className="h-auto p-4 flex-col bg-blue-600 hover:bg-blue-700">
+            <Button asChild variant="outline" className="h-auto p-4 flex-col">
               <Link href="/request-car?tab=car">
                 <Car className="h-8 w-8 mb-2" />
                 <span className="text-sm font-medium">Comandă Mașină</span>
@@ -124,10 +124,6 @@ export default async function DashboardPage() {
               <div>
                 <label className="text-sm font-medium text-gray-600">Telefon</label>
                 <p className="text-gray-900">{profile?.phone || "Nu este setat"}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Rol</label>
-                <p className="text-gray-900 capitalize">{profile?.role || "user"}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Membru din</label>

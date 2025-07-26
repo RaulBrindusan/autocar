@@ -87,6 +87,7 @@ const transmissionTranslations: { [key: string]: string } = {
 export interface CarRequestEmailData {
   name: string
   phone: string
+  email: string
   make: string
   model: string
   year: number
@@ -119,6 +120,7 @@ export interface OpenLaneEmailData {
 }
 
 export async function sendCarRequestEmail(data: CarRequestEmailData) {
+  console.log('sendCarRequestEmail called with data:', JSON.stringify(data, null, 2))
   const translatedFeatures = data.features?.length ? translateFeatures(data.features) : []
   const featuresText = translatedFeatures.length 
     ? `\n\nCaracteristici dorite:\n${translatedFeatures.map(f => `• ${f}`).join('\n')}`
@@ -147,6 +149,7 @@ Cerere nouă de mașină prin formularul de selecție:
 DETALII CLIENT:
 • Numele: ${data.name}
 • Telefon: ${data.phone}
+• Email: ${data.email}
 
 DETALII MAȘINĂ:
 • Marca: ${data.make}
@@ -167,6 +170,7 @@ Trimis de pe autocar.codemint.ro
         <ul style="list-style: none; padding: 0;">
           <li style="margin: 8px 0;"><strong>Numele:</strong> ${data.name}</li>
           <li style="margin: 8px 0;"><strong>Telefon:</strong> ${data.phone}</li>
+          <li style="margin: 8px 0;"><strong>Email:</strong> ${data.email}</li>
         </ul>
         
         <h3 style="color: #374151;">DETALII MAȘINĂ:</h3>
@@ -211,10 +215,13 @@ Trimis de pe autocar.codemint.ro
       name: 'AutoCar', 
       email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
     }
-    emailMessage.to = [{ 
-      email: process.env.EMAIL_TO || 'contact@codemint.ro', 
+    // Parse multiple email addresses
+    const emailToString = process.env.EMAIL_TO || 'contact@codemint.ro'
+    const emailAddresses = emailToString.split(',').map(email => email.trim())
+    emailMessage.to = emailAddresses.map(email => ({ 
+      email: email, 
       name: 'AutoCar Team' 
-    }]
+    }))
 
     console.log('Email message created, sending...')
     const result = await apiInstance.sendTransacEmail(emailMessage)
@@ -328,10 +335,13 @@ Trimis de pe autocar.codemint.ro
       name: 'AutoCar', 
       email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
     }
-    emailMessage.to = [{ 
-      email: process.env.EMAIL_TO || 'contact@codemint.ro', 
+    // Parse multiple email addresses
+    const emailToString = process.env.EMAIL_TO || 'contact@codemint.ro'
+    const emailAddresses = emailToString.split(',').map(email => email.trim())
+    emailMessage.to = emailAddresses.map(email => ({ 
+      email: email, 
       name: 'AutoCar Team' 
-    }]
+    }))
 
     const result = await apiInstance.sendTransacEmail(emailMessage)
     
@@ -339,6 +349,127 @@ Trimis de pe autocar.codemint.ro
     return result
   } catch (error) {
     console.error('Failed to send OpenLane email via Brevo API:', error)
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      response: (error as any).response?.body || (error as any).response
+    })
+    throw error
+  }
+}
+
+export async function sendCustomerConfirmationEmail(data: CarRequestEmailData) {
+  console.log('sendCustomerConfirmationEmail called for:', data.email)
+  
+  const emailContent = `
+Bună ziua ${data.name},
+
+Mulțumim că ați contactat AutoCar! Am primit cererea dumneavoastră pentru:
+
+${data.make} ${data.model} ${data.year}
+Buget: €${data.budget.toLocaleString()}
+
+Echipa noastră va analiza cererea și vă va contacta în cel mai scurt timp posibil.
+
+Pentru o experiență mai bună, vă invităm să vă creați un cont pe platforma noastră unde puteți urmări statusul cererii și beneficia de servicii suplimentare.
+
+Creați-vă contul aici: https://autocar-phi.vercel.app/signup
+
+Cu stimă,
+Echipa AutoCar
+
+---
+AutoCar - Importul de mașini din Europa
+Website: https://autocar-phi.vercel.app
+Email: ${process.env.EMAIL_FROM}
+`
+
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #2563eb; margin: 0; font-size: 28px;">AutoCar</h1>
+          <p style="color: #6b7280; margin: 5px 0 0 0;">Importul de mașini din Europa</p>
+        </div>
+        
+        <h2 style="color: #374151; margin-bottom: 20px;">Bună ziua ${data.name},</h2>
+        
+        <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
+          Mulțumim că ați contactat <strong>AutoCar</strong>! Am primit cererea dumneavoastră și suntem încântați să vă ajutăm.
+        </p>
+        
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #374151; margin-top: 0;">Detaliile cererii dumneavoastră:</h3>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin: 8px 0; color: #374151;"><strong>Mașina:</strong> ${data.make} ${data.model} ${data.year}</li>
+            <li style="margin: 8px 0; color: #374151;"><strong>Buget:</strong> €${data.budget.toLocaleString()}</li>
+            ${data.fuelType ? `<li style="margin: 8px 0; color: #374151;"><strong>Combustibil:</strong> ${data.fuelType}</li>` : ''}
+            ${data.transmission ? `<li style="margin: 8px 0; color: #374151;"><strong>Transmisie:</strong> ${data.transmission}</li>` : ''}
+          </ul>
+        </div>
+        
+        <p style="color: #374151; line-height: 1.6; margin-bottom: 25px;">
+          Echipa noastră va analiza cererea și vă va contacta în cel mai scurt timp posibil pentru a discuta opțiunile disponibile.
+        </p>
+        
+        <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+          <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 15px;">💡 Creați-vă un cont AutoCar</h3>
+          <p style="color: #374151; margin-bottom: 15px; line-height: 1.6;">
+            Pentru o experiență completă, vă invităm să vă creați un cont pe platforma noastră unde puteți:
+          </p>
+          <ul style="color: #374151; margin: 0 0 20px 20px;">
+            <li>Urmări statusul cererii dumneavoastră</li>
+            <li>Gestiona multiple cereri</li>
+            <li>Accesa calculatorul de costuri</li>
+            <li>Primi notificări personalizate</li>
+          </ul>
+          <div style="text-align: center;">
+            <a href="https://autocar-phi.vercel.app/signup" 
+               style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px;">
+              Creează Cont Gratuit
+            </a>
+          </div>
+        </div>
+        
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center;">
+          <p style="color: #6b7280; margin: 0; font-size: 14px;">
+            Cu stimă,<br>
+            <strong style="color: #374151;">Echipa AutoCar</strong>
+          </p>
+          <div style="margin-top: 20px; color: #6b7280; font-size: 12px;">
+            <p style="margin: 5px 0;">🌐 Website: <a href="https://autocar-phi.vercel.app" style="color: #2563eb;">autocar-phi.vercel.app</a></p>
+            <p style="margin: 5px 0;">📧 Email: ${process.env.EMAIL_FROM}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+
+  console.log('Attempting to send customer confirmation email via Brevo API...')
+  console.log('Email will be sent to customer:', data.email)
+  
+  try {
+    const apiInstance = createBrevoClient()
+    
+    const emailMessage = new SendSmtpEmail()
+    emailMessage.subject = `AutoCar - Confirmarea cererii pentru ${data.make} ${data.model}`
+    emailMessage.htmlContent = htmlContent
+    emailMessage.textContent = emailContent
+    emailMessage.sender = { 
+      name: 'AutoCar', 
+      email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
+    }
+    emailMessage.to = [{ 
+      email: data.email, 
+      name: data.name 
+    }]
+
+    const result = await apiInstance.sendTransacEmail(emailMessage)
+    
+    console.log('Customer confirmation email sent successfully via Brevo API:', result.body?.messageId)
+    return result
+  } catch (error) {
+    console.error('Failed to send customer confirmation email via Brevo API:', error)
     console.error('Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : 'No stack trace',

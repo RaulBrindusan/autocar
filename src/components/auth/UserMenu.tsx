@@ -40,12 +40,8 @@ export function UserMenu() {
             .single()
           
           if (profileError) {
-            console.error('Error fetching user profile:', {
-              message: profileError.message,
-              code: profileError.code,
-              details: profileError.details,
-              hint: profileError.hint
-            })
+            console.error('Error fetching user profile:', profileError)
+            console.error('Error details:', JSON.stringify(profileError, null, 2))
             
             // If user doesn't exist in users table, create them
             if (profileError.code === 'PGRST116') { // No rows returned

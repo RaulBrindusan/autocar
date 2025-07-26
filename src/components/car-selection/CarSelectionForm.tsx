@@ -6,12 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Select from "react-select"
 import { Button } from "@/components/ui/Button"
-import { Car, DollarSign, Settings, Calendar, User, Phone, Fuel, Cog, Gauge } from "lucide-react"
+import { Car, DollarSign, Settings, Calendar, User, Phone, Mail, Fuel, Cog, Gauge } from "lucide-react"
 import toast from "react-hot-toast"
 
 const carSelectionSchema = z.object({
   name: z.string().min(1, "Numele este obligatoriu"),
   phone: z.string().min(1, "Numărul de telefon este obligatoriu"),
+  email: z.string().min(1, "Adresa de email este obligatorie").email("Adresa de email nu este validă"),
   make: z.string().min(1, "Selectează marca"),
   model: z.string().min(1, "Selectează modelul"),
   year: z.number().min(1985, "Anul trebuie să fie după 1985").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
@@ -514,6 +515,23 @@ export function CarSelectionForm() {
           />
           {errors.phone && (
             <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+          )}
+        </div>
+
+        {/* Email Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Mail className="h-4 w-4 inline mr-1" />
+            Adresa de Email *
+          </label>
+          <input
+            type="email"
+            {...register('email')}
+            placeholder="ex: nume@exemplu.com"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
           )}
         </div>
 
