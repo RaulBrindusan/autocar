@@ -48,7 +48,7 @@ export function UsersModal({ isOpen, onClose, mode, user, onUserUpdated }: Users
     phone: '',
     role: 'user'
   })
-  const [formErrors, setFormErrors] = useState<Partial<UserFormData>>({})
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof UserFormData, string>>>({})
 
   const supabase = createClient()
 
@@ -101,10 +101,11 @@ export function UsersModal({ isOpen, onClose, mode, user, onUserUpdated }: Users
       return true
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errors: Partial<UserFormData> = {}
+        const errors: Partial<Record<keyof UserFormData, string>> = {}
         error.issues.forEach((err) => {
-          if (err.path) {
-            errors[err.path[0] as keyof UserFormData] = err.message
+          if (err.path && err.path.length > 0) {
+            const field = err.path[0] as keyof UserFormData
+            errors[field] = err.message
           }
         })
         setFormErrors(errors)
