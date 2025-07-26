@@ -32,31 +32,45 @@ export function UserMenu() {
         
         // If user exists, fetch their profile to get role
         if (user) {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from("users")
             .select("*")
             .eq("id", user.id)
             .single()
           
-          setUserProfile(profile)
+          if (profileError) {
+            console.error('Error fetching user profile:', profileError)
+          } else {
+            console.log('Fetched user profile:', profile) // Debug log
+            setUserProfile(profile)
+          }
         }
+        setLoading(false)
       } catch (err) {
         console.error('Error getting user:', err)
-        setError('Authentication error')
-      } finally {
         setLoading(false)
       }
     }
 
     getUser()
+    
+    // Fallback timeout to ensure loading doesn't hang
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 5000)
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null)
+        setUserProfile(null) // Reset profile when auth changes
+        setLoading(false) // Ensure loading stops on auth change
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [])
 
   const handleSignOut = async () => {
@@ -112,13 +126,40 @@ export function UserMenu() {
         <Button
           variant="outline"
           size="sm"
-          asChild
+          onClick={async () => {
+            console.log('UserProfile:', userProfile) // Debug log
+            console.log('Role:', userProfile?.role) // Debug log
+            
+            // If profile isn't loaded yet, try to fetch it again
+            let currentProfile = userProfile
+            if (!currentProfile && user) {
+              console.log('Profile not loaded, fetching...') // Debug log
+              try {
+                const supabase = createClient()
+                const { data: profile } = await supabase
+                  .from("users")
+                  .select("*")
+                  .eq("id", user.id)
+                  .single()
+                
+                if (profile) {
+                  setUserProfile(profile)
+                  currentProfile = profile
+                  console.log('Fetched profile on click:', profile) // Debug log
+                }
+              } catch (err) {
+                console.error('Error fetching profile on click:', err)
+              }
+            }
+            
+            const targetPath = currentProfile?.role === 'admin' ? '/admin' : '/dashboard'
+            console.log('Redirecting to:', targetPath) // Debug log
+            router.push(targetPath)
+          }}
           className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
         >
-          <a href={userProfile?.role === 'admin' ? '/admin-account' : '/dashboard'}>
-            <Settings className="h-4 w-4 mr-1" />
-            Cont
-          </a>
+          <Settings className="h-4 w-4 mr-1" />
+          Cont
         </Button>
         
         <Button
