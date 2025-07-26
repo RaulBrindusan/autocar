@@ -203,7 +203,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
         resetCreateForm()
       }
     }
-  }, [isOpen, client, mode])
+  }, [isOpen, client, mode]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetCreateForm = () => {
     const currentYear = new Date().getFullYear()

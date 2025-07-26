@@ -113,7 +113,7 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
       setIsEditing(false)
       setError(null)
     }
-  }, [isOpen, requestId])
+  }, [isOpen, requestId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchRequest = async () => {
     if (!requestId) return

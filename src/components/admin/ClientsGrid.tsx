@@ -184,7 +184,9 @@ export function ClientsGrid({ clients }: ClientsGridProps) {
                         <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                           {client.contact_name || 'Nume nedefinit'}
                           {client.user_id && (
-                            <UserCheck className="h-4 w-4 ml-2 text-green-600" title="Utilizator înregistrat" />
+                            <span title="Utilizator înregistrat">
+                              <UserCheck className="h-4 w-4 ml-2 text-green-600" />
+                            </span>
                           )}
                         </h3>
                         <div className="mt-1 space-y-1">
