@@ -102,7 +102,7 @@ export function UsersModal({ isOpen, onClose, mode, user, onUserUpdated }: Users
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errors: Partial<UserFormData> = {}
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           if (err.path) {
             errors[err.path[0] as keyof UserFormData] = err.message
           }
