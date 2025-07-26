@@ -12,10 +12,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="flex-1 lg:ml-0">
         {/* Mobile spacing */}
-        <div className="lg:hidden h-16" />
+        <div className="lg:hidden h-2" />
         
         {/* Content */}
-        <main className="p-6 lg:p-8">
+        <main className="p-2 lg:p-8">
           {children}
         </main>
       </div>

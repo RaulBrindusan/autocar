@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { 
   LayoutDashboard,
   Users, 
@@ -16,6 +16,9 @@ import {
   X,
   LogOut
 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+import type { UserProfile } from "@/lib/auth-utils"
 
 interface SidebarItem {
   name: string
@@ -69,17 +72,69 @@ const sidebarItems: SidebarItem[] = [
 
 export function AdminSidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const pathname = usePathname()
+  const router = useRouter()
+
+  useEffect(() => {
+    const supabase = createClient()
+    
+    const getUser = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+        
+        if (user) {
+          const { data: profile } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", user.id)
+            .single()
+          
+          if (profile) {
+            setUserProfile(profile)
+          }
+        }
+      } catch (err) {
+        console.error('Error getting user:', err)
+      }
+    }
+
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null)
+        if (!session?.user) {
+          setUserProfile(null)
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleSignOut = async () => {
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      setSidebarOpen(false)
+      router.push('/')
+    } catch (err) {
+      console.error('Error signing out:', err)
+    }
+  }
 
   return (
     <>
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden absolute top-4 right-4 z-50">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="bg-white p-2 rounded-lg shadow-md border border-gray-200"
+          className="bg-blue-600 p-2 rounded-lg shadow-md"
         >
-          <Menu className="h-6 w-6 text-gray-600" />
+          <Menu className="h-6 w-6 text-white" />
         </button>
       </div>
 
@@ -162,7 +217,21 @@ export function AdminSidebar() {
 
           {/* Footer */}
           <div className="border-t border-gray-200 p-4">
-            <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+            {/* User Info */}
+            {user && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-900">
+                  {userProfile?.full_name || user.email}
+                </p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </div>
+            )}
+            
+            {/* Logout Button */}
+            <button 
+              onClick={handleSignOut}
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+            >
               <LogOut className="h-5 w-5 text-gray-400" />
               <span className="font-medium">Ieșire</span>
             </button>

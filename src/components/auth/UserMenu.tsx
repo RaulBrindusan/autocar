@@ -32,6 +32,7 @@ export function UserMenu() {
         
         // If user exists, fetch their profile to get role
         if (user) {
+          console.log('Authenticated user ID:', user.id) // Debug log
           const { data: profile, error: profileError } = await supabase
             .from("users")
             .select("*")
@@ -39,7 +40,70 @@ export function UserMenu() {
             .single()
           
           if (profileError) {
-            console.error('Error fetching user profile:', profileError)
+            console.error('Error fetching user profile:', {
+              message: profileError.message,
+              code: profileError.code,
+              details: profileError.details,
+              hint: profileError.hint
+            })
+            
+            // If user doesn't exist in users table, create them
+            if (profileError.code === 'PGRST116') { // No rows returned
+              console.log('User not found in users table, creating...') // Debug log
+              try {
+                const { data: newProfile, error: insertError } = await supabase
+                  .from("users")
+                  .insert({
+                    id: user.id,
+                    email: user.email!,
+                    full_name: user.user_metadata?.full_name || null,
+                    phone: user.user_metadata?.phone || null,
+                    role: 'user'
+                  })
+                  .select()
+                  .single()
+                
+                if (insertError) {
+                  console.error('Error creating user profile:', insertError)
+                  // Set a basic profile even if insert fails
+                  setUserProfile({
+                    id: user.id,
+                    email: user.email!,
+                    full_name: user.user_metadata?.full_name || null,
+                    phone: user.user_metadata?.phone || null,
+                    role: 'user',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                  })
+                } else {
+                  console.log('Created new user profile:', newProfile)
+                  setUserProfile(newProfile)
+                }
+              } catch (insertErr) {
+                console.error('Error inserting user:', insertErr)
+                // Set a basic profile as fallback
+                setUserProfile({
+                  id: user.id,
+                  email: user.email!,
+                  full_name: user.user_metadata?.full_name || null,
+                  phone: user.user_metadata?.phone || null,
+                  role: 'user',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                })
+              }
+            } else {
+              // For other errors, set a basic profile
+              setUserProfile({
+                id: user.id,
+                email: user.email!,
+                full_name: user.user_metadata?.full_name || null,
+                phone: user.user_metadata?.phone || null,
+                role: 'user',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+            }
           } else {
             console.log('Fetched user profile:', profile) // Debug log
             setUserProfile(profile)
@@ -86,7 +150,7 @@ export function UserMenu() {
   // Show login/signup buttons even if Supabase has errors
   if (error) {
     return (
-      <div className="flex items-center space-x-2">
+      <div className="hidden md:flex items-center space-x-2">
         <Button
           variant="outline"
           size="sm"
@@ -116,7 +180,7 @@ export function UserMenu() {
 
   if (user) {
     return (
-      <div className="flex items-center space-x-2">
+      <div className="hidden md:flex items-center space-x-2">
         <span className="text-sm text-blue-100">
           {userProfile?.full_name || user.email}
         </span>
@@ -175,7 +239,7 @@ export function UserMenu() {
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="hidden md:flex items-center space-x-2">
       <Button
         variant="outline"
         size="sm"
