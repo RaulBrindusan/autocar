@@ -335,11 +335,11 @@ export default function ContractePage() {
             <p className="text-black">Gestionează șabloanele de contracte și documentele</p>
           </div>
           <Button 
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 text-sm sm:text-base"
             onClick={handleCreateNewContract}
           >
-            <Plus className="h-4 w-4" />
-            <span>Contract Nou</span>
+            <Plus className="h-4 w-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">Contract Nou</span>
           </Button>
         </div>
 

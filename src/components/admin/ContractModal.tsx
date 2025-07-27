@@ -282,9 +282,12 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
             <Button
               onClick={handleCreateContract}
               disabled={isLoading || !isFormValid()}
+              className="flex items-center space-x-1 px-2 sm:px-4 py-2 text-sm sm:text-base"
             >
-              <Save className="h-4 w-4 mr-1" />
-              {mode === 'edit' ? 'Actualizează Contract' : 'Salvează Contract'}
+              <Save className="h-4 w-4 flex-shrink-0" />
+              <span className="whitespace-nowrap">
+                {mode === 'edit' ? 'Actualizează Contract' : 'Salvează Contract'}
+              </span>
             </Button>
             <button
               onClick={onClose}
