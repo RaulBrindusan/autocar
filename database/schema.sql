@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS public.contracte (
   
   -- Additional contract metadata
   contract_type TEXT NOT NULL DEFAULT 'servicii' CHECK (contract_type IN ('servicii', 'vanzare', 'cumparare')),
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'completed', 'cancelled', 'archived')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'semnat', 'trimis_la_client', 'semnat_de_client', 'archived', 'cancelled')),
   
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

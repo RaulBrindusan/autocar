@@ -94,7 +94,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
   const [error, setError] = useState<string | null>(null)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContractFormData>({
     // Contract identification
     nr: '',
     data: new Date().toISOString().split('T')[0],
@@ -122,8 +122,8 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
     email: '',
     
     // Additional metadata
-    contract_type: 'servicii' as const,
-    status: 'draft' as const
+    contract_type: 'servicii',
+    status: 'draft'
   })
 
   const supabase = createClient()
