@@ -318,12 +318,17 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                 <select
                   value={formData.contract_type}
                   onChange={(e) => setFormData({...formData, contract_type: e.target.value as any})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                    getFieldError('contract_type') ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 >
                   <option value="servicii">Contract de Prestări Servicii</option>
                   <option value="vanzare">Contract de Vânzare</option>
                   <option value="cumparare">Contract de Cumpărare</option>
                 </select>
+                {getFieldError('contract_type') && (
+                  <p className="text-red-600 text-sm mt-1">{getFieldError('contract_type')}</p>
+                )}
               </div>
 
               <div>
@@ -333,7 +338,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value as any})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                    getFieldError('status') ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 >
                   <option value="draft">Draft</option>
                   <option value="semnat">Semnat</option>
@@ -342,6 +349,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                   <option value="archived">Arhivat</option>
                   <option value="cancelled">Anulat</option>
                 </select>
+                {getFieldError('status') && (
+                  <p className="text-red-600 text-sm mt-1">{getFieldError('status')}</p>
+                )}
               </div>
             </div>
           </div>
@@ -519,7 +529,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                       type="text"
                       value={formData.bl}
                       onChange={(e) => setFormData({...formData, bl: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                        getFieldError('bl') ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="A1"
                     />
                   </div>
@@ -531,7 +543,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                       type="text"
                       value={formData.scara}
                       onChange={(e) => setFormData({...formData, scara: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                        getFieldError('scara') ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="1"
                     />
                   </div>
@@ -543,7 +557,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                       type="text"
                       value={formData.etaj}
                       onChange={(e) => setFormData({...formData, etaj: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                        getFieldError('etaj') ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="2"
                     />
                   </div>
@@ -555,7 +571,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                       type="text"
                       value={formData.apartament}
                       onChange={(e) => setFormData({...formData, apartament: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
+                        getFieldError('apartament') ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="15"
                     />
                   </div>
