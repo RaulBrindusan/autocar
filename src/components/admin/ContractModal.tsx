@@ -206,7 +206,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
       
       if (!result.success) {
         const errors: Record<string, string> = {}
-        result.error.errors.forEach((error) => {
+        result.error.issues.forEach((error) => {
           if (error.path.length > 0) {
             errors[error.path[0] as string] = error.message
           }
