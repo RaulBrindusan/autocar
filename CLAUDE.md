@@ -18,7 +18,7 @@ npm start
 npm run lint
 ```
 
-**Note**: No test framework is currently configured. If tests are needed, check with the user for their preferred testing setup.
+**Note**: No test framework is currently configured. If tests are needed, check with the user for their preferred testing setup. Playwright is available as a dependency for potential E2E testing.
 
 ## Architecture Overview
 
@@ -51,12 +51,17 @@ Uses Supabase Auth with automatic user profile creation via database triggers. P
 - `/api/cars/makes` - Car manufacturers list
 - `/api/cars/models` - Car models by manufacturer  
 - `/api/scrape-openlane` - OpenLane data extraction (30s timeout)
+- `/api/car-requests` - Handle car import requests submission
+- `/api/email/*` - Email notification endpoints (car-request, openlane, test)
+- `/api/debug/*` - Development debugging endpoints
 
 ### Key Components
 - **CarSelectionForm** - Multi-step car selection with API integration
 - **CostEstimator** - Real-time cost calculation with Romanian tax logic
 - **OpenLaneForm** - OpenLane URL submission with validation
 - **AuthForm** - Login/signup with Supabase integration
+- **AdminDashboard** - Admin interface for managing requests and users
+- **CarDataDisplay** - Shows fetched car information from APIs
 
 ## Development Workflow
 
@@ -67,6 +72,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_ACCESS_TOKEN=your_personal_access_token (for MCP)
 SUPABASE_PROJECT_REF=your_project_reference (for MCP)
+BREVO_API_KEY=your_brevo_api_key (for email notifications)
 ```
 
 ### Database Changes
@@ -77,7 +83,10 @@ When modifying the database:
 4. Update RLS policies for new tables/columns
 
 ### Supabase Integration
-The project uses Supabase SSR package for server-side rendering compatibility. Client configurations are in `src/lib/supabase/`.
+The project uses Supabase SSR package for server-side rendering compatibility. Client configurations are in `src/lib/supabase/`:
+- `client.ts` - Browser client for client components
+- `server.ts` - Server client for server components and API routes
+- `middleware.ts` - Middleware helper for authentication
 
 ### MCP Server Integration
 Configured for AI assistant interactions with Supabase. The `.mcp.json` file contains server configuration for Claude Desktop integration.
@@ -109,6 +118,12 @@ Configured for AI assistant interactions with Supabase. The `.mcp.json` file con
 ## Romanian Market Context
 
 This application is specifically built for the Romanian car import market. Forms and user-facing text are in Romanian. Cost calculations include Romanian-specific taxes and import fees.
+
+### Email Integration
+Uses Brevo (formerly SendinBlue) for transactional emails:
+- Car request notifications
+- OpenLane submission confirmations
+- Debug/testing endpoints available
 
 ## Current Development Rules
 

@@ -57,11 +57,53 @@ CREATE TABLE IF NOT EXISTS public.openlane_submissions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create contracte table with prestari servicii fields
+CREATE TABLE IF NOT EXISTS public.contracte (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  contract_number SERIAL UNIQUE NOT NULL,
+  user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  
+  -- Contract identification
+  nr TEXT,
+  data DATE NOT NULL DEFAULT CURRENT_DATE,
+  
+  -- Personal information
+  nume_prenume TEXT NOT NULL,
+  localitatea TEXT NOT NULL,
+  strada TEXT NOT NULL,
+  nr_strada TEXT NOT NULL,
+  bl TEXT,
+  scara TEXT,
+  etaj TEXT,
+  apartament TEXT,
+  judet TEXT NOT NULL,
+  
+  -- ID document information
+  ci_seria TEXT NOT NULL,
+  ci_nr TEXT NOT NULL,
+  cnp TEXT NOT NULL,
+  spclep TEXT NOT NULL,
+  ci_data DATE NOT NULL,
+  
+  -- Contract details
+  suma_licitatie DECIMAL(10,2) NOT NULL,
+  email TEXT NOT NULL,
+  
+  -- Additional contract metadata
+  contract_type TEXT NOT NULL DEFAULT 'servicii' CHECK (contract_type IN ('servicii', 'vanzare', 'cumparare')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'completed', 'cancelled', 'archived')),
+  
+  -- Timestamps
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.car_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cost_estimates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.openlane_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contracte ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for users table
 CREATE POLICY "Users can view their own profile" ON public.users
@@ -99,6 +141,39 @@ CREATE POLICY "Anyone can create openlane submissions" ON public.openlane_submis
 
 CREATE POLICY "Users can update their own openlane submissions" ON public.openlane_submissions
   FOR UPDATE USING (auth.uid() = user_id);
+
+-- Create policies for contracte table
+CREATE POLICY "Admin can view all contracts" ON public.contracte
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE users.id = auth.uid() AND users.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admin can create contracts" ON public.contracte
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE users.id = auth.uid() AND users.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admin can update contracts" ON public.contracte
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE users.id = auth.uid() AND users.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admin can delete contracts" ON public.contracte
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE users.id = auth.uid() AND users.role = 'admin'
+    )
+  );
 
 -- Create function to handle user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -141,4 +216,8 @@ CREATE TRIGGER handle_updated_at_car_requests
 
 CREATE TRIGGER handle_updated_at_openlane_submissions
   BEFORE UPDATE ON public.openlane_submissions
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER handle_updated_at_contracte
+  BEFORE UPDATE ON public.contracte
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();

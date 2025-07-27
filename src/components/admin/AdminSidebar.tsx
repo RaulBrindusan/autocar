@@ -49,6 +49,11 @@ const sidebarItems: SidebarItem[] = [
     icon: Users
   },
   {
+    name: "Contracte",
+    href: "/admin/contracte",
+    icon: FileText
+  },
+  {
     name: "Estimări Costuri",
     href: "/admin/cost-estimates",
     icon: Calculator

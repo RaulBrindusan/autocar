@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Car, Mail, Phone, MapPin } from "lucide-react"
+import Image from "next/image"
+import { Car, Mail, Phone, MapPin, Heart } from "lucide-react"
 
 export function Footer() {
   return (
@@ -69,14 +70,44 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-blue-600 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-blue-200 text-sm">
-            © {new Date().getFullYear()} AutoCar. Toate drepturile rezervate.
-          </p>
-          <div className="flex space-x-6 mt-4 sm:mt-0">
-            <span className="text-blue-200 text-sm">
-              contact@codemint.ro
-            </span>
+        <div className="mt-8 pt-8">
+          {/* ANPC Logos */}
+          <div className="flex justify-center items-center space-x-8 mb-6">
+            <Link 
+              href="https://anpc.ro/ce-este-sal/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Image
+                src="/anpc-sal.png"
+                alt="ANPC SAL"
+                width={200}
+                height={100}
+                className="h-20 w-auto"
+              />
+            </Link>
+            <Link 
+              href="https://ec.europa.eu/consumers/odr" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Image
+                src="/anpc-sol.png"
+                alt="ANPC SOL"
+                width={200}
+                height={100}
+                className="h-20 w-auto"
+              />
+            </Link>
+          </div>
+          
+          <div className="flex justify-center items-center">
+            <p className="text-blue-200 text-sm flex items-center space-x-1">
+              <span>© {new Date().getFullYear()} Made by Codemint</span>
+              <Heart className="h-4 w-4 text-red-400 fill-current" />
+            </p>
           </div>
         </div>
       </div>
