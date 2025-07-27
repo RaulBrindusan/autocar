@@ -203,7 +203,7 @@ export default function Home() {
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">BMW Seria 5 518d M Sport</h3>
-                <p className="text-gray-600 mb-4">Sedan premium cu tehnologie avansată și design sportiv</p>
+                <p className="text-gray-600 mb-4">Diesel - Automatic - 136 hp - 72.212 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€28,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
@@ -228,8 +228,8 @@ export default function Home() {
                 badge="Luxury"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Mercedes-Benz S Long 580e AMG Line</h3>
-                <p className="text-gray-600 mb-4">Luxul suprem cu tehnologie hibridă plug-in</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Mercedes-Benz S 580e AMG Line</h3>
+                <p className="text-gray-600 mb-4">Hibrid - Automatic - 367 hp - 8.172 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€110,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
@@ -255,7 +255,7 @@ export default function Home() {
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Audi RS3 2.5 Quattro</h3>
-                <p className="text-gray-600 mb-4">Performanțe extreme cu tracțiune integrală Quattro</p>
+                <p className="text-gray-600 mb-4">Benzina - Automatic - 400 hp - 25.189 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€54,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
