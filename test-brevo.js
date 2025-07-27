@@ -18,12 +18,12 @@ async function testBrevoAPI() {
     emailMessage.textContent = 'This is a direct test of the Brevo API';
     emailMessage.htmlContent = '<h1>Direct Brevo API Test</h1><p>This is a direct test of the Brevo API</p>';
     emailMessage.sender = { 
-      name: 'AutoCar Test', 
+      name: 'Automode Test', 
       email: process.env.EMAIL_FROM || 'contact@codemint.ro' 
     };
     emailMessage.to = [{ 
       email: process.env.EMAIL_FROM || 'contact@codemint.ro', 
-      name: 'AutoCar Test' 
+      name: 'Automode Test' 
     }];
     
     console.log('Sending email...');

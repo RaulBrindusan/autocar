@@ -5,13 +5,18 @@ import { Car, Mail, Phone, MapPin, Heart } from "lucide-react"
 export function Footer() {
   return (
     <footer className="bg-blue-700 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <Car className="h-8 w-8 text-white" />
-              <span className="text-xl font-bold text-white">AutoCar</span>
+            <div className="flex items-center mb-2">
+              <Image
+                src="/logo2.png"
+                alt="Automode"
+                width={160}
+                height={160}
+                className="h-32 w-32"
+              />
             </div>
             <p className="text-blue-100 mb-4 max-w-md">
               Partenerul tău de încredere pentru importul de vehicule premium din Europa. 
@@ -20,7 +25,7 @@ export function Footer() {
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-white" />
-                <span className="text-sm">contact@autocar.ro</span>
+                <span className="text-sm">contact@automode.ro</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-white" />
@@ -70,7 +75,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8">
+        <div className="mt-6 pt-6">
           {/* ANPC Logos */}
           <div className="flex justify-center items-center space-x-8 mb-6">
             <Link 

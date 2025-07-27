@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Car, Menu, X, Settings, LogOut, User, Mail } from "lucide-react"
@@ -168,14 +169,13 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-blue-600 border-b border-blue-700 shadow-sm">
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
+      <header className="bg-blue-600 border-b border-blue-700 shadow-sm m-0 p-0">
+        <nav className="max-w-7xl mx-auto m-0 p-0" aria-label="Top">
           <div className="flex w-full items-center justify-between py-4">
             {/* Logo - moved to left */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <Car className="h-8 w-8 text-white" />
-                <span className="text-xl font-bold text-white">AutoCar</span>
+            <div className="flex items-center pl-4 md:pl-0">
+              <Link href="/" className="flex items-center">
+                <span className="text-2xl font-bold text-white">AutoMode</span>
               </Link>
             </div>
 
@@ -203,7 +203,7 @@ export function Header() {
             </div>
 
             {/* Mobile hamburger menu */}
-            <div className="md:hidden">
+            <div className="md:hidden pr-4">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-lg bg-blue-600 shadow-md hover:shadow-lg transition-shadow"
@@ -234,10 +234,15 @@ export function Header() {
           )}
         >
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <Car className="h-6 w-6 text-blue-600" />
-              <span className="text-lg font-bold text-gray-900">AutoCar</span>
+          <div className="flex items-center justify-between p-2 border-b border-gray-200">
+            <div className="flex items-center">
+              <Image
+                src="/logo2.png"
+                alt="Automode"
+                width={100}
+                height={100}
+                className="h-24 w-24"
+              />
             </div>
             <Button
               variant="ghost"

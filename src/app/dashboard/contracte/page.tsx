@@ -265,7 +265,7 @@ export default function UserContractePage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Contractele Tale</h1>
           <p className="text-gray-600 mt-2">
-            Vezi și gestionează contractele tale cu AutoCar
+            Vezi și gestionează contractele tale cu Automode
           </p>
         </div>
 
@@ -394,7 +394,7 @@ export default function UserContractePage() {
                 Niciun contract încă
               </h3>
               <p className="text-gray-600 mb-6">
-                Contractele tale cu AutoCar vor apărea aici odată ce sunt create.
+                Contractele tale cu Automode vor apărea aici odată ce sunt create.
               </p>
               <Button variant="outline">
                 Contactează-ne pentru un contract

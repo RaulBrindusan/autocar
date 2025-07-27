@@ -158,7 +158,7 @@ DETALII MAȘINĂ:
 • Buget: €${data.budget.toLocaleString()}${featuresText}${notesText}
 
 ---
-Trimis de pe autocar.codemint.ro
+Trimis de pe automode.ro
 `
 
   const htmlContent = `
@@ -195,7 +195,7 @@ Trimis de pe autocar.codemint.ro
       
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
       <p style="color: #6b7280; font-size: 14px; text-align: center;">
-        Trimis de pe autocar.codemint.ro
+        Trimis de pe automode.ro
       </p>
     </div>
   `
@@ -212,7 +212,7 @@ Trimis de pe autocar.codemint.ro
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'AutoCar', 
+      name: 'Automode', 
       email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
     }
     // Parse multiple email addresses
@@ -220,7 +220,7 @@ Trimis de pe autocar.codemint.ro
     const emailAddresses = emailToString.split(',').map(email => email.trim())
     emailMessage.to = emailAddresses.map(email => ({ 
       email: email, 
-      name: 'AutoCar Team' 
+      name: 'Automode Team' 
     }))
 
     console.log('Email message created, sending...')
@@ -271,7 +271,7 @@ ${data.url}
 ${carDataText}${notesText}
 
 ---
-Trimis de pe autocar.codemint.ro
+Trimis de pe automode.ro
 `
 
   const htmlContent = `
@@ -316,7 +316,7 @@ Trimis de pe autocar.codemint.ro
       
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
       <p style="color: #6b7280; font-size: 14px; text-align: center;">
-        Trimis de pe autocar.codemint.ro
+        Trimis de pe automode.ro
       </p>
     </div>
   `
@@ -332,7 +332,7 @@ Trimis de pe autocar.codemint.ro
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'AutoCar', 
+      name: 'Automode', 
       email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
     }
     // Parse multiple email addresses
@@ -340,7 +340,7 @@ Trimis de pe autocar.codemint.ro
     const emailAddresses = emailToString.split(',').map(email => email.trim())
     emailMessage.to = emailAddresses.map(email => ({ 
       email: email, 
-      name: 'AutoCar Team' 
+      name: 'Automode Team' 
     }))
 
     const result = await apiInstance.sendTransacEmail(emailMessage)
@@ -364,7 +364,7 @@ export async function sendCustomerConfirmationEmail(data: CarRequestEmailData) {
   const emailContent = `
 Bună ziua ${data.name},
 
-Mulțumim că ați contactat AutoCar! Am primit cererea dumneavoastră pentru:
+Mulțumim că ați contactat Automode! Am primit cererea dumneavoastră pentru:
 
 ${data.make} ${data.model} ${data.year}
 Buget: €${data.budget.toLocaleString()}
@@ -373,14 +373,14 @@ Echipa noastră va analiza cererea și vă va contacta în cel mai scurt timp po
 
 Pentru o experiență mai bună, vă invităm să vă creați un cont pe platforma noastră unde puteți urmări statusul cererii și beneficia de servicii suplimentare.
 
-Creați-vă contul aici: https://autocar-phi.vercel.app/signup
+Creați-vă contul aici: https://automode.ro/signup
 
 Cu stimă,
-Echipa AutoCar
+Echipa Automode
 
 ---
-AutoCar - Importul de mașini din Europa
-Website: https://autocar-phi.vercel.app
+Automode - Importul de mașini din Europa
+Website: https://automode.ro
 Email: ${process.env.EMAIL_FROM}
 `
 
@@ -388,14 +388,14 @@ Email: ${process.env.EMAIL_FROM}
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
       <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #2563eb; margin: 0; font-size: 28px;">AutoCar</h1>
+          <h1 style="color: #2563eb; margin: 0; font-size: 28px;">Automode</h1>
           <p style="color: #6b7280; margin: 5px 0 0 0;">Importul de mașini din Europa</p>
         </div>
         
         <h2 style="color: #374151; margin-bottom: 20px;">Bună ziua ${data.name},</h2>
         
         <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-          Mulțumim că ați contactat <strong>AutoCar</strong>! Am primit cererea dumneavoastră și suntem încântați să vă ajutăm.
+          Mulțumim că ați contactat <strong>Automode</strong>! Am primit cererea dumneavoastră și suntem încântați să vă ajutăm.
         </p>
         
         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -413,7 +413,7 @@ Email: ${process.env.EMAIL_FROM}
         </p>
         
         <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-          <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 15px;">💡 Creați-vă un cont AutoCar</h3>
+          <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 15px;">💡 Creați-vă un cont Automode</h3>
           <p style="color: #374151; margin-bottom: 15px; line-height: 1.6;">
             Pentru o experiență completă, vă invităm să vă creați un cont pe platforma noastră unde puteți:
           </p>
@@ -424,7 +424,7 @@ Email: ${process.env.EMAIL_FROM}
             <li>Primi notificări personalizate</li>
           </ul>
           <div style="text-align: center;">
-            <a href="https://autocar-phi.vercel.app/signup" 
+            <a href="https://automode.ro/signup" 
                style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px;">
               Creează Cont Gratuit
             </a>
@@ -434,10 +434,10 @@ Email: ${process.env.EMAIL_FROM}
         <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center;">
           <p style="color: #6b7280; margin: 0; font-size: 14px;">
             Cu stimă,<br>
-            <strong style="color: #374151;">Echipa AutoCar</strong>
+            <strong style="color: #374151;">Echipa Automode</strong>
           </p>
           <div style="margin-top: 20px; color: #6b7280; font-size: 12px;">
-            <p style="margin: 5px 0;">🌐 Website: <a href="https://autocar-phi.vercel.app" style="color: #2563eb;">autocar-phi.vercel.app</a></p>
+            <p style="margin: 5px 0;">🌐 Website: <a href="https://automode.ro" style="color: #2563eb;">automode.ro</a></p>
             <p style="margin: 5px 0;">📧 Email: ${process.env.EMAIL_FROM}</p>
           </div>
         </div>
@@ -452,11 +452,11 @@ Email: ${process.env.EMAIL_FROM}
     const apiInstance = createBrevoClient()
     
     const emailMessage = new SendSmtpEmail()
-    emailMessage.subject = `AutoCar - Confirmarea cererii pentru ${data.make} ${data.model}`
+    emailMessage.subject = `Automode - Confirmarea cererii pentru ${data.make} ${data.model}`
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'AutoCar', 
+      name: 'Automode', 
       email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
     }
     emailMessage.to = [{ 

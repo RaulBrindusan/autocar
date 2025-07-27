@@ -1,4 +1,4 @@
-# AutoCar - European Car Import Platform
+# Automode - European Car Import Platform
 
 A Next.js application for importing premium European cars to Romania, built with Supabase authentication and database integration, plus MCP (Model Context Protocol) server support.
 
@@ -34,7 +34,7 @@ A Next.js application for importing premium European cars to Romania, built with
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd autocar
+   cd automode
    ```
 
 2. **Install dependencies**
@@ -206,4 +206,4 @@ This project is licensed under the MIT License.
 
 ## Support
 
-For support, email contact@autocar.ro or create an issue in the repository.
+For support, email contact@automode.ro or create an issue in the repository.

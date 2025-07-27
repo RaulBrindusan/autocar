@@ -22,7 +22,7 @@ async function testDirectSend() {
       <p>If you receive this email, the noreply sender is working correctly!</p>
     `;
     
-    email1.sender = { name: 'AutoCar System', email: 'noreply@codemint.ro' };
+    email1.sender = { name: 'Automode System', email: 'noreply@codemint.ro' };
     email1.to = [{ email: 'contact@codemint.ro', name: 'Contact Team' }];
     
     try {

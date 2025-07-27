@@ -24,12 +24,12 @@ async function testNewConfig() {
     `;
     
     emailMessage.sender = { 
-      name: 'AutoCar Test', 
+      name: 'Automode Test', 
       email: process.env.EMAIL_FROM 
     };
     emailMessage.to = [{ 
       email: process.env.EMAIL_TO, 
-      name: 'AutoCar Team' 
+      name: 'Automode Team' 
     }];
     
     console.log('Sending test email...');

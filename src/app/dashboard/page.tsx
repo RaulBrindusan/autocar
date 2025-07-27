@@ -31,7 +31,7 @@ export default async function DashboardPage() {
             Bună ziua, {profile?.full_name || user.email}!
           </h1>
           <p className="text-gray-600 mt-2">
-            Bine ai venit în dashboard-ul tău AutoCar
+            Bine ai venit în dashboard-ul tău Automode
           </p>
         </div>
 

@@ -45,7 +45,7 @@ async function debugEmailDelivery() {
     `;
     
     testEmail.sender = { 
-      name: 'AutoCar Debug', 
+      name: 'Automode Debug', 
       email: process.env.EMAIL_FROM 
     };
     testEmail.to = [{ 

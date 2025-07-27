@@ -184,7 +184,7 @@ export default async function AdminAccountPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-blue-900">Înapoi la Panou Administrare</h3>
-              <p className="text-blue-700">Continuă să gestionezi platforma AutoCar</p>
+              <p className="text-blue-700">Continuă să gestionezi platforma Automode</p>
             </div>
             <Button asChild className="bg-blue-600 hover:bg-blue-700">
               <a href="/admin">

@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/${encodeURIComponent(make)}?format=json`,
         {
           headers: {
-            'User-Agent': 'AutoCar-Import-Service/1.0'
+            'User-Agent': 'Automode-Import-Service/1.0'
           }
         }
       )

@@ -9,7 +9,7 @@ async function createSender() {
     sendersApi.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
     
     const senderData = {
-      name: 'AutoCar',  // Display name
+      name: 'Automode',  // Display name
       email: 'noreply@codemint.ro'  // Sender email
     };
     

@@ -164,7 +164,7 @@ export function AdminSidebar() {
               <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center">
                 <Car className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">AutoCar</span>
+              <span className="text-xl font-bold text-gray-900">Automode</span>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}

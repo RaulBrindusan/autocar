@@ -91,7 +91,7 @@ export function CostEstimator() {
             value={carPrice}
             onChange={(e) => setCarPrice(e.target.value)}
             placeholder="ex: 15000"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-900"
           />
         </div>
         

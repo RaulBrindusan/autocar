@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AutoCar - European Car Import Specialists",
-  description: "Import your dream European car with AutoCar. Professional car sourcing, import handling, and delivery services.",
+  title: "Automode - European Car Import Specialists",
+  description: "Import your dream European car with Automode. Professional car sourcing, import handling, and delivery services.",
 };
 
 export default function RootLayout({

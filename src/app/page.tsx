@@ -54,8 +54,8 @@ export default function Home() {
                 </span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
-                Mașini Premium
-                <span className="block text-blue-600 mt-2">din Europa</span>
+                Povestea Ta Auto
+                <span className="block text-blue-600 mt-2">Începe de Aici</span>
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl">
                 Accesează cele mai bune mașini din piața europeană. De la BMW și Mercedes 
@@ -492,7 +492,7 @@ export default function Home() {
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
               <Link href="/request-car">Începe Cererea Ta</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+            <Button asChild size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
               <Link href="/request-car?tab=openlane">Trimite Link OpenLane</Link>
             </Button>
           </div>
@@ -578,7 +578,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-700 mb-6 leading-relaxed">
-                &ldquo;Echipa AutoCar m-a ajutat să îmi import Mercedes-ul de vis. Procesul a fost simplu și fără probleme.&rdquo;
+                &ldquo;Echipa Automode m-a ajutat să îmi import Mercedes-ul de vis. Procesul a fost simplu și fără probleme.&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -596,7 +596,7 @@ export default function Home() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/40770852489?text=Salut!%20Am%20vazut%20site-ul%20AutoCar%20si%20sunt%20interesat%20de%20serviciile%20voastre."
+        href="https://wa.me/40770852489?text=Salut!%20Am%20vazut%20site-ul%20AutoMode%20si%20sunt%20interesat%20de%20serviciile%20voastre."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"

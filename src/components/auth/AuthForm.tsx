@@ -122,8 +122,8 @@ export function AuthForm({ mode }: AuthFormProps) {
           </h1>
           <p className="text-gray-600">
             {mode === "signup" 
-              ? "Alătură-te comunității AutoCar" 
-              : "Intră în contul tău AutoCar"
+              ? "Alătură-te comunității Automode" 
+              : "Intră în contul tău Automode"
             }
           </p>
         </div>
