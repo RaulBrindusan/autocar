@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient()
+    const { id } = await params
     
     // Check if user is authenticated
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -36,7 +37,7 @@ export async function POST(
         prestator_signed_by: user.id,
         status: 'semnat'
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -64,10 +65,11 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient()
+    const { id } = await params
     
     // Check if user is authenticated
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -86,7 +88,7 @@ export async function DELETE(
         prestator_signed_at: null,
         prestator_signed_by: null
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
