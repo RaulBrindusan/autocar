@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, FileText, User, Phone, Mail, CreditCard, Calendar, Save, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { UserSearchDropdown } from '@/components/ui/UserSearchDropdown'
 import { createClient } from '@/lib/supabase/client'
 import { z } from 'zod'
 
@@ -89,10 +90,19 @@ const contractSchema = z.object({
 
 type ContractFormData = z.infer<typeof contractSchema>
 
+interface UserProfile {
+  id: string
+  email: string
+  full_name: string | null
+  phone: string | null
+  role: string
+}
+
 export function ContractModal({ isOpen, onClose, onContractCreated, editingContract, mode = 'create' }: ContractModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)
   
   const [formData, setFormData] = useState<ContractFormData>({
     // Contract identification
@@ -128,6 +138,25 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
 
   const supabase = createClient()
 
+  // Handle user selection from dropdown
+  const handleUserSelect = (user: UserProfile) => {
+    setSelectedUser(user)
+    setFormData(prev => ({
+      ...prev,
+      nume_prenume: user.full_name || '',
+      email: user.email,
+    }))
+  }
+
+  // Handle manual input change for nume_prenume
+  const handleNumePretumeChange = (value: string) => {
+    setFormData(prev => ({ ...prev, nume_prenume: value }))
+    // Clear selected user if manually typing
+    if (selectedUser && value !== selectedUser.full_name) {
+      setSelectedUser(null)
+    }
+  }
+
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && editingContract) {
@@ -155,6 +184,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
         })
       } else {
         resetForm()
+        setSelectedUser(null)
       }
     }
   }, [isOpen, mode, editingContract])
@@ -193,6 +223,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
     })
     setError(null)
     setValidationErrors({})
+    setSelectedUser(null)
   }
 
   const handleCreateContract = async () => {
@@ -221,7 +252,9 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
         bl: result.data.bl || null,
         scara: result.data.scara || null,
         etaj: result.data.etaj || null,
-        apartament: result.data.apartament || null
+        apartament: result.data.apartament || null,
+        // Include user_id if a user was selected from dropdown
+        ...(selectedUser && { user_id: selectedUser.id })
       }
 
       if (mode === 'edit' && editingContract) {
@@ -408,21 +441,15 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                 {/* Personal Information */}
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
-                    Nume Prenume *
+                    Selectează Client *
                   </label>
-                  <input
-                    type="text"
+                  <UserSearchDropdown
                     value={formData.nume_prenume}
-                    onChange={(e) => setFormData({...formData, nume_prenume: e.target.value})}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black ${
-                      getFieldError('nume_prenume') ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="Numele complet al clientului"
-                    required
+                    onUserSelect={handleUserSelect}
+                    onInputChange={handleNumePretumeChange}
+                    placeholder="Caută client sau introdu numele manual..."
+                    error={getFieldError('nume_prenume')}
                   />
-                  {getFieldError('nume_prenume') && (
-                    <p className="text-red-600 text-sm mt-1">{getFieldError('nume_prenume')}</p>
-                  )}
                 </div>
 
                 <div>
@@ -443,6 +470,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
                     <p className="text-red-600 text-sm mt-1">{getFieldError('email')}</p>
                   )}
                 </div>
+
 
                 {/* Address Information */}
                 <div className="grid grid-cols-2 gap-4">

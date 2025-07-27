@@ -9,7 +9,7 @@ import { ContractModal } from '@/components/admin/ContractModal'
 import DigitalSignature from '@/components/ui/DigitalSignature'
 import { generatePDFFromHTML } from '@/lib/pdf-utils'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, Download, Plus, FileText, Trash2, Edit, PenTool } from 'lucide-react'
+import { Eye, Download, Plus, FileText, Trash2, Edit, PenTool, Send } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
 interface Contract {
@@ -56,6 +56,9 @@ interface DatabaseContract {
   prestator_signature?: string
   prestator_signed_at?: string
   prestator_signed_by?: string
+  client_signature?: string
+  client_signed_at?: string
+  client_signed_by?: string
   
   // Additional contract metadata
   contract_type: 'servicii' | 'vanzare' | 'cumparare'
@@ -90,12 +93,24 @@ export default function ContractePage() {
   const [showSignatureModal, setShowSignatureModal] = useState(false)
   const [signingContract, setSigningContract] = useState<DatabaseContract | null>(null)
   const [isSignatureSaving, setIsSignatureSaving] = useState(false)
+  const [isSendingToClient, setIsSendingToClient] = useState(false)
+  const [toast, setToast] = useState<{type: 'success' | 'error', message: string} | null>(null)
   const contractRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
   useEffect(() => {
     fetchDatabaseContracts()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-hide toast after 5 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [toast])
 
   const fetchDatabaseContracts = async () => {
     try {
@@ -107,6 +122,7 @@ export default function ContractePage() {
       
       if (error) {
         console.error('Error fetching contracts:', error)
+        console.error('Error details:', error.message, error.details, error.hint)
         return
       }
       
@@ -173,6 +189,50 @@ export default function ContractePage() {
   const handleCancelSignature = () => {
     setShowSignatureModal(false)
     setSigningContract(null)
+  }
+
+  const handleSendToClient = async (contract: DatabaseContract) => {
+    if (!confirm(`Ești sigur că vrei să trimiți contractul #${contract.contract_number} la clientul ${contract.nume_prenume}?`)) {
+      return
+    }
+
+    try {
+      setIsSendingToClient(true)
+      
+      const { error } = await supabase
+        .from('contracte')
+        .update({
+          status: 'trimis_la_client'
+        })
+        .eq('id', contract.id)
+      
+      if (error) throw error
+      
+      // Refresh contracts list
+      await fetchDatabaseContracts()
+      
+      // Update selected contract if it's the one being sent
+      if (selectedDatabaseContract?.id === contract.id) {
+        setSelectedDatabaseContract({
+          ...selectedDatabaseContract,
+          status: 'trimis_la_client'
+        })
+      }
+      
+      // Show success toast
+      setToast({
+        type: 'success',
+        message: `Contractul #${contract.contract_number} a fost trimis cu succes la ${contract.nume_prenume}!`
+      })
+    } catch (error) {
+      console.error('Error sending contract to client:', error)
+      setToast({
+        type: 'error',
+        message: 'Eroare la trimiterea contractului. Încercați din nou.'
+      })
+    } finally {
+      setIsSendingToClient(false)
+    }
   }
 
   const handleViewContract = (contract: Contract) => {
@@ -261,7 +321,10 @@ export default function ContractePage() {
       email: contract.email,
       prestator_signature: contract.prestator_signature,
       prestator_signed_at: contract.prestator_signed_at,
-      prestator_signed_by: contract.prestator_signed_by
+      prestator_signed_by: contract.prestator_signed_by,
+      client_signature: contract.client_signature,
+      client_signed_at: contract.client_signed_at,
+      client_signed_by: contract.client_signed_by
     }
   }
 
@@ -437,7 +500,7 @@ export default function ContractePage() {
                   <div className="flex space-x-2">
                     {selectedDatabaseContract.prestator_signature ? (
                       <div className="flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-md text-sm">
-                        <span>✓ Semnat Digital</span>
+                        <span>✓ Semnat de Prestator</span>
                       </div>
                     ) : (
                       <Button
@@ -449,6 +512,15 @@ export default function ContractePage() {
                         <span>Semnează Contract</span>
                       </Button>
                     )}
+                    {selectedDatabaseContract.client_signature ? (
+                      <div className="flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-md text-sm">
+                        <span>✓ Semnat de Client</span>
+                      </div>
+                    ) : selectedDatabaseContract.status === 'trimis_la_client' ? (
+                      <div className="flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 rounded-md text-sm">
+                        <span>⏳ Așteptare Semnătură Client</span>
+                      </div>
+                    ) : null}
                     <Button
                       variant="outline"
                       onClick={() => handleDownloadPDF(selectedDatabaseContract)}
@@ -524,11 +596,17 @@ export default function ContractePage() {
                       <p><strong>Valoare:</strong> {contract.suma_licitatie.toLocaleString()} EUR</p>
                       <p><strong>Data:</strong> {new Date(contract.data).toLocaleDateString('ro-RO')}</p>
                       <p><strong>Localitatea:</strong> {contract.localitatea}, {contract.judet}</p>
+                      {contract.prestator_signature && (
+                        <p className="text-green-600"><strong>✓ Prestator:</strong> Semnat</p>
+                      )}
+                      {contract.client_signature && (
+                        <p className="text-blue-600"><strong>✓ Client:</strong> Semnat pe {new Date(contract.client_signed_at!).toLocaleDateString('ro-RO')}</p>
+                      )}
                     </div>
                     <div className="text-xs text-gray-500 mb-4">
                       Creat: {new Date(contract.created_at).toLocaleDateString('ro-RO')}
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -538,6 +616,18 @@ export default function ContractePage() {
                         <Eye className="h-4 w-4" />
                         <span>Vizualizează</span>
                       </Button>
+                      {contract.status === 'semnat' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center space-x-1 text-green-600 hover:text-green-700"
+                          onClick={() => handleSendToClient(contract)}
+                          disabled={isSendingToClient}
+                        >
+                          <Send className="h-4 w-4" />
+                          <span>{isSendingToClient ? 'Se trimite...' : 'Trimite la Client'}</span>
+                        </Button>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
@@ -591,6 +681,80 @@ export default function ContractePage() {
             isLoading={isSignatureSaving}
           />
         )}
+
+        {/* Enhanced Toast Notification */}
+        {toast && (
+          <div className={`fixed top-6 right-6 z-50 max-w-sm w-full transform transition-all duration-300 ease-in-out ${
+            toast ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+          }`}>
+            <div className={`rounded-xl shadow-2xl border-l-4 overflow-hidden ${
+              toast.type === 'success' 
+                ? 'bg-white border-l-green-500' 
+                : 'bg-white border-l-red-500'
+            }`}>
+              <div className="p-4">
+                <div className="flex items-start">
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                    toast.type === 'success' 
+                      ? 'bg-green-100' 
+                      : 'bg-red-100'
+                  }`}>
+                    {toast.type === 'success' ? (
+                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className={`text-sm font-semibold ${
+                          toast.type === 'success' ? 'text-green-800' : 'text-red-800'
+                        }`}>
+                          {toast.type === 'success' ? 'Contract Trimis cu Succes!' : 'Eroare'}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+                          {toast.message}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setToast(null)}
+                        className="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Progress bar for auto-dismiss */}
+              <div className="h-1 bg-gray-100">
+                <div 
+                  className={`h-full transition-all duration-5000 ease-linear ${
+                    toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+                  style={{
+                    animation: 'shrink 5s linear forwards'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add CSS animation for progress bar */}
+        <style jsx>{`
+          @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+          }
+        `}</style>
       </div>
     </AdminLayout>
   )

@@ -1,8 +1,43 @@
+'use client'
+
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/Button"
 import { CostEstimator } from "@/components/home/CostEstimator"
-import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail } from "lucide-react"
+import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle } from "lucide-react"
+import { useState, useEffect } from "react"
+
+// Car Carousel Component
+const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
+  const [currentImage, setCurrentImage] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length)
+    }, 3500) // Change image every 3.5 seconds
+
+    return () => clearInterval(interval)
+  }, [images.length])
+
+  return (
+    <div className="h-56 relative overflow-hidden">
+      {images.map((image, index) => (
+        <Image
+          key={index}
+          src={image}
+          alt={alt}
+          fill
+          className={`object-cover group-hover:scale-105 transition-all duration-500 ${
+            index === currentImage ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      ))}
+      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-900">
+        {badge}
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   return (
@@ -150,67 +185,79 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* BMW Seria 5 */}
             <div className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="h-56 relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                  alt="BMW Seria 3"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                  Premium
-                </div>
-              </div>
+              <CarCarousel 
+                images={[
+                  '/car1/car1.jpeg',
+                  '/car1/car2.jpeg',
+                  '/car1/2.jpeg',
+                  '/car1/4.jpeg',
+                  '/car1/5.jpeg',
+                  '/car1/6.jpeg',
+                  '/car1/7.jpeg',
+                  '/car1/8.jpeg'
+                ]}
+                alt="BMW Seria 5 518d M Sport"
+                badge="Premium"
+              />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">BMW Seria 3</h3>
-                <p className="text-gray-600 mb-4">Sedan premium cu performanțe excepționale</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">BMW Seria 5 518d M Sport</h3>
+                <p className="text-gray-600 mb-4">Sedan premium cu tehnologie avansată și design sportiv</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€35,000</span>
+                  <span className="text-2xl font-bold text-blue-600">€28,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
                 </div>
               </div>
             </div>
 
+            {/* Mercedes-Benz S Long */}
             <div className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="h-56 relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                  alt="Audi A4"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                  Popular
-                </div>
-              </div>
+              <CarCarousel 
+                images={[
+                  '/car2/1.jpeg',
+                  '/car2/2.jpeg',
+                  '/car2/3.jpeg',
+                  '/car2/4.jpeg',
+                  '/car2/5.jpeg',
+                  '/car2/6.jpeg',
+                  '/car2/7.jpeg',
+                  '/car2/8.jpeg'
+                ]}
+                alt="Mercedes-Benz S Long 580e AMG Line"
+                badge="Luxury"
+              />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Audi A4</h3>
-                <p className="text-gray-600 mb-4">Elegantă și tehnologic avansată</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Mercedes-Benz S Long 580e AMG Line</h3>
+                <p className="text-gray-600 mb-4">Luxul suprem cu tehnologie hibridă plug-in</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€40,000</span>
+                  <span className="text-2xl font-bold text-blue-600">€110,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
                 </div>
               </div>
             </div>
 
+            {/* Audi RS3 */}
             <div className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="h-56 relative overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                  alt="Mercedes C-Class"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                  Luxury
-                </div>
-              </div>
+              <CarCarousel 
+                images={[
+                  '/car3/1.jpeg',
+                  '/car3/2.jpeg',
+                  '/car3/3.jpeg',
+                  '/car3/4.jpeg',
+                  '/car3/5.jpeg',
+                  '/car3/6.jpeg',
+                  '/car3/7.jpeg',
+                  '/car3/8.jpeg'
+                ]}
+                alt="Audi RS3 2.5 Quattro"
+                badge="Performance"
+              />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Mercedes C-Class</h3>
-                <p className="text-gray-600 mb-4">Luxul german la cel mai înalt nivel</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Audi RS3 2.5 Quattro</h3>
+                <p className="text-gray-600 mb-4">Performanțe extreme cu tracțiune integrală Quattro</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€45,000</span>
+                  <span className="text-2xl font-bold text-blue-600">€54,000</span>
                   <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
                 </div>
               </div>
@@ -261,8 +308,206 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Warranty Section */}
+      <section className="py-24 bg-gradient-to-br from-blue-600 to-blue-700 text-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-blue-700/90"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-48 translate-x-48"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-32 -translate-x-32"></div>
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
+              <Shield className="h-10 w-10 text-white" />
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+              Garanție Completă de 12 Luni
+            </h2>
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+              Investești în mașina ta cu încredere totală. Fiecare vehicul importat vine cu garanția noastră extinsă pentru liniștea ta deplină.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {/* Warranty Feature 1 */}
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Protecție Completă</h3>
+              <p className="text-blue-100 leading-relaxed">
+                Acoperim toate problemele mecanice și electrice care pot apărea în primul an de la import, fără excepții.
+              </p>
+            </div>
+
+            {/* Warranty Feature 2 */}
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Service de Calitate</h3>
+              <p className="text-blue-100 leading-relaxed">
+                Colaborăm cu service-uri autorizate pentru a-ți asigura reparații profesionale și mentenanță de încredere.
+              </p>
+            </div>
+
+            {/* Warranty Feature 3 */}
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Suport Dedicat</h3>
+              <p className="text-blue-100 leading-relaxed">
+                Echipa noastră îți oferă consultanță și asistență pe toată perioada garanției pentru liniștea ta.
+              </p>
+            </div>
+          </div>
+
+          {/* Warranty Details */}
+          <div className="bg-white/10 backdrop-blur-sm p-8 lg:p-12 rounded-3xl border border-white/20 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-2xl font-bold mb-6">Ce Include Garanția Noastră?</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <CheckCircle className="h-6 w-6 text-blue-300 mt-0.5 flex-shrink-0" />
+                    <span className="text-blue-100">Componente mecanice principale</span>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <CheckCircle className="h-6 w-6 text-blue-300 mt-0.5 flex-shrink-0" />
+                    <span className="text-blue-100">Sisteme electrice și electronice</span>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <CheckCircle className="h-6 w-6 text-blue-300 mt-0.5 flex-shrink-0" />
+                    <span className="text-blue-100">Elemente de siguranță și confort</span>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <CheckCircle className="h-6 w-6 text-blue-300 mt-0.5 flex-shrink-0" />
+                    <span className="text-blue-100">Support tehnic și consultanță</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center lg:text-left">
+                <div className="bg-white/20 p-8 rounded-2xl">
+                  <div className="text-4xl font-bold mb-2">12</div>
+                  <div className="text-xl font-semibold mb-4">Luni Garanție</div>
+                  <div className="text-blue-100 mb-6">
+                    Cea mai extinsă garanție din industrie pentru mașini importate
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact CTA */}
+          <div className="text-center">
+            <h3 className="text-2xl font-bold mb-4">
+              Ai Întrebări Despre Garanție?
+            </h3>
+            <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+              Echipa noastră de specialiști îți explică în detaliu toate beneficiile garanției extended și cum te protejează investiția ta.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-white hover:text-blue-800 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <Link href="/request-car">
+                  <Shield className="mr-2 h-5 w-5" />
+                  Vreau Mașină cu Garanție
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105">
+                <a href="https://wa.me/40770852489?text=Salut!%20Sunt%20interesat%20de%20o%20masina%20importata%20cu%20garantie%20de%2012%20luni.%20Imi%20puteti%20oferi%20mai%20multe%20detalii?" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Discută pe WhatsApp
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Întrebări Frecvente
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Răspunsuri la cele mai comune întrebări despre importul de mașini
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Cât durează procesul de import?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                În medie, procesul durează între 4-8 săptămâni, de la confirmarea comenzii până la livrarea mașinii la adresa ta.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Ce documente sunt necesare?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Avem nevoie de cartea de identitate, un contract de vânzare-cumpărare și documentele vehiculului. Ne ocupăm noi de restul formalităților.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Există garanție pentru mașinile importate?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Da, toate mașinile vin cu garanția producătorului valabilă în România, plus garanția noastră pentru serviciile de import.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Care sunt costurile suplimentare?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Toate costurile sunt transparente: taxe de import, transport, înmatriculare și serviciile noastre. Nu există costuri ascunse.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-white text-gray-900">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
+            Gata să Îți Imporți Mașina de Vis?
+          </h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Alătură-te sutelor de clienți mulțumiți care ne-au încredințat importul mașinilor lor europene
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Link href="/request-car">Începe Cererea Ta</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Link href="/request-car?tab=openlane">Trimite Link OpenLane</Link>
+            </Button>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-gray-500">
+            <div className="flex items-center space-x-2">
+              <Star className="h-5 w-5 text-yellow-400 fill-current" />
+              <span>4.9/5 Rating Clienți</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -344,145 +589,6 @@ export default function Home() {
                   <div className="text-sm text-gray-500">Mercedes E-Class, 2023</div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-24 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Întrebări Frecvente
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Răspunsuri la cele mai comune întrebări despre importul de mașini
-            </p>
-          </div>
-
-          <div className="max-w-3xl mx-auto space-y-6">
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Cât durează procesul de import?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                În medie, procesul durează între 4-8 săptămâni, de la confirmarea comenzii până la livrarea mașinii la adresa ta.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Ce documente sunt necesare?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Avem nevoie de cartea de identitate, un contract de vânzare-cumpărare și documentele vehiculului. Ne ocupăm noi de restul formalităților.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Există garanție pentru mașinile importate?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Da, toate mașinile vin cu garanția producătorului valabilă în România, plus garanția noastră pentru serviciile de import.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Care sunt costurile suplimentare?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Toate costurile sunt transparente: taxe de import, transport, înmatriculare și serviciile noastre. Nu există costuri ascunse.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-24 bg-blue-600 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Contactează-ne Astăzi
-              </h2>
-              <p className="text-lg text-blue-100 mb-8">
-                Suntem aici să te ajutăm să îți găsești mașina perfectă din Europa
-              </p>
-              
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-5 w-5 text-blue-200" />
-                  <span>+40 123 456 789</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-5 w-5 text-blue-200" />
-                  <span>contact@autocar.ro</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-5 w-5 text-blue-200" />
-                  <span>Luni - Vineri: 9:00 - 18:00</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20">
-              <h3 className="text-xl font-semibold mb-6">Contact Rapid</h3>
-              <div className="space-y-4">
-                <input 
-                  type="text" 
-                  placeholder="Numele tău"
-                  className="w-full p-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-                />
-                <input 
-                  type="email" 
-                  placeholder="Email"
-                  className="w-full p-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-                />
-                <textarea 
-                  placeholder="Mesajul tău"
-                  rows={4}
-                  className="w-full p-4 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-                ></textarea>
-                <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                  Trimite Mesajul
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-gray-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Gata să Îți Imporți Mașina de Vis?
-          </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Alătură-te sutelor de clienți mulțumiți care ne-au încredințat importul mașinilor lor europene
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link href="/request-car">Începe Cererea Ta</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link href="/request-car?tab=openlane">Trimite Link OpenLane</Link>
-            </Button>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-gray-400">
-            <div className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-400 fill-current" />
-              <span>4.9/5 Rating Clienți</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-blue-500" />
-              <span>500+ Mașini Importate</span>
             </div>
           </div>
         </div>
