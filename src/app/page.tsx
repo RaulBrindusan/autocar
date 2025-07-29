@@ -292,15 +292,10 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex justify-center">
               <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <Link href="/calculator">
                   Calculator Cost <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 hover:scale-105">
-                <Link href="/request-car">
-                  Comandă Mașină
                 </Link>
               </Button>
             </div>

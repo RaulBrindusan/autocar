@@ -176,12 +176,7 @@ export function UserMenu() {
 
   if (user) {
     return (
-      <div className="hidden md:flex items-center space-x-2">
-        <span className="text-sm text-blue-100">
-          {userProfile?.full_name || user.email}
-        </span>
-        
-        
+      <div className="hidden md:flex items-center space-x-2">        
         {/* Dashboard Link - different for admin vs user */}
         <Button
           variant="outline"
@@ -219,7 +214,7 @@ export function UserMenu() {
           className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
         >
           <Settings className="h-4 w-4 mr-1" />
-          Cont
+          Contul meu
         </Button>
         
         <Button

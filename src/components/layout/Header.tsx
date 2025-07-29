@@ -13,7 +13,6 @@ import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
 
 const navigation = [
-  { name: "Acasă", href: "/" },
   { name: "Calculator Cost", href: "/calculator" },
   { name: "Comandă Mașină", href: "/request-car?tab=car" },
   { name: "Trimite OpenLane", href: "/request-car?tab=openlane" },
@@ -289,7 +288,7 @@ export function Header() {
                       className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <Settings className="h-4 w-4 mr-3" />
-                      Cont
+                      Contul meu
                     </button>
                     
                     <button
