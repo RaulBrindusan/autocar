@@ -5,20 +5,21 @@ import { Car, Mail, Phone, MapPin, Heart } from "lucide-react"
 export function Footer() {
   return (
     <footer className="bg-blue-700 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center mb-2">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-8">
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex lg:items-start lg:justify-between">
+          {/* Company Info with Logo */}
+          <div className="flex-1 max-w-md">
+            <div className="flex items-center mb-4">
               <Image
-                src="/logo2.png"
+                src="/AUTO.svg"
                 alt="Automode"
-                width={160}
+                width={400}
                 height={160}
-                className="h-32 w-32"
+                className="block h-40 w-auto"
               />
             </div>
-            <p className="text-blue-100 mb-4 max-w-md">
+            <p className="text-blue-100 mb-4">
               Partenerul tău de încredere pentru importul de vehicule premium din Europa. 
               Ne ocupăm de tot, de la selecție la livrare, transformând mașina ta de vis în realitate.
             </p>
@@ -38,40 +39,118 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Linkuri Rapide</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-blue-100 hover:text-white transition-colors">
-                  Acasă
-                </Link>
-              </li>
-              <li>
-                <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
-                  Comandă Mașină
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* Services */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Servicii</h3>
             <ul className="space-y-2">
               <li>
-                <span className="text-blue-100">Găsire Mașini</span>
+                <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
+                  Comandă Mașină
+                </Link>
               </li>
               <li>
-                <span className="text-blue-100">Gestionare Import</span>
-              </li>
-              <li>
-                <span className="text-blue-100">Transport & Logistică</span>
-              </li>
-              <li>
-                <span className="text-blue-100">Documentație</span>
+                <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
+                  Calculator Costuri
+                </Link>
               </li>
             </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/termeni-si-conditii" className="text-blue-100 hover:text-white transition-colors">
+                  Termeni și Condiții
+                </Link>
+              </li>
+              <li>
+                <Link href="/politica-de-confidentialitate" className="text-blue-100 hover:text-white transition-colors">
+                  Politica de Confidențialitate
+                </Link>
+              </li>
+              <li>
+                <Link href="/politica-de-cookies" className="text-blue-100 hover:text-white transition-colors">
+                  Politica de Cookie-uri
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Mobile/Tablet Layout */}
+        <div className="lg:hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Company Info */}
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center justify-center mb-4">
+                <Image
+                  src="/AUTO.svg"
+                  alt="Automode"
+                  width={400}
+                  height={160}
+                  className="block h-40 w-auto"
+                />
+              </div>
+              <p className="text-blue-100 mb-4 max-w-md mx-auto text-center">
+                Partenerul tău de încredere pentru importul de vehicule premium din Europa. 
+                Ne ocupăm de tot, de la selecție la livrare, transformând mașina ta de vis în realitate.
+              </p>
+              <div className="space-y-2 max-w-md mx-auto">
+                <div className="flex items-center justify-center space-x-2">
+                  <Mail className="h-4 w-4 text-white" />
+                  <span className="text-sm">contact@automode.ro</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <Phone className="h-4 w-4 text-white" />
+                  <span className="text-sm">+40 123 456 789</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <MapPin className="h-4 w-4 text-white" />
+                  <span className="text-sm">Str. Importului 123, București, România</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Services */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">Servicii</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
+                    Comandă Mașină
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
+                    Calculator Costuri
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">Legal</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/termeni-si-conditii" className="text-blue-100 hover:text-white transition-colors">
+                    Termeni și Condiții
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/politica-de-confidentialitate" className="text-blue-100 hover:text-white transition-colors">
+                    Politica de Confidențialitate
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/politica-de-cookies" className="text-blue-100 hover:text-white transition-colors">
+                    Politica de Cookie-uri
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

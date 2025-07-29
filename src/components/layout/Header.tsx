@@ -169,13 +169,20 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-blue-600 border-b border-blue-700 shadow-sm m-0 p-0">
-        <nav className="max-w-7xl mx-auto m-0 p-0" aria-label="Top">
-          <div className="flex w-full items-center justify-between py-4">
+      <header className="bg-blue-600 border-b border-blue-700 shadow-sm h-16 relative">
+        <nav className="max-w-7xl mx-auto h-full" aria-label="Top">
+          <div className="flex w-full items-center justify-between h-full">
             {/* Logo - moved to left */}
-            <div className="flex items-center pl-4 md:pl-0">
+            <div className="flex items-center pl-4 md:pl-0 relative z-10">
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-white">AutoMode</span>
+                <Image
+                  src="/AUTO.svg"
+                  alt="AutoMode"
+                  width={336}
+                  height={134}
+                  className="block h-34 w-auto -my-6 relative z-10"
+                  priority
+                />
               </Link>
             </div>
 
@@ -237,11 +244,11 @@ export function Header() {
           <div className="flex items-center justify-between p-2 border-b border-gray-200">
             <div className="flex items-center">
               <Image
-                src="/logo2.png"
+                src="/AUTO.svg"
                 alt="Automode"
-                width={100}
-                height={100}
-                className="h-24 w-24"
+                width={280}
+                height={112}
+                className="block h-28 w-auto"
               />
             </div>
             <Button

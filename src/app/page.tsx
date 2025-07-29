@@ -61,12 +61,12 @@ export default function Home() {
                 Accesează cele mai bune mașini din piața europeană. De la BMW și Mercedes 
                 la Audi și Porsche - îți aducem vehiculul perfect la cel mai bun preț.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button asChild size="lg" className="text-base px-8 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                  <Link href="/request-car">Vreau o Mașină</Link>
+              <div className="flex flex-row gap-4 mb-8 items-center justify-center sm:justify-start">
+                <Button asChild size="lg" className="text-base px-6 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
+                  <Link href="/request-car">Vreau Masina</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="text-base px-8 py-4 h-14 font-semibold border-gray-300 hover:bg-gray-50 hover:text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                  <Link href="/calculator">Calculează Costul</Link>
+                <Button asChild size="lg" variant="outline" className="text-base px-6 py-4 h-14 font-semibold border-gray-300 hover:bg-gray-50 hover:text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
+                  <Link href="/calculator">Calculator Cost</Link>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500">
@@ -166,6 +166,104 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Livrare</h3>
                 <p className="text-gray-600">Îți livrăm mașina direct la adresa ta</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute bottom-0 right-0 w-96 h-96 opacity-5">
+          <svg viewBox="0 0 400 400" className="w-full h-full text-gray-200">
+            <path d="M0 300 L50 250 L100 300 L150 200 L200 250 L250 150 L300 200 L350 100 L400 150 L400 400 L0 400 Z" fill="currentColor" />
+          </svg>
+        </div>
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left side - Content */}
+            <div className="text-center lg:text-left">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
+                De Ce să Alegi AutoMode?
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-600 mb-12 leading-relaxed text-justify max-w-xl">
+                Partenerii tăi de încredere pentru import auto din Europa. Îți oferim servicii complete și transparente pentru a-ți aduce mașina perfectă.
+              </p>
+              
+              {/* Main Image */}
+              <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+                <Image
+                  src="/image11.jpg"
+                  alt="Echipa AutoMode - Specialiști în consultanță auto"
+                  width={500}
+                  height={300}
+                  className="w-full h-[300px] object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Right side - Benefits Grid */}
+            <div className="space-y-6">
+              {/* 12 Month Warranty */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Garanție 12 Luni</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Cea mai extinsă garanție din România pentru mașini importate cu protecție completă.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Car Report */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Raport Complet Auto</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Analiză tehnică detaliată și verificări profesionale pentru fiecare vehicul.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Car Delivery */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Car className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Livrare la Domiciliu</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Transport sigur și asigurat direct la adresa ta, fără să te deplasezi.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* RAR Registration */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Înmatriculare RAR</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Ne ocupăm de toate formalitățile RAR și îți livrăm mașina gata de condus.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -404,17 +502,17 @@ export default function Home() {
             <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
               Echipa noastră de specialiști îți explică în detaliu toate beneficiile garanției extended și cum te protejează investiția ta.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-white hover:text-blue-800 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-white hover:text-blue-800 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl w-52">
                 <Link href="/request-car">
                   <Shield className="mr-2 h-5 w-5" />
-                  Vreau Mașină cu Garanție
+                  Vreau Masina
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105">
+              <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 w-52 whitespace-nowrap">
                 <a href="https://wa.me/40770852489?text=Salut!%20Sunt%20interesat%20de%20o%20masina%20importata%20cu%20garantie%20de%2012%20luni.%20Imi%20puteti%20oferi%20mai%20multe%20detalii?" target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="mr-2 h-5 w-5" />
-                  Discută pe WhatsApp
+                  Intreaba-ne
                 </a>
               </Button>
             </div>
@@ -474,33 +572,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-white text-gray-900">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
-            Gata să Îți Imporți Mașina de Vis?
-          </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Alătură-te sutelor de clienți mulțumiți care ne-au încredințat importul mașinilor lor europene
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link href="/request-car">Începe Cererea Ta</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 py-4 px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link href="/request-car?tab=openlane">Trimite Link OpenLane</Link>
-            </Button>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-gray-500">
-            <div className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-400 fill-current" />
-              <span>4.9/5 Rating Clienți</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Testimonials Section */}
       <section className="py-24 bg-gray-50">
