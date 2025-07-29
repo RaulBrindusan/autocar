@@ -3,6 +3,24 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --warranty-bg: #1458F7;
+  --hero-bg: #ffffff;
+  --hero-text: #111827;
+  --hero-subtext: #6b7280;
+  --section-bg-alt: #F9FAFB;
+  --section-text: #000000;
+  --section-subtext: #6b7280;
+  --card-bg: #ffffff;
+  --card-text: #000000;
+  --card-subtext: #6b7280;
+  --card-border: #e5e7eb;
+  --warranty-card-bg: #3765F5;
+  --warranty-card-text: #ffffff;
+  --warranty-card-subtext: #bfdbfe;
+  --cost-estimator-bg: #EDEDED;
+  --connector-line: #d1d5db;
+  --info-tip-bg: #eff6ff;
+  --info-tip-text: #2563eb;
 }
 
 @theme inline {
@@ -10,6 +28,48 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --warranty-bg: #1f2937;
+  --hero-bg: #111827;
+  --hero-text: #ffffff;
+  --hero-subtext: #d1d5db;
+  --section-bg-alt: #1f2937;
+  --section-text: #ffffff;
+  --section-subtext: #d1d5db;
+  --card-bg: #374151;
+  --card-text: #ffffff;
+  --card-subtext: #d1d5db;
+  --card-border: #4b5563;
+  --warranty-card-bg: #374151;
+  --warranty-card-text: #ffffff;
+  --warranty-card-subtext: #d1d5db;
+  --cost-estimator-bg: #1f2937;
+  --connector-line: #4b5563;
+  --info-tip-bg: #1e3a8a;
+  --info-tip-text: #93c5fd;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --warranty-bg: #1f2937;
+  --hero-bg: #111827;
+  --hero-text: #ffffff;
+  --hero-subtext: #d1d5db;
+  --section-bg-alt: #1f2937;
+  --section-text: #ffffff;
+  --section-subtext: #d1d5db;
+  --card-bg: #374151;
+  --card-text: #ffffff;
+  --card-subtext: #d1d5db;
+  --card-border: #4b5563;
+  --connector-line: #4b5563;
+  --info-tip-bg: #1e3a8a;
+  --info-tip-text: #93c5fd;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,6 +83,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Ensure dark mode styles are applied properly */
+.dark {
+  color-scheme: dark;
+}
+
+:root {
+  color-scheme: light;
 }
 
 /* React Select Custom Styles */

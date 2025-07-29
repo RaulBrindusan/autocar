@@ -8,6 +8,7 @@ import { Car, Menu, X, Settings, LogOut, User, Mail } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "@/components/auth/UserMenu"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
@@ -205,7 +206,8 @@ export function Header() {
             </div>
 
             {/* Desktop User Menu - on the right */}
-            <div className="hidden md:flex">
+            <div className="hidden md:flex md:items-center md:space-x-2">
+              <ThemeToggle />
               <UserMenu />
             </div>
 
@@ -236,12 +238,12 @@ export function Header() {
         {/* Sidebar */}
         <div
           className={cn(
-            "fixed top-0 left-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50",
+            "fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out z-50",
             mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-2 border-b border-gray-200">
+          <div className="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
               <Image
                 src="/AUTO.svg"
@@ -255,7 +257,7 @@ export function Header() {
               variant="ghost"
               size="sm"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -264,7 +266,7 @@ export function Header() {
           {/* Sidebar Content */}
           <div className="flex flex-col h-full">
             {/* User Section - Moved higher */}
-            <div className="border-b border-gray-200 p-4">
+            <div className="border-b border-gray-200 dark:border-gray-700 p-4">
               {user ? (
                 <div className="space-y-4">
                   {/* User Info */}
@@ -273,10 +275,10 @@ export function Header() {
                       <User className="h-5 w-5 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {userProfile?.full_name || 'User'}
                       </p>
-                      <div className="flex items-center text-xs text-gray-500">
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                         <Mail className="h-3 w-3 mr-1" />
                         {user.email}
                       </div>
@@ -290,9 +292,14 @@ export function Header() {
                   
                   {/* Action Buttons */}
                   <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Temă</span>
+                      <ThemeToggle />
+                    </div>
+                    
                     <button
                       onClick={handleAccountClick}
-                      className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       <Settings className="h-4 w-4 mr-3" />
                       Contul meu
@@ -300,7 +307,7 @@ export function Header() {
                     
                     <button
                       onClick={handleSignOut}
-                      className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     >
                       <LogOut className="h-4 w-4 mr-3" />
                       Deconectează-te
@@ -320,7 +327,7 @@ export function Header() {
                   
                   <Link
                     href="/signup"
-                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <User className="h-4 w-4 mr-3" />
@@ -340,8 +347,8 @@ export function Header() {
                     className={cn(
                       "block px-3 py-3 text-base font-medium rounded-lg transition-colors",
                       pathname === item.href
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                        ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20"
+                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >

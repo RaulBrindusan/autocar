@@ -151,11 +151,12 @@ export function UserMenu() {
           variant="outline"
           size="sm"
           asChild
-          className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
+          className="bg-transparent text-white border-white hover:bg-white hover:text-blue-600"
         >
           <a href="/login">Conectează-te</a>
         </Button>
         <Button
+          variant="secondary"
           size="sm"
           asChild
           className="bg-white text-blue-600 hover:bg-gray-100"
@@ -179,7 +180,6 @@ export function UserMenu() {
       <div className="hidden md:flex items-center space-x-2">        
         {/* Dashboard Link - different for admin vs user */}
         <Button
-          variant="outline"
           size="sm"
           onClick={async () => {
             console.log('UserProfile:', userProfile) // Debug log
@@ -211,17 +211,16 @@ export function UserMenu() {
             console.log('Redirecting to:', targetPath) // Debug log
             router.push(targetPath)
           }}
-          className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
+          className="bg-blue-600 text-white hover:bg-blue-700 border border-white"
         >
           <Settings className="h-4 w-4 mr-1" />
           Contul meu
         </Button>
         
         <Button
-          variant="outline"
           size="sm"
           onClick={handleSignOut}
-          className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
+          className="bg-blue-600 text-white hover:bg-blue-700 border border-white"
         >
           Deconectează-te
         </Button>
@@ -235,11 +234,12 @@ export function UserMenu() {
         variant="outline"
         size="sm"
         asChild
-        className="text-blue-100 border-blue-100 hover:bg-blue-700 hover:text-white"
+        className="bg-transparent text-white border-white hover:bg-white hover:text-blue-600"
       >
         <a href="/login">Conectează-te</a>
       </Button>
       <Button
+        variant="secondary"
         size="sm"
         asChild
         className="bg-white text-blue-600 hover:bg-gray-100"
