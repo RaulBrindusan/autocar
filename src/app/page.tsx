@@ -66,7 +66,7 @@ export default function Home() {
                   <Link href="/request-car">Vreau o Mașină</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-base px-8 py-4 h-14 font-semibold border-gray-300 hover:bg-gray-50 hover:text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                  <Link href="#cost-estimator">Calculează Costul</Link>
+                  <Link href="/calculator">Calculează Costul</Link>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500">
@@ -269,41 +269,42 @@ export default function Home() {
       {/* Cost Estimator Section */}
       <section id="cost-estimator" className="py-24 bg-blue-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-                Știi Costurile Dinainte
-              </h2>
-              <p className="text-lg text-gray-600 mb-8">
-                Obține o estimare instantanee pentru importul mașinii tale europene. 
-                Calculatorul nostru include toate costurile majore, fără surprize.
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
-                  <span className="text-gray-700">Taxe și comisioane de import</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
-                  <span className="text-gray-700">Costuri de transport și logistică</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
-                  <span className="text-gray-700">Taxe și comisioane regulamentare</span>
-                </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+              Calculează Costurile Exact
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              Folosește calculatorul nostru avansat pentru a obține o estimare precisă a costurilor pentru importul mașinii tale. Include toate taxele, transportul și comisioanele.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-3xl mx-auto">
+              <div className="flex flex-col items-center text-center">
+                <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
+                <span className="text-gray-700 font-medium">Calculator cu 2 variante: Fără TVA și Cu TVA</span>
               </div>
+              <div className="flex flex-col items-center text-center">
+                <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
+                <span className="text-gray-700 font-medium">Calcul automat al avansului necesar (20%)</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
+                <span className="text-gray-700 font-medium">Rezultate în timp real, fără surprize</span>
+              </div>
+            </div>
 
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                <Link href="/calculator">
+                  Calculator Cost <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 hover:scale-105">
                 <Link href="/request-car">
-                  Comandă Mașină <ArrowRight className="ml-2 h-4 w-4" />
+                  Comandă Mașină
                 </Link>
               </Button>
             </div>
 
-            <div>
-              <CostEstimator />
-            </div>
           </div>
         </div>
       </section>

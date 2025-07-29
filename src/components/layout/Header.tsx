@@ -14,6 +14,7 @@ import type { UserProfile } from "@/lib/auth-utils"
 
 const navigation = [
   { name: "Acasă", href: "/" },
+  { name: "Calculator Cost", href: "/calculator" },
   { name: "Comandă Mașină", href: "/request-car?tab=car" },
   { name: "Trimite OpenLane", href: "/request-car?tab=openlane" },
 ]
