@@ -886,13 +886,11 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                   
                   <div className="flex items-center space-x-2">
                     <Car className="h-4 w-4 text-gray-500" />
-                    <span className="text-black">{client.total_requests} cereri total</span>
+                    <span className="text-black">{client.car_requests_count} cereri total</span>
                   </div>
-                  {client.user_id && (
-                    <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
-                      Utilizator înregistrat
-                    </div>
-                  )}
+                  <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                    Utilizator înregistrat
+                  </div>
                 </div>
               </div>
 
