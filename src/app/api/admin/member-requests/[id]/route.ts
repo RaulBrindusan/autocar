@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
 
-interface RouteParams {
+interface RouteContext {
   params: {
     id: string
   }
@@ -29,7 +29,7 @@ async function verifyAdminAccess() {
 }
 
 // GET - Fetch single member request
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteContext) {
   try {
     const adminCheck = await verifyAdminAccess()
     if ('error' in adminCheck) {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PATCH - Update member request
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(request: NextRequest, { params }: RouteContext) {
   try {
     const adminCheck = await verifyAdminAccess()
     if ('error' in adminCheck) {
@@ -122,7 +122,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE - Delete member request
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
   try {
     const adminCheck = await verifyAdminAccess()
     if ('error' in adminCheck) {
