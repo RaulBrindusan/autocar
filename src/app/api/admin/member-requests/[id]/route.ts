@@ -25,7 +25,7 @@ async function verifyAdminAccess() {
 // GET - Fetch single member request
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -34,6 +34,7 @@ export async function GET(
     }
 
     const { supabase } = adminCheck
+    const { id } = await params
     const { data: memberRequest, error } = await supabase
       .from("member_car_requests")
       .select(`
@@ -44,7 +45,7 @@ export async function GET(
           email
         )
       `)
-      .eq("id", context.params.id)
+      .eq("id", id)
       .single()
 
     if (error) {
@@ -63,7 +64,7 @@ export async function GET(
 // PATCH - Update member request
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -72,6 +73,7 @@ export async function PATCH(
     }
 
     const { supabase } = adminCheck
+    const { id } = await params
     const updates = await request.json()
 
     // Allowed fields for update
@@ -100,7 +102,7 @@ export async function PATCH(
     const { data: updatedRequest, error } = await supabase
       .from("member_car_requests")
       .update(filteredUpdates)
-      .eq("id", context.params.id)
+      .eq("id", id)
       .select("*")
       .single()
 
@@ -124,7 +126,7 @@ export async function PATCH(
 // DELETE - Delete member request  
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -133,12 +135,13 @@ export async function DELETE(
     }
 
     const { supabase } = adminCheck
+    const { id } = await params
 
     // First check if the request exists
     const { data: existingRequest, error: fetchError } = await supabase
       .from("member_car_requests")
       .select("id, brand, model, contact_name")
-      .eq("id", context.params.id)
+      .eq("id", id)
       .single()
 
     if (fetchError || !existingRequest) {
@@ -149,7 +152,7 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from("member_car_requests")
       .delete()
-      .eq("id", context.params.id)
+      .eq("id", id)
 
     if (deleteError) {
       console.error("Error deleting member request:", deleteError)
