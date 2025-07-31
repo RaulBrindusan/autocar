@@ -26,14 +26,6 @@ interface ContractData {
   // Contract details
   suma_licitatie?: string
   email?: string
-  
-  // Signature data
-  prestator_signature?: string
-  prestator_signed_at?: string
-  prestator_signed_by?: string
-  client_signature?: string
-  client_signed_at?: string
-  client_signed_by?: string
 }
 
 interface ContractProps {
@@ -94,7 +86,7 @@ export default function PrestariServContract({ data }: ContractProps) {
               numărul <span className="font-semibold">{data?.ci_nr || '…………'}</span>, 
               CNP <span className="font-semibold">{data?.cnp || '……………………………………………'}</span>, 
               eliberat de <span className="font-semibold">{data?.spclep || '…………………………………...'}</span> 
-              la data <span className="font-semibold">{data?.ci_data || ''}</span>, 
+               la data <span className="font-semibold">{data?.ci_data || ''}</span>, 
               denumit în continuare <strong>CLIENT</strong>.
             </p>
           </div>
@@ -252,33 +244,13 @@ export default function PrestariServContract({ data }: ContractProps) {
             <div className="text-center">
               <p className="mb-8"><strong>PRESTATOR,</strong></p>
               <p className="mb-2"><strong>S.C. ALLY TRADING SOLUTIONS S.R.L.</strong></p>
-              {data?.prestator_signature ? (
-                <div className="mb-8">
-                  <img 
-                    src={data.prestator_signature} 
-                    alt="Semnătura prestator" 
-                    className="max-h-16 mx-auto"
-                  />
-                </div>
-              ) : (
-                <p className="mb-8">(semnătura + ștampila)</p>
-              )}
+              <p className="mb-8">(semnătura + ștampila)</p>
               <p><strong>ADMINISTRATOR,</strong></p>
               <p><strong>VALENTIN FLORIN</strong></p>
             </div>
             <div className="text-center">
               <p className="mb-8"><strong>CLIENT,</strong></p>
-              {data?.client_signature ? (
-                <div className="mb-8">
-                  <img 
-                    src={data.client_signature} 
-                    alt="Semnătura client" 
-                    className="max-h-16 mx-auto"
-                  />
-                </div>
-              ) : (
-                <p className="mb-8">………………………………………………………………</p>
-              )}
+              <p className="mb-8">………………………………………………………………</p>
               <p>(semnătura)</p>
             </div>
           </div>
@@ -292,18 +264,7 @@ export default function PrestariServContract({ data }: ContractProps) {
           </p>
           <div className="mt-8">
             <p><strong>CLIENT,</strong></p>
-            {data?.client_signature ? (
-              <div className="mt-4 flex items-center justify-center">
-                <img 
-                  src={data.client_signature} 
-                  alt="Semnătura client confirmare" 
-                  className="max-h-12 mr-2"
-                />
-                <span>(semnătura)</span>
-              </div>
-            ) : (
-              <p className="mt-4">………………………………………………………………… (semnătura)</p>
-            )}
+            <p className="mt-4">………………………………………………………………… (semnătura)</p>
           </div>
         </section>
       </div>

@@ -9,6 +9,16 @@ interface ThemeContextType {
   toggleTheme: () => void
 }
 
+// Get time-based default theme for Romanian timezone
+function getTimeBasedTheme(): Theme {
+  const now = new Date()
+  const romanianTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Bucharest"}))
+  const hour = romanianTime.getHours()
+  
+  // Dark mode between 22:00 (10 PM) and 06:00 (6 AM)
+  return (hour >= 22 || hour < 6) ? 'dark' : 'light'
+}
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -19,14 +29,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true)
     const savedTheme = localStorage.getItem('theme') as Theme
     console.log('Initial theme load:', savedTheme)
-    if (savedTheme) {
+    
+    if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
+      // Use saved theme if exists
       setTheme(savedTheme)
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark')
-      console.log('Using system dark mode preference')
     } else {
-      setTheme('light')
-      console.log('Using default light mode')
+      // Use time-based default theme
+      const timeBasedTheme = getTimeBasedTheme()
+      setTheme(timeBasedTheme)
+      console.log('Using time-based default theme:', timeBasedTheme)
+      localStorage.setItem('theme', timeBasedTheme)
     }
   }, [])
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { 
   LayoutDashboard,
@@ -14,11 +15,13 @@ import {
   ExternalLink,
   Menu,
   X,
-  LogOut
+  LogOut,
+  UserCheck
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
+import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal"
 
 interface SidebarItem {
   name: string
@@ -37,6 +40,11 @@ const sidebarItems: SidebarItem[] = [
     name: "Cereri Mașini",
     href: "/admin/car-requests",
     icon: Car
+  },
+  {
+    name: "Cereri Membri",
+    href: "/admin/member-requests",
+    icon: UserCheck
   },
   {
     name: "Clienti",
@@ -79,6 +87,7 @@ export function AdminSidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -120,15 +129,24 @@ export function AdminSidebar() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const handleSignOut = async () => {
+  const handleSignOutClick = () => {
+    setShowLogoutModal(true)
+  }
+
+  const handleConfirmSignOut = async () => {
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
       setSidebarOpen(false)
+      setShowLogoutModal(false)
       router.push('/')
     } catch (err) {
       console.error('Error signing out:', err)
     }
+  }
+
+  const handleCancelSignOut = () => {
+    setShowLogoutModal(false)
   }
 
   return (
@@ -160,11 +178,14 @@ export function AdminSidebar() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center">
-                <Car className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Automode</span>
+            <div className="flex items-center justify-center w-full">
+              <Image
+                src="/logo.png"
+                alt="Automode Logo"
+                width={192}
+                height={192}
+                className="rounded-lg -my-16"
+              />
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -172,21 +193,6 @@ export function AdminSidebar() {
             >
               <X className="h-5 w-5" />
             </button>
-          </div>
-
-          {/* Admin badge */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <div className="flex items-center space-x-2">
-                <div className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center">
-                  <Settings className="h-4 w-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-red-900">Panou Admin</p>
-                  <p className="text-xs text-red-700">Gestionare sistem</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Navigation */}
@@ -234,7 +240,7 @@ export function AdminSidebar() {
             
             {/* Logout Button */}
             <button 
-              onClick={handleSignOut}
+              onClick={handleSignOutClick}
               className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
             >
               <LogOut className="h-5 w-5 text-gray-400" />
@@ -243,6 +249,13 @@ export function AdminSidebar() {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onConfirm={handleConfirmSignOut}
+        onCancel={handleCancelSignOut}
+      />
     </>
   )
 }

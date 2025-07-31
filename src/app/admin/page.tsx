@@ -13,17 +13,19 @@ export default async function AdminPage() {
   const [
     { data: totalUsers },
     { data: totalCarRequests },
-    { data: totalCostEstimates },
+    { data: totalMemberRequests },
     { data: totalOpenLaneSubmissions },
     { data: recentUsers },
-    { data: recentCarRequests }
+    { data: recentCarRequests },
+    { data: recentMemberRequests }
   ] = await Promise.all([
     supabase.rpc('admin_get_table_count', { table_name: 'users' }),
     supabase.rpc('admin_get_table_count', { table_name: 'car_requests' }),
-    supabase.rpc('admin_get_table_count', { table_name: 'cost_estimates' }),
+    supabase.rpc('admin_get_table_count', { table_name: 'member_car_requests' }),
     supabase.rpc('admin_get_table_count', { table_name: 'openlane_submissions' }),
     supabase.rpc('admin_get_recent_users', { limit_count: 5 }),
-    supabase.rpc('admin_get_recent_car_requests', { limit_count: 5 })
+    supabase.rpc('admin_get_recent_car_requests', { limit_count: 5 }),
+    supabase.from('member_car_requests').select('*').order('created_at', { ascending: false }).limit(5)
   ])
 
   return (
@@ -31,10 +33,11 @@ export default async function AdminPage() {
       <AdminDashboard
         totalUsers={totalUsers || 0}
         totalCarRequests={totalCarRequests || 0}
-        totalCostEstimates={totalCostEstimates || 0}
+        totalMemberRequests={totalMemberRequests || 0}
         totalOpenLaneSubmissions={totalOpenLaneSubmissions || 0}
         recentUsers={recentUsers || []}
         recentCarRequests={recentCarRequests || []}
+        recentMemberRequests={recentMemberRequests || []}
       />
     </AdminLayout>
   )

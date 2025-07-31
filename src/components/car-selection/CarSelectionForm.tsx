@@ -6,13 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Select from "react-select"
 import { Button } from "@/components/ui/Button"
-import { Car, DollarSign, Settings, Calendar, User, Phone, Mail, Fuel, Cog, Gauge } from "lucide-react"
+import { Car, DollarSign, Settings, Calendar, Fuel, Cog, Gauge } from "lucide-react"
 import toast from "react-hot-toast"
+import { createClient } from "@/lib/supabase/client"
 
 const carSelectionSchema = z.object({
-  name: z.string().min(1, "Numele este obligatoriu"),
-  phone: z.string().min(1, "Numărul de telefon este obligatoriu"),
-  email: z.string().min(1, "Adresa de email este obligatorie").email("Adresa de email nu este validă"),
   make: z.string().min(1, "Selectează marca"),
   model: z.string().min(1, "Selectează modelul"),
   year: z.number().min(1985, "Anul trebuie să fie după 1985").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
@@ -266,46 +264,166 @@ export function CarSelectionForm() {
 
   const onSubmit = async (data: CarSelectionData) => {
     try {
-      // Prepare submission data
+      const supabase = createClient()
+      
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !user) {
+        toast.error('Trebuie să fii conectat pentru a trimite o cerere.', {
+          duration: 4000,
+          position: 'top-center',
+        })
+        return
+      }
+
+      // Get user profile for contact information
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('full_name, email, phone')
+        .eq('id', user.id)
+        .single()
+
+      if (profileError) {
+        console.error('Profile error:', profileError)
+        toast.error('Nu am putut accesa informațiile de profil.', {
+          duration: 4000,
+          position: 'top-center',
+        })
+        return
+      }
+
+      // Map fuel type to valid enum values
+      const mapFuelType = (fuelType: string | undefined) => {
+        if (!fuelType) return null
+        const fuelMap: { [key: string]: string } = {
+          'benzina': 'gasoline',
+          'motorina': 'diesel',
+          'hybrid': 'hybrid',
+          'electric': 'electric',
+          'gpl': 'other',
+          'cng': 'other',
+          'mild-hybrid': 'hybrid',
+          'plug-in-hybrid': 'hybrid',
+          'hydrogen': 'other',
+          'ethanol': 'other',
+          'lpg': 'other',
+          'flex-fuel': 'other',
+          'bi-fuel': 'other',
+          'range-extender': 'electric'
+        }
+        return fuelMap[fuelType] || 'other'
+      }
+
+      // Map transmission to valid enum values
+      const mapTransmission = (transmission: string | undefined) => {
+        if (!transmission) return null
+        const transMap: { [key: string]: string } = {
+          'manuala': 'manual',
+          'automata': 'automatic',
+          'semiautomata': 'automatic',
+          'cvt': 'cvt',
+          'dsg': 'automatic',
+          'tiptronic': 'automatic',
+          'multitronic': 'cvt',
+          's-tronic': 'automatic',
+          'pdk': 'automatic',
+          'zf-8hp': 'automatic',
+          'torque-converter': 'automatic',
+          'dual-clutch': 'automatic',
+          'single-speed': 'automatic',
+          'e-cvt': 'cvt',
+          'amt': 'automatic',
+          'imt': 'manual'
+        }
+        return transMap[transmission] || 'other'
+      }
+
+      // Prepare submission data for the new table
       const submissionData = {
-        ...data
+        user_id: user.id,
+        brand: data.make,
+        model: data.model,
+        year: data.year,
+        fuel_type: mapFuelType(data.fuelType),
+        transmission: mapTransmission(data.transmission),
+        max_mileage_km: data.maxMileage || null,
+        max_budget: data.budget,
+        required_features: data.features || [],
+        additional_notes: data.additionalNotes || null,
+        contact_name: userProfile.full_name || user.email?.split('@')[0] || 'Utilizator',
+        contact_email: userProfile.email || user.email || '',
+        contact_phone: userProfile.phone || null,
+        status: 'pending'
       }
       
+      // Save to member_car_requests table
+      const { data: insertResult, error: insertError } = await supabase
+        .from('member_car_requests')
+        .insert(submissionData)
+        .select('id')
+        .single()
+
+      if (insertError) {
+        console.error('Database error:', insertError)
+        console.error('Submission data:', submissionData)
+        toast.error(`Eroare bază de date: ${insertError.message || 'Eroare necunoscută'}`, {
+          duration: 6000,
+          position: 'top-center',
+        })
+        return
+      }
+
+      console.log('Successfully saved car request with ID:', insertResult.id)
+
       // Send email notification
-      const emailResponse = await fetch('/api/email/car-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData)
-      })
+      try {
+        console.log('Sending email notification...')
+        const emailResponse = await fetch('/api/email/member-car-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData)
+        })
 
-      if (!emailResponse.ok) {
-        throw new Error('Failed to send email notification')
+        if (!emailResponse.ok) {
+          const errorData = await emailResponse.json().catch(() => ({}))
+          console.error('Failed to send email notification:', {
+            status: emailResponse.status,
+            statusText: emailResponse.statusText,
+            error: errorData
+          })
+          // Show warning to user but don't fail the operation
+          toast.error('Cererea a fost salvată, dar notificarea email a eșuat.', {
+            duration: 4000,
+            position: 'top-center',
+          })
+        } else {
+          const result = await emailResponse.json()
+          console.log('Email notification sent successfully:', result)
+        }
+      } catch (emailError) {
+        console.error('Error sending email notification:', emailError)
+        // Show warning to user but don't fail the operation
+        toast.error('Cererea a fost salvată, dar notificarea email a eșuat.', {
+          duration: 4000,
+          position: 'top-center',
+        })
       }
 
-      // Save to database after successful email
-      const dbResponse = await fetch('/api/car-requests', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData)
-      })
-
-      if (!dbResponse.ok) {
-        const errorText = await dbResponse.text()
-        console.error('Failed to save to database, but email was sent successfully. Error:', errorText)
-        // Still show success message since email was sent
-      } else {
-        const dbResult = await dbResponse.json()
-        console.log('Successfully saved to database with ID:', dbResult.id)
-      }
-
-      toast.success('Cererea ta a fost trimisă cu succes! Te vom contacta în curând.', {
+      toast.success('Cererea ta a fost trimisă cu succes! O vei găsi în lista de cereri.', {
         duration: 5000,
         position: 'top-center',
+        style: {
+          background: '#10B981',
+          color: 'white',
+        },
       })
+
+      // Reset form after successful submission
+      window.location.reload()
+      
     } catch (error) {
       console.error('Error submitting form:', error)
       toast.error('A apărut o eroare. Te rugăm să încerci din nou.', {
@@ -484,57 +602,6 @@ export function CarSelectionForm() {
           />
         </div>
 
-        {/* Name Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <User className="h-4 w-4 inline mr-1" />
-            Nume Prenume *
-          </label>
-          <input
-            type="text"
-            {...register('name')}
-            placeholder="Nume și prenume"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
-
-        {/* Phone Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Phone className="h-4 w-4 inline mr-1" />
-            Numărul de Telefon *
-          </label>
-          <input
-            type="tel"
-            {...register('phone')}
-            placeholder="ex: +40 720 123 456"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
-          />
-          {errors.phone && (
-            <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
-          )}
-        </div>
-
-        {/* Email Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Mail className="h-4 w-4 inline mr-1" />
-            Adresa de Email *
-          </label>
-          <input
-            type="email"
-            {...register('email')}
-            placeholder="ex: nume@exemplu.com"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
         {/* Additional Notes */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -549,13 +616,15 @@ export function CarSelectionForm() {
         </div>
 
         {/* Submit Button */}
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg py-4 text-lg font-semibold"
-        >
-          {isSubmitting ? "Se trimite..." : "Trimite Cererea"}
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg py-4 px-8 text-lg font-semibold"
+          >
+            {isSubmitting ? "Se trimite..." : "Trimite Cererea"}
+          </Button>
+        </div>
       </form>
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CarRequestModal } from '@/components/admin/CarRequestModal'
+import { ClientRequestModal } from '@/components/admin/ClientRequestModal'
 import { 
   Users, 
   Car, 
@@ -10,7 +11,8 @@ import {
   Calendar,
   TrendingUp,
   Mail,
-  Phone
+  Phone,
+  UserCheck
 } from "lucide-react"
 
 interface CarRequest {
@@ -46,34 +48,67 @@ interface User {
   updated_at: string
 }
 
+interface MemberRequest {
+  id: string
+  brand: string
+  model: string
+  year?: number
+  max_budget: number
+  contact_name: string
+  contact_email: string
+  contact_phone?: string
+  status: string
+  created_at: string
+}
+
 interface AdminDashboardProps {
   totalUsers: number
   totalCarRequests: number
-  totalCostEstimates: number
+  totalMemberRequests: number
   totalOpenLaneSubmissions: number
   recentUsers: User[]
   recentCarRequests: CarRequest[]
+  recentMemberRequests: MemberRequest[]
 }
 
 export function AdminDashboard({
   totalUsers,
   totalCarRequests,
-  totalCostEstimates,
+  totalMemberRequests,
   totalOpenLaneSubmissions,
   recentUsers,
-  recentCarRequests
+  recentCarRequests,
+  recentMemberRequests
 }: AdminDashboardProps) {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedMemberRequestId, setSelectedMemberRequestId] = useState<string | null>(null)
+  const [isCarModalOpen, setIsCarModalOpen] = useState(false)
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false)
+  
+  // Pagination states
+  const [currentMemberPage, setCurrentMemberPage] = useState(1)
+  const [currentCarPage, setCurrentCarPage] = useState(1)
+  const [currentUserPage, setCurrentUserPage] = useState(1)
+  const itemsPerPage = 5
 
-  const handleRequestClick = (requestId: string) => {
+  const handleCarRequestClick = (requestId: string) => {
     setSelectedRequestId(requestId)
-    setIsModalOpen(true)
+    setIsCarModalOpen(true)
   }
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
+  const handleMemberRequestClick = (requestId: string) => {
+    setSelectedMemberRequestId(requestId)
+    setIsClientModalOpen(true)
+  }
+
+  const handleCloseCarModal = () => {
+    setIsCarModalOpen(false)
     setSelectedRequestId(null)
+  }
+
+  const handleCloseClientModal = () => {
+    setIsClientModalOpen(false)
+    setSelectedMemberRequestId(null)
   }
 
   const handleRequestUpdated = () => {
@@ -81,6 +116,21 @@ export function AdminDashboard({
     // For now, we'll just close the modal and the parent will need to refresh
     window.location.reload()
   }
+
+  // Pagination helpers
+  const paginateData = (data: any[], currentPage: number) => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return data?.slice(startIndex, startIndex + itemsPerPage) || []
+  }
+
+  const getTotalPages = (data: any[]) => {
+    return Math.ceil((data?.length || 0) / itemsPerPage)
+  }
+
+  // Paginated data
+  const paginatedMemberRequests = paginateData(recentMemberRequests, currentMemberPage)
+  const paginatedCarRequests = paginateData(recentCarRequests, currentCarPage)
+  const paginatedUsers = paginateData(recentUsers, currentUserPage)
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -123,11 +173,11 @@ export function AdminDashboard({
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Estimări Costuri</p>
-              <p className="text-3xl font-bold text-gray-900">{totalCostEstimates || 0}</p>
+              <p className="text-sm font-medium text-gray-600">Cereri Membri</p>
+              <p className="text-3xl font-bold text-gray-900">{totalMemberRequests || 0}</p>
             </div>
             <div className="bg-purple-100 p-3 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-purple-600" />
+              <UserCheck className="h-6 w-6 text-purple-600" />
             </div>
           </div>
         </div>
@@ -146,16 +196,88 @@ export function AdminDashboard({
       </div>
 
       {/* Recent Activity Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Car Requests */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Cereri Recente Mașini</h2>
-          <div className="space-y-4">
-            {recentCarRequests?.map((request) => (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Member Requests */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Cereri Membri ({totalMemberRequests})</h2>
+          <div className="space-y-4 flex-1">
+            {paginatedMemberRequests?.map((request) => (
               <div 
                 key={request.id} 
                 className="border-b border-gray-100 pb-4 last:border-b-0 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                onClick={() => handleRequestClick(request.id)}
+                onClick={() => handleMemberRequestClick(request.id)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">
+                      {request.brand} {request.model} {request.year && `(${request.year})`}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Client: {request.contact_name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Email: {request.contact_email}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Buget: €{request.max_budget?.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      request.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                      request.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {request.status === 'pending' ? 'În așteptare' :
+                       request.status === 'in_progress' ? 'În procesare' :
+                       request.status === 'completed' ? 'Finalizat' :
+                       request.status}
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      {new Date(request.created_at).toLocaleDateString('ro-RO')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )) || (
+              <p className="text-gray-500 text-center py-4">Nu există cereri membre</p>
+            )}
+          </div>
+          
+          {/* Pagination for Member Requests */}
+          {recentMemberRequests && recentMemberRequests.length > 0 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => setCurrentMemberPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentMemberPage === 1}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înapoi
+              </button>
+              <span className="text-sm text-gray-600">
+                {currentMemberPage} din {getTotalPages(recentMemberRequests)}
+              </span>
+              <button
+                onClick={() => setCurrentMemberPage(prev => Math.min(prev + 1, getTotalPages(recentMemberRequests)))}
+                disabled={currentMemberPage === getTotalPages(recentMemberRequests)}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înainte
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Car Requests */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Cereri Mașini ({totalCarRequests})</h2>
+          <div className="space-y-4 flex-1">
+            {paginatedCarRequests?.map((request) => (
+              <div 
+                key={request.id} 
+                className="border-b border-gray-100 pb-4 last:border-b-0 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                onClick={() => handleCarRequestClick(request.id)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -196,13 +318,36 @@ export function AdminDashboard({
               <p className="text-gray-500 text-center py-4">Nu există cereri recente</p>
             )}
           </div>
+          
+          {/* Pagination for Car Requests */}
+          {recentCarRequests && recentCarRequests.length > 0 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => setCurrentCarPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentCarPage === 1}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înapoi
+              </button>
+              <span className="text-sm text-gray-600">
+                {currentCarPage} din {getTotalPages(recentCarRequests)}
+              </span>
+              <button
+                onClick={() => setCurrentCarPage(prev => Math.min(prev + 1, getTotalPages(recentCarRequests)))}
+                disabled={currentCarPage === getTotalPages(recentCarRequests)}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înainte
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Recent Users */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Utilizatori ({totalUsers})</h2>
-          <div className="space-y-4">
-            {recentUsers?.map((user) => (
+          <div className="space-y-4 flex-1">
+            {paginatedUsers?.map((user) => (
               <div key={user.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -237,14 +382,44 @@ export function AdminDashboard({
               <p className="text-gray-500 text-center py-4">Nu există utilizatori noi</p>
             )}
           </div>
+          
+          {/* Pagination for Users */}
+          {recentUsers && recentUsers.length > 0 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => setCurrentUserPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentUserPage === 1}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înapoi
+              </button>
+              <span className="text-sm text-gray-600">
+                {currentUserPage} din {getTotalPages(recentUsers)}
+              </span>
+              <button
+                onClick={() => setCurrentUserPage(prev => Math.min(prev + 1, getTotalPages(recentUsers)))}
+                disabled={currentUserPage === getTotalPages(recentUsers)}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Înainte
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modals */}
       <CarRequestModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isCarModalOpen}
+        onClose={handleCloseCarModal}
         requestId={selectedRequestId}
+        onRequestUpdated={handleRequestUpdated}
+      />
+      
+      <ClientRequestModal
+        isOpen={isClientModalOpen}
+        onClose={handleCloseClientModal}
+        requestId={selectedMemberRequestId}
         onRequestUpdated={handleRequestUpdated}
       />
     </div>

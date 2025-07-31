@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Users, Mail, Phone, Calendar, Car, Euro, Plus, Edit, Save, Trash2, Settings, Fuel, Cog, Gauge } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal'
 import { createClient } from '@/lib/supabase/client'
 import Select from 'react-select'
 
@@ -11,49 +12,79 @@ interface Option {
   label: string
 }
 
-interface Client {
+interface User {
   id: string
-  contact_name: string | null
-  contact_email: string
-  contact_phone: string | null
-  user_id: string | null
-  user_full_name: string | null
-  user_email: string | null
-  total_requests: number
-  latest_request_date: string
-  latest_request_brand: string | null
-  latest_request_model: string | null
-  latest_request_year: number | null
-  latest_request_status: string | null
+  email: string
+  full_name: string | null
+  phone: string | null
+  role: 'user' | 'admin'
+  created_at: string
+  updated_at: string
+  car_requests_count: number
+  cost_estimates_count: number
+  openlane_submissions_count: number
 }
 
-interface ClientDetails {
-  client_name: string | null
-  client_email: string
-  client_phone: string | null
-  user_id: string | null
-  user_full_name: string | null
-  user_email: string | null
-  request_id: string
+interface MemberCarRequest {
+  id: string
+  user_id: string
   brand: string
   model: string
   year: number | null
+  engine_capacity: number | null
+  horsepower: number | null
+  fuel_type: string | null
+  transmission: string | null
+  drivetrain: string | null
+  body_type: string | null
+  doors: number | null
+  seats: number | null
+  condition: string | null
+  mileage_km: number | null
+  accident_history: boolean | null
+  service_records_available: boolean | null
+  preferred_colors: string[] | null
   max_budget: number | null
+  budget_currency: string | null
+  max_mileage_km: number | null
+  min_year: number | null
+  required_features: string[] | null
+  preferred_features: string[] | null
+  excluded_features: string[] | null
+  preferred_origin_countries: string[] | null
+  delivery_location: string | null
+  delivery_deadline: string | null
+  inspection_required: boolean | null
+  contact_name: string
+  contact_email: string
+  contact_phone: string | null
+  preferred_contact_method: string | null
+  contact_language: string | null
+  urgency_level: string | null
+  flexibility_level: string | null
+  additional_notes: string | null
+  special_requirements: string | null
   status: string
+  priority_level: string | null
+  assigned_agent_id: string | null
+  source_platform: string | null
+  estimated_completion_date: string | null
+  internal_notes: string | null
   created_at: string
   updated_at: string
+  expires_at: string | null
 }
 
 interface ClientModalProps {
   isOpen: boolean
   onClose: () => void
-  client: Client | null
+  client: User | null
   mode: 'view' | 'create'
   onClientUpdated: () => void
 }
 
 export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: ClientModalProps) {
-  const [clientDetails, setClientDetails] = useState<ClientDetails[]>([])
+  const [memberRequests, setMemberRequests] = useState<MemberCarRequest[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -61,6 +92,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
     contact_name: '',
     contact_phone: ''
   })
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   
   // Form data for creating new clients
   const [formData, setFormData] = useState({
@@ -194,8 +226,8 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
       if (mode === 'view' && client) {
         fetchClientDetails()
         setEditClientData({
-          contact_name: client.contact_name || '',
-          contact_phone: client.contact_phone || ''
+          contact_name: client.full_name || '',
+          contact_phone: client.phone || ''
         })
       } else if (mode === 'create') {
         setIsEditing(true)
@@ -306,16 +338,30 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
     setError(null)
     
     try {
-      const { data, error } = await supabase.rpc('admin_get_client_details', { 
-        client_email_param: client.contact_email 
+      const { data, error } = await supabase.rpc('admin_get_member_details', { 
+        member_user_id: client.id 
       })
       
-      if (error) throw error
+      if (error) {
+        console.error('Supabase RPC error:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        })
+        throw error
+      }
       
-      setClientDetails(data || [])
+      setMemberRequests(data || [])
     } catch (err) {
-      console.error('Error fetching client details:', err)
-      setError('Failed to load client details')
+      console.error('Error fetching member details:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        clientId: client.id,
+        errorType: typeof err,
+        stringifiedError: JSON.stringify(err, null, 2)
+      })
+      setError(`Failed to load member details: ${err instanceof Error ? err.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -407,11 +453,15 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
     setError(null)
     
     try {
-      const { error } = await supabase.rpc('admin_update_client_info', {
-        client_email_param: client.contact_email,
-        new_contact_name: editClientData.contact_name !== client.contact_name ? editClientData.contact_name : null,
-        new_contact_phone: editClientData.contact_phone !== client.contact_phone ? editClientData.contact_phone : null
-      })
+      // Update user profile in users table
+      const { error } = await supabase
+        .from('users')
+        .update({
+          full_name: editClientData.contact_name,
+          phone: editClientData.contact_phone,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', client.id)
       
       if (error) throw error
       
@@ -419,35 +469,45 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
       await fetchClientDetails()
       onClientUpdated()
     } catch (err) {
-      console.error('Error updating client:', err)
-      setError('Failed to update client')
+      console.error('Error updating member:', err)
+      setError('Failed to update member')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleDeleteClient = async () => {
+  const handleDeleteClient = () => {
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDeleteClient = async () => {
     if (!client) return
     
-    if (!confirm(`Ești sigur că vrei să ștergi clientul ${client.contact_name || client.contact_email} și toate cererile sale? Această acțiune nu poate fi anulată.`)) {
-      return
-    }
-    
+    setShowDeleteConfirm(false)
     setIsLoading(true)
     setError(null)
     
     try {
-      const { error } = await supabase.rpc('admin_delete_client', {
-        client_email_param: client.contact_email
+      // Call API to delete member (admin only)
+      const response = await fetch('/api/admin/delete-member', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ memberId: client.id }),
       })
-      
-      if (error) throw error
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete member')
+      }
       
       onClientUpdated()
       onClose()
     } catch (err) {
-      console.error('Error deleting client:', err)
-      setError('Failed to delete client')
+      console.error('Error deleting member:', err)
+      setError(err instanceof Error ? err.message : 'Failed to delete member')
     } finally {
       setIsLoading(false)
     }
@@ -466,10 +526,16 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'in_progress': return 'bg-blue-100 text-blue-800'
-      case 'quoted': return 'bg-purple-100 text-purple-800'
+      case 'reviewing': return 'bg-blue-100 text-blue-800'
+      case 'sourcing': return 'bg-purple-100 text-purple-800'
+      case 'found_options': return 'bg-indigo-100 text-indigo-800'
+      case 'negotiating': return 'bg-orange-100 text-orange-800'
+      case 'approved': return 'bg-cyan-100 text-cyan-800'
+      case 'purchasing': return 'bg-pink-100 text-pink-800'
+      case 'shipping': return 'bg-teal-100 text-teal-800'
       case 'completed': return 'bg-green-100 text-green-800'
       case 'cancelled': return 'bg-red-100 text-red-800'
+      case 'expired': return 'bg-gray-100 text-gray-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -477,10 +543,16 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending': return 'În așteptare'
-      case 'in_progress': return 'În procesare'
-      case 'quoted': return 'Ofertat'
+      case 'reviewing': return 'În evaluare'
+      case 'sourcing': return 'Căutare mașină'
+      case 'found_options': return 'Opțiuni găsite'
+      case 'negotiating': return 'Negociere'
+      case 'approved': return 'Aprobat'
+      case 'purchasing': return 'Achiziție'
+      case 'shipping': return 'Transport'
       case 'completed': return 'Finalizat'
       case 'cancelled': return 'Anulat'
+      case 'expired': return 'Expirat'
       default: return status
     }
   }
@@ -496,11 +568,11 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
             <Users className="h-6 w-6 text-blue-600" />
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
-                {mode === 'create' ? 'Adaugă Client Nou' : `Client: ${client?.contact_name || client?.contact_email}`}
+                {mode === 'create' ? 'Adaugă Membru Nou' : `Membru: ${client?.full_name || client?.email}`}
               </h2>
               {mode === 'view' && client && (
                 <p className="text-sm text-gray-600">
-                  {client.total_requests} cereri • Ultima cerere: {formatDate(client.latest_request_date)}
+                  {client.car_requests_count} cereri mașini • {client.cost_estimates_count} estimări • Înregistrat: {formatDate(client.created_at)}
                 </p>
               )}
             </div>
@@ -554,8 +626,8 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                   onClick={() => {
                     setIsEditing(false)
                     setEditClientData({
-                      contact_name: client?.contact_name || '',
-                      contact_phone: client?.contact_phone || ''
+                      contact_name: client?.full_name || '',
+                      contact_phone: client?.phone || ''
                     })
                   }}
                   disabled={isLoading}
@@ -760,7 +832,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
             </div>
           )}
 
-          {mode === 'view' && client && clientDetails.length > 0 && (
+          {mode === 'view' && client && memberRequests.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Client Info */}
               <div>
@@ -781,7 +853,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                     ) : (
                       <div className="flex items-center space-x-2">
                         <Users className="h-4 w-4 text-gray-500" />
-                        <span className="font-medium text-black">{client.contact_name || 'Nume nedefinit'}</span>
+                        <span className="font-medium text-black">{client.full_name || 'Nume nedefinit'}</span>
                       </div>
                     )}
                   </div>
@@ -790,7 +862,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                     <label className="block text-sm font-medium text-black mb-1">Email</label>
                     <div className="flex items-center space-x-2">
                       <Mail className="h-4 w-4 text-gray-500" />
-                      <span className="text-black">{client.contact_email}</span>
+                      <span className="text-black">{client.email}</span>
                     </div>
                   </div>
                   
@@ -807,7 +879,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                     ) : (
                       <div className="flex items-center space-x-2">
                         <Phone className="h-4 w-4 text-gray-500" />
-                        <span className="text-black">{client.contact_phone || 'Nu este specificat'}</span>
+                        <span className="text-black">{client.phone || 'Nu este specificat'}</span>
                       </div>
                     )}
                   </div>
@@ -824,64 +896,155 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
                 </div>
               </div>
 
-              {/* Latest Request */}
+              {/* Member Activity */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <Car className="h-5 w-5 text-green-600 mr-2" />
-                  Ultima Cerere
+                  Activitate Membru
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-black">
-                      {client.latest_request_brand} {client.latest_request_model} {client.latest_request_year}
-                    </span>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(client.latest_request_status || '')}`}>
-                      {getStatusText(client.latest_request_status || '')}
-                    </span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{client.car_requests_count}</div>
+                      <div className="text-sm text-gray-600">Cereri Mașini</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{client.cost_estimates_count}</div>
+                      <div className="text-sm text-gray-600">Estimări Cost</div>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-black">{formatDate(client.latest_request_date)}</span>
+                  <div className="text-center pt-2 border-t border-gray-200">
+                    <div className="text-lg font-semibold text-purple-600">{client.openlane_submissions_count}</div>
+                    <div className="text-sm text-gray-600">Submisii OpenLane</div>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2 mt-3">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-sm text-gray-500">Înregistrat: {formatDate(client.created_at)}</span>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* All Requests */}
-          {mode === 'view' && clientDetails.length > 0 && (
+          {/* All Member Requests */}
+          {mode === 'view' && memberRequests.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Toate Cererile ({clientDetails.length})</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Toate Cererile de Import ({memberRequests.length})</h3>
               <div className="space-y-4">
-                {clientDetails.map((detail, index) => (
-                  <div key={detail.request_id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
-                    <div className="flex items-start justify-between">
+                {memberRequests.map((request, index) => (
+                  <div key={request.id} className="border border-gray-200 rounded-lg p-6 hover:bg-gray-50">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      {/* Vehicle Info */}
                       <div className="flex-1">
-                        <h4 className="font-medium text-black">
-                          {detail.brand} {detail.model} {detail.year}
+                        <h4 className="font-medium text-black text-lg mb-2">
+                          {request.brand} {request.model} {request.year}
                         </h4>
-                        <div className="mt-2 text-sm text-black space-y-1">
-                          {detail.max_budget && (
+                        <div className="text-sm text-gray-600 space-y-1">
+                          {request.engine_capacity && (
                             <div className="flex items-center">
-                              <Euro className="h-4 w-4 mr-1" />
-                              Buget: €{detail.max_budget.toLocaleString()}
+                              <Settings className="h-4 w-4 mr-1" />
+                              Motor: {request.engine_capacity}L
+                              {request.horsepower && ` • ${request.horsepower} CP`}
                             </div>
                           )}
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            Creat: {formatDate(detail.created_at)}
-                          </div>
+                          {request.fuel_type && (
+                            <div className="flex items-center">
+                              <Fuel className="h-4 w-4 mr-1" />
+                              Combustibil: {request.fuel_type}
+                            </div>
+                          )}
+                          {request.transmission && (
+                            <div className="flex items-center">
+                              <Cog className="h-4 w-4 mr-1" />
+                              Transmisie: {request.transmission}
+                            </div>
+                          )}
+                          {request.mileage_km && (
+                            <div className="flex items-center">
+                              <Gauge className="h-4 w-4 mr-1" />
+                              Km: {request.mileage_km.toLocaleString()}
+                            </div>
+                          )}
                         </div>
                       </div>
+
+                      {/* Budget & Requirements */}
+                      <div>
+                        <div className="text-sm text-black space-y-2">
+                          {request.max_budget && (
+                            <div className="flex items-center font-medium">
+                              <Euro className="h-4 w-4 mr-1" />
+                              Buget: {request.max_budget.toLocaleString()} {request.budget_currency || 'EUR'}
+                            </div>
+                          )}
+                          {request.delivery_location && (
+                            <div className="text-sm text-gray-600">
+                              Livrare: {request.delivery_location}
+                            </div>
+                          )}
+                          {request.urgency_level && (
+                            <div className="text-sm text-gray-600">
+                              Urgență: {request.urgency_level}
+                            </div>
+                          )}
+                          {request.preferred_colors && request.preferred_colors.length > 0 && (
+                            <div className="text-sm text-gray-600">
+                              Culori: {request.preferred_colors.join(', ')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Status & Dates */}
                       <div className="flex flex-col items-end space-y-2">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(detail.status)}`}>
-                          {getStatusText(detail.status)}
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                          {getStatusText(request.status)}
                         </span>
-                        <span className="text-xs text-black">
-                          #{detail.request_id.slice(0, 8)}
+                        {request.priority_level && (
+                          <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                            Prioritate: {request.priority_level}
+                          </span>
+                        )}
+                        <div className="text-xs text-gray-500 text-right">
+                          <div className="flex items-center">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            Creat: {formatDate(request.created_at)}
+                          </div>
+                          {request.expires_at && (
+                            <div className="mt-1 text-orange-600">
+                              Expiră: {formatDate(request.expires_at)}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          #{request.id.slice(0, 8)}
                         </span>
                       </div>
                     </div>
+
+                    {/* Additional Info */}
+                    {(request.additional_notes || request.special_requirements || request.internal_notes) && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        {request.additional_notes && (
+                          <div className="mb-2">
+                            <span className="text-sm font-medium text-gray-700">Note client: </span>
+                            <span className="text-sm text-gray-600">{request.additional_notes}</span>
+                          </div>
+                        )}
+                        {request.special_requirements && (
+                          <div className="mb-2">
+                            <span className="text-sm font-medium text-gray-700">Cerințe speciale: </span>
+                            <span className="text-sm text-gray-600">{request.special_requirements}</span>
+                          </div>
+                        )}
+                        {request.internal_notes && (
+                          <div className="mb-2">
+                            <span className="text-sm font-medium text-red-700">Note interne: </span>
+                            <span className="text-sm text-red-600">{request.internal_notes}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -889,6 +1052,17 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={showDeleteConfirm}
+        onConfirm={confirmDeleteClient}
+        onCancel={() => setShowDeleteConfirm(false)}
+        title="Confirmare Ștergere Membru"
+        message={`Ești sigur că vrei să ștergi membrul ${client?.full_name || client?.email} și toate cererile sale? Această acțiune nu poate fi anulată.`}
+        confirmText="Da, Șterge Membrul"
+        cancelText="Anulează"
+      />
     </div>
   )
 }

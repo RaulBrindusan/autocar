@@ -207,7 +207,7 @@ export function Header() {
 
             {/* Desktop User Menu - on the right */}
             <div className="hidden md:flex md:items-center md:space-x-2">
-              <ThemeToggle />
+              {!user && <ThemeToggle />}
               <UserMenu />
             </div>
 
@@ -292,10 +292,6 @@ export function Header() {
                   
                   {/* Action Buttons */}
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Temă</span>
-                      <ThemeToggle />
-                    </div>
                     
                     <button
                       onClick={handleAccountClick}

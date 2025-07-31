@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { Car, Settings, User, FileText, BarChart3 } from "lucide-react"
+import { Car, Settings, User, FileText, BarChart3, FileCheck } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { BenefitsSection } from "@/components/dashboard/BenefitsSection"
 import Link from "next/link"
 
 export default async function DashboardPage() {
@@ -21,6 +22,18 @@ export default async function DashboardPage() {
     .select("*")
     .eq("id", user.id)
     .single()
+
+  // Fetch user's car requests count
+  const { count: carRequestsCount } = await supabase
+    .from("member_car_requests")
+    .select("*", { count: 'exact', head: true })
+    .eq("user_id", user.id)
+
+  // Fetch user's contracts count
+  const { count: contractsCount } = await supabase
+    .from("contracte")
+    .select("*", { count: 'exact', head: true })
+    .eq("user_id", user.id)
 
   return (
     <div className="p-6 lg:p-8">
@@ -44,7 +57,7 @@ export default async function DashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Cereri Active</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+                <p className="text-2xl font-bold text-gray-900">{carRequestsCount || 0}</p>
               </div>
             </div>
           </div>
@@ -63,12 +76,12 @@ export default async function DashboardPage() {
 
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center">
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-purple-600" />
+              <div className="bg-orange-100 p-3 rounded-lg">
+                <FileCheck className="h-6 w-6 text-orange-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Estimări</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+                <p className="text-sm font-medium text-gray-600">Contracte</p>
+                <p className="text-2xl font-bold text-gray-900">{contractsCount || 0}</p>
               </div>
             </div>
           </div>
@@ -93,7 +106,7 @@ export default async function DashboardPage() {
             </Button>
             
             <Button asChild variant="outline" className="h-auto p-4 flex-col">
-              <Link href="#cost-estimator">
+              <Link href="/dashboard/calculator">
                 <BarChart3 className="h-8 w-8 mb-2" />
                 <span className="text-sm font-medium">Calculator Costuri</span>
               </Link>
@@ -107,6 +120,9 @@ export default async function DashboardPage() {
             </Button>
           </div>
         </div>
+
+        {/* Benefits Section */}
+        <BenefitsSection />
 
         {/* Profile Information */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

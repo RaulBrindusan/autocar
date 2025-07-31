@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { 
   LayoutDashboard,
   Car, 
   FileText, 
+  Calculator,
   Menu,
   X,
   LogOut,
@@ -15,6 +17,7 @@ import {
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
+import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal"
 
 interface SidebarItem {
   name: string
@@ -35,6 +38,11 @@ const sidebarItems: SidebarItem[] = [
     icon: Car
   },
   {
+    name: "Calculator Costuri",
+    href: "/dashboard/calculator",
+    icon: Calculator
+  },
+  {
     name: "Contracte",
     href: "/dashboard/contracte",
     icon: FileText
@@ -49,6 +57,7 @@ export function UserSidebar({ children }: UserSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -90,15 +99,24 @@ export function UserSidebar({ children }: UserSidebarProps) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const handleSignOut = async () => {
+  const handleSignOutClick = () => {
+    setShowLogoutModal(true)
+  }
+
+  const handleConfirmSignOut = async () => {
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
       setSidebarOpen(false)
+      setShowLogoutModal(false)
       router.push('/')
     } catch (err) {
       console.error('Error signing out:', err)
     }
+  }
+
+  const handleCancelSignOut = () => {
+    setShowLogoutModal(false)
   }
 
   return (
@@ -130,11 +148,14 @@ export function UserSidebar({ children }: UserSidebarProps) {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center">
-                <Car className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Automode</span>
+            <div className="flex items-center justify-center w-full">
+              <Image
+                src="/logo.png"
+                alt="Automode Logo"
+                width={192}
+                height={192}
+                className="rounded-lg -my-16"
+              />
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -142,21 +163,6 @@ export function UserSidebar({ children }: UserSidebarProps) {
             >
               <X className="h-5 w-5" />
             </button>
-          </div>
-
-          {/* User badge */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center space-x-2">
-                <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-900">Panou Client</p>
-                  <p className="text-xs text-blue-700">Dashboard personal</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Navigation */}
@@ -204,7 +210,7 @@ export function UserSidebar({ children }: UserSidebarProps) {
             
             {/* Logout Button */}
             <button 
-              onClick={handleSignOut}
+              onClick={handleSignOutClick}
               className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
             >
               <LogOut className="h-5 w-5 text-gray-400" />
@@ -224,6 +230,13 @@ export function UserSidebar({ children }: UserSidebarProps) {
           {children}
         </main>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onConfirm={handleConfirmSignOut}
+        onCancel={handleCancelSignOut}
+      />
     </div>
   )
 }

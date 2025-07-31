@@ -36,6 +36,12 @@ export async function GET(request: NextRequest) {
     })
     
     if (!error) {
+      // For email confirmations, redirect to confirmation page
+      if (type === 'signup') {
+        return NextResponse.redirect(new URL('/auth/confirmation', request.url))
+      }
+      
+      // For other types (password reset, etc.), redirect normally
       const redirectPath = await getRedirectPath(supabase)
       return NextResponse.redirect(new URL(redirectPath, request.url))
     }
