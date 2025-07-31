@@ -25,7 +25,7 @@ async function verifyAdminAccess() {
 // GET - Fetch single member request
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -44,7 +44,7 @@ export async function GET(
           email
         )
       `)
-      .eq("id", params.id)
+      .eq("id", context.params.id)
       .single()
 
     if (error) {
@@ -63,7 +63,7 @@ export async function GET(
 // PATCH - Update member request
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -100,7 +100,7 @@ export async function PATCH(
     const { data: updatedRequest, error } = await supabase
       .from("member_car_requests")
       .update(filteredUpdates)
-      .eq("id", params.id)
+      .eq("id", context.params.id)
       .select("*")
       .single()
 
@@ -121,10 +121,10 @@ export async function PATCH(
   }
 }
 
-// DELETE - Delete member request
+// DELETE - Delete member request  
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const adminCheck = await verifyAdminAccess()
@@ -138,7 +138,7 @@ export async function DELETE(
     const { data: existingRequest, error: fetchError } = await supabase
       .from("member_car_requests")
       .select("id, brand, model, contact_name")
-      .eq("id", params.id)
+      .eq("id", context.params.id)
       .single()
 
     if (fetchError || !existingRequest) {
@@ -149,7 +149,7 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from("member_car_requests")
       .delete()
-      .eq("id", params.id)
+      .eq("id", context.params.id)
 
     if (deleteError) {
       console.error("Error deleting member request:", deleteError)
