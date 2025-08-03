@@ -22,24 +22,24 @@ function getTimeBasedTheme(): Theme {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light') // Default to light mode
+  // Initialize with time-based theme to prevent hydration mismatch
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Always use time-based theme for now to debug the issue
+    return getTimeBasedTheme()
+  })
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    const savedTheme = localStorage.getItem('theme') as Theme
-    console.log('Initial theme load:', savedTheme)
+    // Force time-based theme on mount to override any localStorage
+    const timeBasedTheme = getTimeBasedTheme()
+    setTheme(timeBasedTheme)
     
-    if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
-      // Use saved theme if exists
-      setTheme(savedTheme)
-    } else {
-      // Use time-based default theme
-      const timeBasedTheme = getTimeBasedTheme()
-      setTheme(timeBasedTheme)
-      console.log('Using time-based default theme:', timeBasedTheme)
-      localStorage.setItem('theme', timeBasedTheme)
-    }
+    // Apply theme to DOM immediately
+    const root = window.document.documentElement
+    root.classList.remove('light', 'dark')
+    root.classList.add(timeBasedTheme)
+    localStorage.setItem('theme', timeBasedTheme)
   }, [])
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   if (!mounted) {
     return (
-      <ThemeContext.Provider value={{ theme: 'light', toggleTheme: () => {} }}>
+      <ThemeContext.Provider value={{ theme, toggleTheme: () => {} }}>
         {children}
       </ThemeContext.Provider>
     )
