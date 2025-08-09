@@ -26,6 +26,14 @@ interface ContractData {
   // Contract details
   suma_licitatie?: string
   email?: string
+  
+  // Signature fields
+  prestator_signature?: string
+  prestator_signed_at?: string
+  prestator_signed_by?: string
+  client_signature?: string
+  client_signed_at?: string
+  client_signed_by?: string
 }
 
 interface ContractProps {
@@ -244,13 +252,61 @@ export default function PrestariServContract({ data }: ContractProps) {
             <div className="text-center">
               <p className="mb-8"><strong>PRESTATOR,</strong></p>
               <p className="mb-2"><strong>S.C. ALLY TRADING SOLUTIONS S.R.L.</strong></p>
-              <p className="mb-8">(semnătura + ștampila)</p>
+              
+              {/* Prestator Signature */}
+              <div className="mb-8 min-h-[100px] flex flex-col items-center justify-center">
+                {data?.prestator_signature ? (
+                  <div className="p-2">
+                    <img 
+                      src={data.prestator_signature} 
+                      alt="Semnătura Prestator" 
+                      className="max-w-[200px] max-h-[80px] object-contain"
+                      style={{
+                        filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
+                        mixBlendMode: 'multiply'
+                      }}
+                    />
+                    {data.prestator_signed_at && (
+                      <p className="text-xs text-gray-600 mt-2">
+                        Semnat pe: {new Date(data.prestator_signed_at).toLocaleDateString('ro-RO')}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p>(semnătura + ștampila)</p>
+                )}
+              </div>
+              
               <p><strong>ADMINISTRATOR,</strong></p>
               <p><strong>VALENTIN FLORIN</strong></p>
             </div>
             <div className="text-center">
               <p className="mb-8"><strong>CLIENT,</strong></p>
-              <p className="mb-8">………………………………………………………………</p>
+              
+              {/* Client Signature */}
+              <div className="mb-8 min-h-[100px] flex flex-col items-center justify-center">
+                {data?.client_signature ? (
+                  <div className="p-2">
+                    <img 
+                      src={data.client_signature} 
+                      alt="Semnătura Client" 
+                      className="max-w-[200px] max-h-[80px] object-contain"
+                      style={{
+                        filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
+                        mixBlendMode: 'multiply'
+                      }}
+                    />
+                    {data.client_signed_at && (
+                      <p className="text-xs text-gray-600 mt-2">
+                        Semnat pe: {new Date(data.client_signed_at).toLocaleDateString('ro-RO')}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p>………………………………………………………………</p>
+                )}
+              </div>
+              
               <p>(semnătura)</p>
             </div>
           </div>
@@ -264,7 +320,25 @@ export default function PrestariServContract({ data }: ContractProps) {
           </p>
           <div className="mt-8">
             <p><strong>CLIENT,</strong></p>
-            <p className="mt-4">………………………………………………………………… (semnătura)</p>
+            
+            {/* Client Confirmation Signature */}
+            <div className="mt-4 flex justify-center">
+              {data?.client_signature ? (
+                <div className="p-2">
+                  <img 
+                    src={data.client_signature} 
+                    alt="Semnătura Client Confirmare" 
+                    className="max-w-[150px] max-h-[60px] object-contain"
+                    style={{
+                      filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
+                      mixBlendMode: 'multiply'
+                    }}
+                  />
+                </div>
+              ) : (
+                <p>………………………………………………………………… (semnătura)</p>
+              )}
+            </div>
           </div>
         </section>
       </div>

@@ -4,16 +4,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-```bash
-# Development server with Turbopack
-npm run dev
-
-# Production build
-npm run build
-
-# Production server
-npm start
-
 # Lint code
 npm run lint
 ```

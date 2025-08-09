@@ -93,6 +93,14 @@ CREATE TABLE IF NOT EXISTS public.contracte (
   contract_type TEXT NOT NULL DEFAULT 'servicii' CHECK (contract_type IN ('servicii', 'vanzare', 'cumparare')),
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'semnat', 'trimis_la_client', 'semnat_de_client', 'archived', 'cancelled')),
   
+  -- Signature fields
+  prestator_signature TEXT,
+  prestator_signed_at TIMESTAMP WITH TIME ZONE,
+  prestator_signed_by UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  client_signature TEXT,
+  client_signed_at TIMESTAMP WITH TIME ZONE,
+  client_signed_by UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -216,36 +224,22 @@ CREATE POLICY "Users can update their own openlane submissions" ON public.openla
 
 -- Create policies for contracte table
 CREATE POLICY "Admin can view all contracts" ON public.contracte
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR SELECT USING (is_admin());
 
 CREATE POLICY "Admin can create contracts" ON public.contracte
-  FOR INSERT WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR INSERT WITH CHECK (is_admin());
 
 CREATE POLICY "Admin can update contracts" ON public.contracte
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR UPDATE USING (is_admin());
 
 CREATE POLICY "Admin can delete contracts" ON public.contracte
-  FOR DELETE USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR DELETE USING (is_admin());
+
+CREATE POLICY "Users can view their own contracts" ON public.contracte
+  FOR SELECT USING (auth.uid() = user_id OR (auth.jwt() ->> 'email') = email);
+
+CREATE POLICY "Users can sign their own contracts" ON public.contracte
+  FOR UPDATE USING (auth.uid() = user_id OR (auth.jwt() ->> 'email') = email);
 
 -- Create policies for member_car_requests table
 CREATE POLICY "Users can view their own member car requests" ON public.member_car_requests
@@ -258,28 +252,13 @@ CREATE POLICY "Users can update their own member car requests" ON public.member_
   FOR UPDATE USING (auth.uid() = user_id);
 
 CREATE POLICY "Admin can view all member car requests" ON public.member_car_requests
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR SELECT USING (is_admin());
 
 CREATE POLICY "Admin can update any member car request" ON public.member_car_requests
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR UPDATE USING (is_admin());
 
 CREATE POLICY "Admin can delete member car requests" ON public.member_car_requests
-  FOR DELETE USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE users.id = auth.uid() AND users.role = 'admin'
-    )
-  );
+  FOR DELETE USING (is_admin());
 
 -- Create function to handle user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -310,6 +289,17 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Create function to check if current user is admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.users 
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Create triggers for updated_at
 CREATE TRIGGER handle_updated_at_users

@@ -1,8 +1,13 @@
+'use client'
+
 import Link from "next/link"
 import Image from "next/image"
 import { Car, Mail, Phone, MapPin, Heart } from "lucide-react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Footer() {
+  const { t } = useLanguage()
+  
   return (
     <footer className="bg-blue-700 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-8">
@@ -20,8 +25,7 @@ export function Footer() {
               />
             </div>
             <p className="text-blue-100 mb-4">
-              Partenerul tău de încredere pentru importul de vehicule premium din Europa. 
-              Ne ocupăm de tot, de la selecție la livrare, transformând mașina ta de vis în realitate.
+              {t('footer.company_description')}
             </p>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
@@ -41,16 +45,16 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Servicii</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.services')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
-                  Comandă Mașină
+                  {t('footer.order_car')}
                 </Link>
               </li>
               <li>
                 <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
-                  Calculator Costuri
+                  {t('footer.cost_calculator')}
                 </Link>
               </li>
             </ul>
@@ -58,21 +62,21 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.legal')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/termeni-si-conditii" className="text-blue-100 hover:text-white transition-colors">
-                  Termeni și Condiții
+                  {t('footer.terms_conditions')}
                 </Link>
               </li>
               <li>
                 <Link href="/politica-de-confidentialitate" className="text-blue-100 hover:text-white transition-colors">
-                  Politica de Confidențialitate
+                  {t('footer.privacy_policy')}
                 </Link>
               </li>
               <li>
                 <Link href="/politica-de-cookies" className="text-blue-100 hover:text-white transition-colors">
-                  Politica de Cookie-uri
+                  {t('footer.cookies_policy')}
                 </Link>
               </li>
             </ul>
@@ -94,8 +98,7 @@ export function Footer() {
                 />
               </div>
               <p className="text-blue-100 mb-4 max-w-md mx-auto text-center">
-                Partenerul tău de încredere pentru importul de vehicule premium din Europa. 
-                Ne ocupăm de tot, de la selecție la livrare, transformând mașina ta de vis în realitate.
+                {t('footer.company_description')}
               </p>
               <div className="space-y-2 max-w-md mx-auto">
                 <div className="flex items-center justify-center space-x-2">
@@ -115,16 +118,16 @@ export function Footer() {
 
             {/* Services */}
             <div className="text-center md:text-left">
-              <h3 className="text-lg font-semibold mb-4">Servicii</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.services')}</h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
-                    Comandă Mașină
+                    {t('footer.order_car')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
-                    Calculator Costuri
+                    {t('footer.cost_calculator')}
                   </Link>
                 </li>
               </ul>
@@ -132,21 +135,21 @@ export function Footer() {
 
             {/* Legal */}
             <div className="text-center md:text-left">
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.legal')}</h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="/termeni-si-conditii" className="text-blue-100 hover:text-white transition-colors">
-                    Termeni și Condiții
+                    {t('footer.terms_conditions')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/politica-de-confidentialitate" className="text-blue-100 hover:text-white transition-colors">
-                    Politica de Confidențialitate
+                    {t('footer.privacy_policy')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/politica-de-cookies" className="text-blue-100 hover:text-white transition-colors">
-                    Politica de Cookie-uri
+                    {t('footer.cookies_policy')}
                   </Link>
                 </li>
               </ul>
@@ -189,7 +192,7 @@ export function Footer() {
           
           <div className="flex justify-center items-center">
             <p className="text-blue-200 text-sm flex items-center space-x-1">
-              <span>© {new Date().getFullYear()} Made by Codemint</span>
+              <span>© {new Date().getFullYear()} {t('footer.copyright')}</span>
               <Heart className="h-4 w-4 text-red-400 fill-current" />
             </p>
           </div>

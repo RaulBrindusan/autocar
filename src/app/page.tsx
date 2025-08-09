@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button"
 import { CostEstimator } from "@/components/home/CostEstimator"
 import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Car Carousel Component
 const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
@@ -40,6 +41,8 @@ const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, ba
 }
 
 export default function Home() {
+  const { t } = useLanguage()
+  
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Hero Section */}
@@ -50,37 +53,36 @@ export default function Home() {
             <div className="text-left lg:pr-12">
               <div className="mb-6">
                 <span className="inline-block px-4 py-2 text-sm font-medium rounded-full transition-colors" style={{ backgroundColor: 'var(--info-tip-bg)', color: 'var(--info-tip-text)' }}>
-                  Importatori specializați din Europa
+                  {t('hero.badge')}
                 </span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight transition-colors" style={{ color: 'var(--hero-text)' }}>
-                Povestea Ta Auto
-                <span className="block text-blue-600 mt-2">Începe de Aici</span>
+                {t('hero.title')}
+                <span className="block text-blue-600 mt-2">{t('hero.title.highlight')}</span>
               </h1>
               <p className="text-lg sm:text-xl mb-8 leading-relaxed max-w-xl transition-colors" style={{ color: 'var(--hero-subtext)' }}>
-                Accesează cele mai bune mașini din piața europeană. De la BMW și Mercedes 
-                la Audi și Porsche - îți aducem vehiculul perfect la cel mai bun preț.
+                {t('hero.subtitle')}
               </p>
               <div className="flex flex-row gap-4 mb-8 items-center justify-center sm:justify-start">
                 <Button asChild size="lg" className="text-base px-6 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/request-car">Vreau Masina</Link>
+                  <Link href="/request-car">{t('hero.cta.primary')}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-base px-6 py-4 h-14 font-semibold border-gray-300 text-black bg-white hover:bg-gray-50 hover:text-black transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/calculator">Calculator Cost</Link>
+                  <Link href="/calculator">{t('hero.cta.secondary')}</Link>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                 <div className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
-                  <span>Fără costuri ascunse</span>
+                  <span>{t('hero.features.no_hidden_costs')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
-                  <span>Garanție completă</span>
+                  <span>{t('hero.features.full_warranty')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
-                  <span>Livrare rapidă</span>
+                  <span>{t('hero.features.fast_delivery')}</span>
                 </div>
               </div>
             </div>
@@ -101,8 +103,8 @@ export default function Home() {
                     <Car className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">Expert</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Servicii Personalizate</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">{t('hero.expert')}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('hero.expert.subtitle')}</div>
                   </div>
                 </div>
               </div>
@@ -118,10 +120,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              Cum Funcționează?
+              {t('how_it_works.title')}
             </h2>
             <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Procesul nostru simplu în 4 pași pentru a-ți importa mașina de vis
+              {t('how_it_works.subtitle')}
             </p>
           </div>
 
@@ -131,8 +133,8 @@ export default function Home() {
                 <div className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-lg font-bold">
                   1
                 </div>
-                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>Consultație</h3>
-                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>Discutăm despre preferințele tale și bugetul disponibil</p>
+                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>{t('how_it_works.step1.title')}</h3>
+                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('how_it_works.step1.description')}</p>
               </div>
               <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 -translate-y-1/2 transition-colors" style={{ backgroundColor: 'var(--connector-line)' }}></div>
             </div>
@@ -142,8 +144,8 @@ export default function Home() {
                 <div className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-lg font-bold">
                   2
                 </div>
-                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>Căutare</h3>
-                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>Căutăm mașina perfectă în rețeaua noastră europeană</p>
+                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>{t('how_it_works.step2.title')}</h3>
+                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('how_it_works.step2.description')}</p>
               </div>
               <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 -translate-y-1/2 transition-colors" style={{ backgroundColor: 'var(--connector-line)' }}></div>
             </div>
@@ -153,8 +155,8 @@ export default function Home() {
                 <div className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-lg font-bold">
                   3
                 </div>
-                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>Import</h3>
-                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>Gestionăm toate formalitățile de import și transport</p>
+                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>{t('how_it_works.step3.title')}</h3>
+                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('how_it_works.step3.description')}</p>
               </div>
               <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 -translate-y-1/2 transition-colors" style={{ backgroundColor: 'var(--connector-line)' }}></div>
             </div>
@@ -164,8 +166,8 @@ export default function Home() {
                 <div className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-lg font-bold">
                   4
                 </div>
-                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>Livrare</h3>
-                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>Îți livrăm mașina direct la adresa ta</p>
+                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>{t('how_it_works.step4.title')}</h3>
+                <p className="transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('how_it_works.step4.description')}</p>
               </div>
             </div>
           </div>
@@ -186,10 +188,10 @@ export default function Home() {
             {/* Left side - Content */}
             <div className="text-left">
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight transition-colors" style={{ color: 'var(--section-text)' }}>
-                De Ce să Alegi AutoMode?
+                {t('why_choose.title')}
               </h2>
               <p className="text-lg mb-12 leading-relaxed max-w-xl transition-colors" style={{ color: 'var(--section-subtext)' }}>
-                Partenerii tăi de încredere pentru import auto din Europa. Îți oferim servicii complete și transparente pentru a-ți aduce mașina perfectă.
+                {t('why_choose.subtitle')}
               </p>
               
               {/* Main Image */}
@@ -213,9 +215,9 @@ export default function Home() {
                     <Shield className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Garanție 12 Luni</h3>
+                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>{t('why_choose.warranty.title')}</h3>
                     <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                      Cea mai extinsă garanție din România pentru mașini importate cu protecție completă.
+                      {t('why_choose.warranty.description')}
                     </p>
                   </div>
                 </div>
@@ -228,9 +230,9 @@ export default function Home() {
                     <CheckCircle className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Raport Complet Auto</h3>
+                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>{t('why_choose.report.title')}</h3>
                     <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                      Analiză tehnică detaliată și verificări profesionale pentru fiecare vehicul.
+                      {t('why_choose.report.description')}
                     </p>
                   </div>
                 </div>
@@ -243,9 +245,9 @@ export default function Home() {
                     <Car className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Livrare la Domiciliu</h3>
+                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>{t('why_choose.delivery.title')}</h3>
                     <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                      Transport sigur și asigurat direct la adresa ta, fără să te deplasezi.
+                      {t('why_choose.delivery.description')}
                     </p>
                   </div>
                 </div>
@@ -258,9 +260,9 @@ export default function Home() {
                     <CheckCircle className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Înmatriculare RAR</h3>
+                    <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>{t('why_choose.registration.title')}</h3>
                     <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                      Ne ocupăm de toate formalitățile RAR și îți livrăm mașina gata de condus.
+                      {t('why_choose.registration.description')}
                     </p>
                   </div>
                 </div>
@@ -275,10 +277,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              Mașini Populare
+              {t('featured_cars.title')}
             </h2>
             <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Descoperă cele mai căutate modele pe care le-am importat recent
+              {t('featured_cars.subtitle')}
             </p>
           </div>
 
@@ -297,14 +299,14 @@ export default function Home() {
                   '/car1/8.jpeg'
                 ]}
                 alt="BMW Seria 5 518d M Sport"
-                badge="Premium"
+                badge={t('featured_cars.badge.premium')}
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>BMW Seria 5 518d M Sport</h3>
                 <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Diesel - Automatic - 136 hp - 72.212 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€28,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
                 </div>
               </div>
             </div>
@@ -323,14 +325,14 @@ export default function Home() {
                   '/car2/8.jpeg'
                 ]}
                 alt="Mercedes-Benz S Long 580e AMG Line"
-                badge="Luxury"
+                badge={t('featured_cars.badge.luxury')}
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Mercedes-Benz S 580e AMG Line</h3>
                 <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Hibrid - Automatic - 367 hp - 8.172 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€110,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
                 </div>
               </div>
             </div>
@@ -349,14 +351,14 @@ export default function Home() {
                   '/car3/8.jpeg'
                 ]}
                 alt="Audi RS3 2.5 Quattro"
-                badge="Performance"
+                badge={t('featured_cars.badge.performance')}
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Audi RS3 2.5 Quattro</h3>
                 <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Benzina - Automatic - 400 hp - 25.189 km</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-blue-600">€54,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">Detalii</Button>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
                 </div>
               </div>
             </div>
@@ -376,31 +378,31 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6 transition-colors" style={{ color: 'var(--section-text)' }}>
-              Calculează Costurile Exact
+              {t('cost_estimator.title')}
             </h2>
             <p className="text-lg mb-8 transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Folosește calculatorul nostru avansat pentru a obține o estimare precisă a costurilor pentru importul mașinii tale. Include toate taxele, transportul și comisioanele.
+              {t('cost_estimator.subtitle')}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-3xl mx-auto">
               <div className="flex flex-col items-center text-center">
                 <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
-                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>Calculator cu 2 variante: Fără TVA și Cu TVA</span>
+                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{t('cost_estimator.feature1')}</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
-                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>Calcul automat al avansului necesar (20%)</span>
+                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{t('cost_estimator.feature2')}</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <CheckCircle className="h-8 w-8 text-blue-600 mb-3" />
-                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>Rezultate în timp real, fără surprize</span>
+                <span className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{t('cost_estimator.feature3')}</span>
               </div>
             </div>
 
             <div className="flex justify-center">
               <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <Link href="/calculator">
-                  Calculator Cost <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('cost_estimator.cta')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -420,10 +422,10 @@ export default function Home() {
               <Shield className="h-10 w-10 text-white" />
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-              Garanție Completă de 12 Luni
+              {t('warranty.title')}
             </h2>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              Investești în mașina ta cu încredere totală. Fiecare vehicul importat vine cu garanția noastră extinsă pentru liniștea ta deplină.
+              {t('warranty.subtitle')}
             </p>
           </div>
 
@@ -433,9 +435,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>Protecție Completă</h3>
+              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.complete_protection.title')}</h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                Acoperim toate problemele mecanice și electrice care pot apărea în primul an de la import, fără excepții.
+                {t('warranty.complete_protection.description')}
               </p>
             </div>
 
@@ -444,9 +446,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>Service de Calitate</h3>
+              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.quality_service.title')}</h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                Colaborăm cu service-uri autorizate pentru a-ți asigura reparații profesionale și mentenanță de încredere.
+                {t('warranty.quality_service.description')}
               </p>
             </div>
 
@@ -455,9 +457,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>Suport Dedicat</h3>
+              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.dedicated_support.title')}</h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                Echipa noastră îți oferă consultanță și asistență pe toată perioada garanției pentru liniștea ta.
+                {t('warranty.dedicated_support.description')}
               </p>
             </div>
           </div>
@@ -466,23 +468,23 @@ export default function Home() {
           <div className="backdrop-blur-sm p-8 lg:p-12 rounded-3xl border mb-12 transition-colors" style={{ backgroundColor: 'var(--warranty-card-bg)', borderColor: 'var(--card-border)' }}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-6 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>Ce Include Garanția Noastră?</h3>
+                <h3 className="text-2xl font-bold mb-6 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.what_includes.title')}</h3>
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-6 w-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>Componente mecanice principale</span>
+                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>{t('warranty.what_includes.mechanical')}</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-6 w-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>Sisteme electrice și electronice</span>
+                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>{t('warranty.what_includes.electrical')}</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-6 w-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>Elemente de siguranță și confort</span>
+                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>{t('warranty.what_includes.safety')}</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-6 w-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>Support tehnic și consultanță</span>
+                    <span className="transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>{t('warranty.what_includes.support')}</span>
                   </div>
                 </div>
               </div>
@@ -490,9 +492,9 @@ export default function Home() {
               <div className="text-center lg:text-left">
                 <div className="p-8 rounded-2xl text-white" style={{ backgroundColor: '#6080F3' }}>
                   <div className="text-4xl font-bold mb-2">12</div>
-                  <div className="text-xl font-semibold mb-4">Luni Garanție</div>
+                  <div className="text-xl font-semibold mb-4">{t('warranty.months')}</div>
                   <div className="text-blue-100 mb-6">
-                    Cea mai extinsă garanție din industrie pentru mașini importate
+                    {t('warranty.months_description')}
                   </div>
                 </div>
               </div>
@@ -502,22 +504,22 @@ export default function Home() {
           {/* Contact CTA */}
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-4">
-              Ai Întrebări Despre Garanție?
+              {t('warranty.questions.title')}
             </h3>
             <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-              Echipa noastră de specialiști îți explică în detaliu toate beneficiile garanției extended și cum te protejează investiția ta.
+              {t('warranty.questions.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button asChild size="lg" variant="secondary" className="bg-white text-blue-600 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl w-60 shadow-lg hover:bg-white hover:text-blue-600">
                 <Link href="/request-car" className="text-blue-600 hover:text-blue-600 whitespace-nowrap">
                   <Shield className="mr-2 h-5 w-5" />
-                  Vreau Masina
+                  {t('warranty.cta.primary')}
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/30 text-white bg-white/10 hover:bg-white/20 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 w-60 whitespace-nowrap">
                 <a href="https://wa.me/40770852489?text=Salut!%20Sunt%20interesat%20de%20o%20masina%20importata%20cu%20garantie%20de%2012%20luni.%20Imi%20puteti%20oferi%20mai%20multe%20detalii?" target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="mr-2 h-5 w-5" />
-                  Intreaba-ne
+                  {t('warranty.cta.secondary')}
                 </a>
               </Button>
             </div>
@@ -530,47 +532,47 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              Întrebări Frecvente
+              {t('faq.title')}
             </h2>
             <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Răspunsuri la cele mai comune întrebări despre importul de mașini
+              {t('faq.subtitle')}
             </p>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
               <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
-                Cât durează procesul de import?
+                {t('faq.q1.question')}
               </h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                În medie, procesul durează între 4-8 săptămâni, de la confirmarea comenzii până la livrarea mașinii la adresa ta.
+                {t('faq.q1.answer')}
               </p>
             </div>
 
             <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
               <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
-                Ce documente sunt necesare?
+                {t('faq.q2.question')}
               </h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                Avem nevoie de cartea de identitate, un contract de vânzare-cumpărare și documentele vehiculului. Ne ocupăm noi de restul formalităților.
+                {t('faq.q2.answer')}
               </p>
             </div>
 
             <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
               <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
-                Există garanție pentru mașinile importate?
+                {t('faq.q3.question')}
               </h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                Da, toate mașinile vin cu garanția producătorului valabilă în România, plus garanția noastră pentru serviciile de import.
+                {t('faq.q3.answer')}
               </p>
             </div>
 
             <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
               <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
-                Care sunt costurile suplimentare?
+                {t('faq.q4.question')}
               </h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                Toate costurile sunt transparente: taxe de import, transport, înmatriculare și serviciile noastre. Nu există costuri ascunse.
+                {t('faq.q4.answer')}
               </p>
             </div>
           </div>
@@ -583,10 +585,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              Ce Spun Clienții Noștri
+              {t('testimonials.title')}
             </h2>
             <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Experiențele reale ale clienților noștri mulțumiți
+              {t('testimonials.subtitle')}
             </p>
           </div>
 
@@ -602,7 +604,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;Serviciu excelent! Mi-au găsit exact BMW-ul pe care îl căutam și au gestionat totul profesional.&rdquo;
+                &ldquo;{t('testimonials.review1')}&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -626,7 +628,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;Transparent, rapid și eficient. Economisesc mult față de piața locală și mașina e în stare perfectă.&rdquo;
+                &ldquo;{t('testimonials.review2')}&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -650,7 +652,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;Echipa Automode m-a ajutat să îmi import Mercedes-ul de vis. Procesul a fost simplu și fără probleme.&rdquo;
+                &ldquo;{t('testimonials.review3')}&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -678,7 +680,7 @@ export default function Home() {
         
         {/* Tooltip */}
         <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-          Scrie-ne pe WhatsApp
+          {t('whatsapp.tooltip')}
           <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900 dark:border-t-gray-700"></div>
         </div>
       </a>

@@ -9,19 +9,22 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "@/components/auth/UserMenu"
 import { ThemeToggle } from "@/components/ui/ThemeToggle"
+import { LanguageToggle } from "@/components/ui/LanguageToggle"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
-
-const navigation = [
-  { name: "Calculator Cost", href: "/calculator" },
-  { name: "Comandă Mașină", href: "/request-car?tab=car" },
-  { name: "Trimite OpenLane", href: "/request-car?tab=openlane" },
-]
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Header() {
+  const { t } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
+  
+  const navigation = [
+    { name: t('header.nav.calculator'), href: "/calculator" },
+    { name: t('header.nav.order_car'), href: "/request-car?tab=car" },
+    { name: t('header.nav.send_openlane'), href: "/request-car?tab=openlane" },
+  ]
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
@@ -207,6 +210,7 @@ export function Header() {
 
             {/* Desktop User Menu - on the right */}
             <div className="hidden md:flex md:items-center md:space-x-2">
+              <LanguageToggle />
               {!user && <ThemeToggle />}
               <UserMenu />
             </div>
@@ -253,14 +257,17 @@ export function Header() {
                 className="block h-28 w-auto"
               />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <LanguageToggle className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Sidebar Content */}
@@ -284,7 +291,7 @@ export function Header() {
                       </div>
                       {userProfile?.role === 'admin' && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 mt-1">
-                          Administrator
+                          {t('header.user.administrator')}
                         </span>
                       )}
                     </div>
@@ -298,7 +305,7 @@ export function Header() {
                       className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       <Settings className="h-4 w-4 mr-3" />
-                      Contul meu
+                      {t('header.user.my_account')}
                     </button>
                     
                     <button
@@ -306,7 +313,7 @@ export function Header() {
                       className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     >
                       <LogOut className="h-4 w-4 mr-3" />
-                      Deconectează-te
+                      {t('header.user.sign_out')}
                     </button>
                   </div>
                 </div>
@@ -318,7 +325,7 @@ export function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <User className="h-4 w-4 mr-3" />
-                    Conectează-te
+                    {t('header.user.sign_in')}
                   </Link>
                   
                   <Link
@@ -327,7 +334,7 @@ export function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <User className="h-4 w-4 mr-3" />
-                    Creează Cont
+                    {t('header.user.create_account')}
                   </Link>
                 </div>
               )}
