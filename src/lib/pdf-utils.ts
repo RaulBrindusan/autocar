@@ -32,7 +32,7 @@ export async function generatePDFFromHTML(htmlContent: string, filename: string 
         // Keep structural classes but remove styling classes that might cause issues
         const cleanClasses = classes
           .split(' ')
-          .filter(cls => 
+          .filter((cls: string) => 
             // Keep structural classes
             cls.includes('grid') || 
             cls.includes('text-center') || 

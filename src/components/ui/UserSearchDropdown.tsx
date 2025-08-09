@@ -62,7 +62,7 @@ export function UserSearchDropdown({
     }
 
     fetchUsers()
-  }, [])
+  }, [supabase])
 
   // Filter users based on search term
   useEffect(() => {
