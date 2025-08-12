@@ -181,7 +181,7 @@ async function processWithAzureDocumentIntelligence(imageBuffer: Buffer, fileNam
       throw new Error(`Analysis failed with status: ${result.status}`)
     }
 
-    const analyzeResult = result.body.analyzeResult
+    const analyzeResult = (result.body as any).analyzeResult
     
     if (!analyzeResult?.content) {
       console.log('No content extracted from Azure Document Intelligence')
