@@ -132,7 +132,7 @@ export default function DashboardPage() {
     }
 
     fetchData()
-  }, [])
+  }, [profile])
 
   const handleUploadComplete = async () => {
     // Refresh document status after upload

@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { FileText, Download, Eye, Clock, CheckCircle, XCircle, X, PenTool } from "lucide-react"
 import { Button } from "@/components/ui/Button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import PrestariServContract from '@/app/contracte/prestariserv'
 import DigitalSignature from '@/components/ui/DigitalSignature'
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -71,7 +71,7 @@ export default function UserContractePage() {
 
   useEffect(() => {
     checkUser()
-  }, [])
+  }, [checkUser])
 
   // Auto-hide toast after 5 seconds
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function UserContractePage() {
     }
   }, [toast])
 
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -93,7 +93,7 @@ export default function UserContractePage() {
     
     setUser(user)
     await fetchUserContracts(user)
-  }
+  }, [router])
 
   const fetchUserContracts = async (currentUser: any) => {
     try {

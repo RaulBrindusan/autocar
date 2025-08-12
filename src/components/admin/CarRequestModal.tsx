@@ -808,7 +808,7 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
                       </div>
                       {request.auto_reset_scheduled && (
                         <p className="text-xs text-orange-600 mt-2">
-                          ⚠️ Auto-reset programat pentru {formatDate(request.reset_scheduled_at)} (întoarcere la căutare activă)
+                          ⚠️ Auto-reset programat pentru {request.reset_scheduled_at ? formatDate(request.reset_scheduled_at) : 'N/A'} (întoarcere la căutare activă)
                         </p>
                       )}
                     </div>
