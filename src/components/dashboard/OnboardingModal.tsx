@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { X, ArrowRight, ArrowLeft, Car, Calculator, FileText, CheckCircle, Star } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
+import Image from "next/image"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 interface OnboardingStep {
@@ -205,9 +206,11 @@ export function OnboardingModal({ isOpen, onClose, userName }: OnboardingModalPr
             <div className="hidden lg:block bg-gradient-to-br from-blue-50 to-indigo-100 relative">
               {currentStepData.image ? (
                 <div className="absolute inset-0 flex items-center justify-center p-8">
-                  <img 
+                  <Image 
                     src={currentStepData.image} 
                     alt={currentStepData.title}
+                    width={400}
+                    height={300}
                     className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                   />
                 </div>

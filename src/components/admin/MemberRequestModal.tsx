@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { X, User, Car, Euro, Calendar, Save, Trash2, Link, Send } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import toast from "react-hot-toast"
@@ -50,9 +50,9 @@ export function MemberRequestModal({
     if (isOpen && requestId) {
       fetchRequest()
     }
-  }, [isOpen, requestId])
+  }, [isOpen, requestId, fetchRequest])
 
-  const fetchRequest = async () => {
+  const fetchRequest = useCallback(async () => {
     if (!requestId) return
     
     setLoading(true)
@@ -73,7 +73,7 @@ export function MemberRequestModal({
     } finally {
       setLoading(false)
     }
-  }
+  }, [requestId])
 
   const handleSave = async () => {
     if (!requestId) return

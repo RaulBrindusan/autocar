@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if the offer belongs to the current user
-    if (offer.member_car_requests.user_id !== user.id) {
+    if (!offer.member_car_requests || offer.member_car_requests.length === 0 || offer.member_car_requests[0].user_id !== user.id) {
       return NextResponse.json(
         { error: 'Unauthorized to respond to this offer' },
         { status: 403 }

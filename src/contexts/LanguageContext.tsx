@@ -15,8 +15,8 @@ const translations = {
     // Hero Section
     'hero.badge': 'Parc Auto la Comandă din Europa',
     'hero.title': 'Mașina Ta Ideală',
-    'hero.title.highlight': 'La Comandă din Licitații',
-    'hero.subtitle': 'Primul parc auto la comandă din România. Configurezi exact ce vrei - marca, modelul, culoarea, dotările - și noi îți aducem vehiculul din licitațiile internaționale.',
+    'hero.title.highlight': 'La Comandă',
+    'hero.subtitle': 'Configurezi exact ce vrei și noi îți aducem mașina din licitațiile internaționale la cel mai bun preț.',
     'hero.cta.primary': 'Vreau Masina',
     'hero.cta.secondary': 'Calculator Cost',
     'hero.cta.tertiary': 'Vezi Licitațiile Live',
@@ -417,8 +417,8 @@ const translations = {
     // Hero Section
     'hero.badge': 'Made-to-Order Auto Park from Europe',
     'hero.title': 'Your Ideal Car',
-    'hero.title.highlight': 'Made to Order from Auctions',
-    'hero.subtitle': 'Romania\'s first made-to-order auto park. Configure exactly what you want - brand, model, color, features - and we bring you the vehicle from international auctions.',
+    'hero.title.highlight': 'Made to Order',
+    'hero.subtitle': 'Configure exactly what you want and we bring you the car from international auctions at the best price.',
     'hero.cta.primary': 'I Want Car',
     'hero.cta.secondary': 'Cost Calculator',
     'hero.cta.tertiary': 'View Live Auctions',
