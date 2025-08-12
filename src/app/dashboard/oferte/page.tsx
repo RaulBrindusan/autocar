@@ -38,7 +38,7 @@ interface Offer {
     contact_phone?: string
     status: string
     created_at: string
-  }
+  }[]
 }
 
 export default function OfertePage() {
@@ -253,22 +253,22 @@ export default function OfertePage() {
                         </div>
                         <div>
                           <h3 className="text-xl font-semibold text-gray-900">
-                            {offer.member_car_requests.brand} {offer.member_car_requests.model}
-                            {offer.member_car_requests.year && ` ${offer.member_car_requests.year}`}
+                            {offer.member_car_requests[0]?.brand} {offer.member_car_requests[0]?.model}
+                            {offer.member_car_requests[0]?.year && ` ${offer.member_car_requests[0].year}`}
                           </h3>
                           <div className="flex items-center space-x-4 mt-1">
-                            {offer.member_car_requests.fuel_type && (
+                            {offer.member_car_requests[0]?.fuel_type && (
                               <span className="text-sm text-gray-600">
-                                {offer.member_car_requests.fuel_type}
+                                {offer.member_car_requests[0].fuel_type}
                               </span>
                             )}
-                            {offer.member_car_requests.transmission && (
+                            {offer.member_car_requests[0]?.transmission && (
                               <span className="text-sm text-gray-600">
-                                {offer.member_car_requests.transmission}
+                                {offer.member_car_requests[0].transmission}
                               </span>
                             )}
                             <span className="text-sm font-semibold text-green-600">
-                              Buget: €{offer.member_car_requests.max_budget.toLocaleString()}
+                              Buget: €{offer.member_car_requests[0]?.max_budget?.toLocaleString()}
                             </span>
                           </div>
                         </div>

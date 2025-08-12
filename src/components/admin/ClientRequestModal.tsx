@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { X, Car, User, Mail, Phone, Calendar, Euro, Fuel, Cog, Gauge, FileText, Save, Trash2, Edit, Link, Send } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { createClient } from "@/lib/supabase/client"
@@ -124,9 +124,9 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
       setIsEditing(false)
       setError(null)
     }
-  }, [isOpen, requestId])
+  }, [isOpen, requestId, fetchRequest])
 
-  const fetchRequest = async () => {
+  const fetchRequest = useCallback(async () => {
     if (!requestId) return
     
     setIsLoading(true)
@@ -162,7 +162,7 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [requestId, fuelTypeOptions, transmissionOptions])
 
   const handleSave = async () => {
     if (!request || !editData) return
