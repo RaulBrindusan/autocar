@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, User, Car, Euro, Calendar, Save, Trash2 } from "lucide-react"
+import { X, User, Car, Euro, Calendar, Save, Trash2, Link, Send } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import toast from "react-hot-toast"
 
@@ -43,6 +43,8 @@ export function MemberRequestModal({
   const [deleting, setDeleting] = useState(false)
   const [status, setStatus] = useState("")
   const [adminNotes, setAdminNotes] = useState("")
+  const [offerLink, setOfferLink] = useState("")
+  const [sendingOffer, setSendingOffer] = useState(false)
 
   useEffect(() => {
     if (isOpen && requestId) {
@@ -133,6 +135,42 @@ export function MemberRequestModal({
       toast.error("Eroare la ștergerea cererii")
     } finally {
       setDeleting(false)
+    }
+  }
+
+  const handleSendOffer = async () => {
+    if (!requestId || !request || !offerLink.trim()) {
+      toast.error("Te rog introdu un link valid")
+      return
+    }
+
+    setSendingOffer(true)
+    try {
+      const response = await fetch('/api/admin/send-offer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestId,
+          offerLink: offerLink.trim()
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        toast.success("Oferta a fost trimisă cu succes!")
+        setOfferLink("")
+        onRequestUpdated()
+      } else {
+        toast.error(data.error || "Nu am putut trimite oferta")
+      }
+    } catch (error) {
+      console.error("Error sending offer:", error)
+      toast.error("Eroare la trimiterea ofertei")
+    } finally {
+      setSendingOffer(false)
     }
   }
 
@@ -291,6 +329,36 @@ export function MemberRequestModal({
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Adaugă note despre această cerere..."
                 />
+              </div>
+
+              {/* Send Offer Section */}
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <Link className="h-4 w-4 mr-2 text-green-600" />
+                  Trimite Ofertă Client
+                </h4>
+                <div className="flex gap-3">
+                  <div className="flex-1">
+                    <input
+                      type="url"
+                      value={offerLink}
+                      onChange={(e) => setOfferLink(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                      placeholder="https://example.com/masina-oferta-link"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSendOffer}
+                    disabled={sendingOffer || !offerLink.trim()}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2"
+                  >
+                    <Send className="h-4 w-4 mr-1" />
+                    {sendingOffer ? "Se trimite..." : "Trimite"}
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-600 mt-2">
+                  Clientul va primi un email cu linkul către oferta de mașină.
+                </p>
               </div>
             </div>
 

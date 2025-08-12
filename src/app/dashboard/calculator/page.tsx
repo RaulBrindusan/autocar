@@ -1,16 +1,32 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+"use client"
+
+import { createClient } from "@/lib/supabase/client"
 import { CostCalculator } from "@/components/dashboard/CostCalculator"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { useEffect, useState } from "react"
 
-export default async function DashboardCalculatorPage() {
-  const supabase = await createClient()
+export default function DashboardCalculatorPage() {
+  const { t } = useLanguage()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect("/login")
+      if (!user) {
+        window.location.href = "/login"
+        return
+      }
+
+      setIsAuthenticated(true)
+    }
+
+    checkAuth()
+  }, [])
+
+  if (!isAuthenticated) {
+    return null
   }
 
   return (
@@ -18,9 +34,9 @@ export default async function DashboardCalculatorPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Calculator Costuri Import</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('calculator.title')}</h1>
           <p className="text-gray-600 mt-2">
-            Calculează costurile exacte pentru importul mașinii tale din Europa
+            {t('calculator.subtitle')}
           </p>
         </div>
 

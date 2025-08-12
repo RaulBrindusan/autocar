@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Car, User, Mail, Phone, Calendar, Euro, Fuel, Cog, Gauge, FileText, Save, Trash2, Edit } from 'lucide-react'
+import { X, Car, User, Mail, Phone, Calendar, Euro, Fuel, Cog, Gauge, FileText, Save, Trash2, Edit, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { createClient } from '@/lib/supabase/client'
 import Select from 'react-select'
@@ -27,6 +27,13 @@ interface CarRequest {
   custom_features: string[] | null
   user_full_name: string | null
   user_email: string | null
+  timeline_stage: string
+  timeline_updated_at: string | null
+  timeline_updated_by: string | null
+  auction_result: 'win' | 'lose' | null
+  auction_decided_at: string | null
+  auto_reset_scheduled: boolean
+  reset_scheduled_at: string | null
 }
 
 interface CarRequestModalProps {
@@ -51,6 +58,8 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
   const [selectedYear, setSelectedYear] = useState<Option | null>(null)
   const [selectedFuelType, setSelectedFuelType] = useState<Option | null>(null)
   const [selectedTransmission, setSelectedTransmission] = useState<Option | null>(null)
+  const [selectedTimelineStage, setSelectedTimelineStage] = useState<Option | null>(null)
+  const [selectedAuctionResult, setSelectedAuctionResult] = useState<Option | null>(null)
 
   const supabase = createClient()
 
@@ -92,6 +101,26 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
     { value: "imt", label: "iMT" }
   ]
 
+  // Timeline stage options
+  const timelineStageOptions: Option[] = [
+    { value: "requested", label: "Cerere trimisă" },
+    { value: "searching", label: "Căutare activă" },
+    { value: "found", label: "Mașină găsită" },
+    { value: "auction_time", label: "Timp de licitație" },
+    { value: "auction_won", label: "Licitație câștigată" },
+    { value: "auction_lost", label: "Achizitie Esuata (pret depasit)" },
+    { value: "purchased", label: "Cumpărată" },
+    { value: "purchase_failed", label: "Achizitie Esuata (pret depasit)" },
+    { value: "in_transit", label: "În transport" },
+    { value: "delivered", label: "Livrată" }
+  ]
+
+  // Auction result options
+  const auctionResultOptions: Option[] = [
+    { value: "win", label: "Câștigat" },
+    { value: "lose", label: "Pierdut" }
+  ]
+
   // Generate years on component mount
   useEffect(() => {
     const currentYear = new Date().getFullYear()
@@ -110,6 +139,8 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
       setSelectedYear(null)
       setSelectedFuelType(null)
       setSelectedTransmission(null)
+      setSelectedTimelineStage(null)
+      setSelectedAuctionResult(null)
       setIsEditing(false)
       setError(null)
     }
@@ -166,12 +197,71 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
           const transmissionOption = transmissionOptions.find(option => option.value === requestData.transmission)
           setSelectedTransmission(transmissionOption || null)
         }
+        if (requestData.timeline_stage) {
+          const timelineOption = timelineStageOptions.find(option => option.value === requestData.timeline_stage)
+          setSelectedTimelineStage(timelineOption || null)
+        }
+        if (requestData.auction_result) {
+          const auctionOption = auctionResultOptions.find(option => option.value === requestData.auction_result)
+          setSelectedAuctionResult(auctionOption || null)
+        }
       } else {
         setError('Request not found')
       }
     } catch (err) {
       console.error('Error fetching request:', err)
       setError('Failed to load request')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleTimelineUpdate = async () => {
+    if (!request || !selectedTimelineStage) return
+    
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      // Get current user for tracking who updated
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      const updateData: any = {
+        timeline_stage: selectedTimelineStage.value,
+        timeline_updated_at: new Date().toISOString(),
+        timeline_updated_by: user?.id
+      }
+
+      // Handle auction result
+      if (selectedTimelineStage.value === 'auction_time' && selectedAuctionResult) {
+        updateData.auction_result = selectedAuctionResult.value
+        updateData.auction_decided_at = new Date().toISOString()
+        
+        // If auction lost, schedule auto-reset after 5 minutes
+        if (selectedAuctionResult.value === 'lose') {
+          updateData.auto_reset_scheduled = true
+          updateData.reset_scheduled_at = new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
+          updateData.timeline_stage = 'purchase_failed'
+        } else if (selectedAuctionResult.value === 'win') {
+          updateData.timeline_stage = 'auction_won'
+        }
+      }
+
+      const { error } = await supabase
+        .from('car_requests')
+        .update(updateData)
+        .eq('id', request.id)
+
+      if (error) throw error
+
+      await fetchRequest()
+      onRequestUpdated()
+      
+      // Show success message
+      alert('Timeline updated successfully!')
+    } catch (err) {
+      console.error('Error updating timeline:', err)
+      setError('Failed to update timeline')
     } finally {
       setIsLoading(false)
     }
@@ -644,6 +734,94 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
                       )}
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Timeline Management Section */}
+              <div className="bg-blue-50 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Clock className="h-5 w-5 text-blue-600 mr-2" />
+                  Gestionare Timeline
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Etapă curentă: <span className="font-semibold text-blue-600">
+                        {timelineStageOptions.find(opt => opt.value === request.timeline_stage)?.label || request.timeline_stage}
+                      </span>
+                    </label>
+                    {request.timeline_updated_at && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Actualizat ultima dată: {formatDate(request.timeline_updated_at)}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Schimbă etapa la:
+                      </label>
+                      <Select
+                        options={timelineStageOptions}
+                        value={selectedTimelineStage}
+                        onChange={setSelectedTimelineStage}
+                        placeholder="Selectează etapa..."
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        instanceId="timeline-stage-select"
+                      />
+                    </div>
+                    
+                    {selectedTimelineStage?.value === 'auction_time' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Rezultat licitație:
+                        </label>
+                        <Select
+                          options={auctionResultOptions}
+                          value={selectedAuctionResult}
+                          onChange={setSelectedAuctionResult}
+                          placeholder="Selectează rezultatul..."
+                          className="react-select-container"
+                          classNamePrefix="react-select"
+                          instanceId="auction-result-select"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {request.auction_result && (
+                    <div className="mt-4 p-3 bg-white rounded-lg border">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Istoric licitație:</h4>
+                      <div className="text-sm text-gray-600">
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                          request.auction_result === 'win' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {request.auction_result === 'win' ? 'Câștigat' : 'Pierdut'}
+                        </span>
+                        {request.auction_decided_at && (
+                          <span className="ml-2 text-gray-500">
+                            la {formatDate(request.auction_decided_at)}
+                          </span>
+                        )}
+                      </div>
+                      {request.auto_reset_scheduled && (
+                        <p className="text-xs text-orange-600 mt-2">
+                          ⚠️ Auto-reset programat pentru {formatDate(request.reset_scheduled_at)} (întoarcere la căutare activă)
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  <Button
+                    onClick={handleTimelineUpdate}
+                    disabled={!selectedTimelineStage || isLoading}
+                    className="w-full mt-4"
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Actualizează Timeline
+                  </Button>
                 </div>
               </div>
             </div>

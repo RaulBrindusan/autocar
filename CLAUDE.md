@@ -4,6 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+```bash
+# Development server with Turbopack
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
 # Lint code
 npm run lint
 ```
@@ -27,10 +37,13 @@ npm run lint
 - `middleware.ts` - Authentication middleware for route protection
 
 ### Database Tables
-- **users** - Extended user profiles linked to Supabase auth
-- **car_requests** - Car import requests with detailed specifications
+- **users** - Extended user profiles linked to Supabase auth with role-based access (user/admin) and ID document tracking
+- **car_requests** - Car import requests with detailed specifications and status tracking (pending, in_progress, quoted, completed, cancelled)
 - **cost_estimates** - Saved cost calculations from the calculator
 - **openlane_submissions** - OpenLane auction link submissions
+- **member_requests** - Membership applications with approval workflow
+- **contracts** - Contract management with digital signature support
+- **user_documents** - Document storage with OCR processing capabilities
 
 All tables use Row Level Security (RLS) with proper access policies.
 
@@ -42,16 +55,25 @@ Uses Supabase Auth with automatic user profile creation via database triggers. P
 - `/api/cars/models` - Car models by manufacturer  
 - `/api/scrape-openlane` - OpenLane data extraction (30s timeout)
 - `/api/car-requests` - Handle car import requests submission
-- `/api/email/*` - Email notification endpoints (car-request, openlane, test)
-- `/api/debug/*` - Development debugging endpoints
+- `/api/email/*` - Email notification endpoints via Brevo (car-request, member-car-request, openlane, test)
+- `/api/admin/*` - Admin-only endpoints (member-requests, documents, user management, send-offer)
+- `/api/user/*` - User-specific endpoints (offers, document-status)
+- `/api/contracts/*` - Contract management and digital signature endpoints
+- `/api/upload-id-document` - ID document upload with OCR processing
+- `/api/document-processing-status` - Check OCR processing status
+- `/api/debug/*` - Development debugging endpoints (brevo, OCR testing)
 
 ### Key Components
 - **CarSelectionForm** - Multi-step car selection with API integration
 - **CostEstimator** - Real-time cost calculation with Romanian tax logic
 - **OpenLaneForm** - OpenLane URL submission with validation
 - **AuthForm** - Login/signup with Supabase integration
-- **AdminDashboard** - Admin interface for managing requests and users
+- **AdminDashboard** - Admin interface for managing requests, users, contracts, and documents
 - **CarDataDisplay** - Shows fetched car information from APIs
+- **IdDocumentUpload** - ID document upload with OCR processing via Tesseract.js and Azure AI
+- **ProgressTracker** - Visual progress tracking for user onboarding
+- **NotificationSystem** - Real-time notifications and alerts
+- **DigitalSignature** - Canvas-based digital signature capture for contracts
 
 ## Development Workflow
 
@@ -63,6 +85,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_ACCESS_TOKEN=your_personal_access_token (for MCP)
 SUPABASE_PROJECT_REF=your_project_reference (for MCP)
 BREVO_API_KEY=your_brevo_api_key (for email notifications)
+AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=your_azure_ai_endpoint (for OCR)
+AZURE_DOCUMENT_INTELLIGENCE_KEY=your_azure_ai_key (for OCR)
+AWS_ACCESS_KEY_ID=your_aws_access_key (for S3 storage)
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key (for S3 storage)
 ```
 
 ### Database Changes
@@ -111,9 +137,22 @@ This application is specifically built for the Romanian car import market. Forms
 
 ### Email Integration
 Uses Brevo (formerly SendinBlue) for transactional emails:
-- Car request notifications
+- Car request notifications to admin
+- Member car request notifications
 - OpenLane submission confirmations
+- Admin offer notifications to users
 - Debug/testing endpoints available
+
+### Document Processing
+- **OCR Integration**: Uses Tesseract.js for client-side OCR and Azure Document Intelligence for server-side processing
+- **File Storage**: AWS S3 integration for document storage
+- **PDF Generation**: jsPDF for contract generation with digital signatures
+- **Image Processing**: html2canvas for capturing digital signatures
+
+### Next.js Configuration
+- **Image Optimization**: Configured remote patterns for OpenLane, Copart, and Unsplash images
+- **Turbopack**: Used for faster development builds
+- **App Router**: Utilizes Next.js 15 App Router architecture
 
 ## Current Development Rules
 

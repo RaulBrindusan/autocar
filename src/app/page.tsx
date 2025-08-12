@@ -4,9 +4,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/Button"
 import { CostEstimator } from "@/components/home/CostEstimator"
-import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle } from "lucide-react"
+import { InternationalAuctions } from "@/components/home/InternationalAuctions"
+import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle, Handshake, DollarSign, FileText, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 // Car Carousel Component
 const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
@@ -42,6 +45,49 @@ const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, ba
 
 export default function Home() {
   const { t } = useLanguage()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const checkUserAndRedirect = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (user) {
+          // Get user profile with role
+          const { data: profile } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+          
+          if (profile?.role === 'admin') {
+            router.replace('/admin')
+            return
+          } else if (profile?.role === 'user') {
+            router.replace('/dashboard')
+            return
+          }
+        }
+        
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Error checking user:', error)
+        setIsLoading(false)
+      }
+    }
+
+    checkUserAndRedirect()
+  }, [router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
   
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
@@ -113,7 +159,8 @@ export default function Home() {
         </div>
       </section>
 
-
+      {/* International Auctions Section */}
+      <InternationalAuctions />
 
       {/* How It Works Section */}
       <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
@@ -411,6 +458,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Consignatie Section */}
+      <section className="py-24 relative overflow-hidden transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 transition-colors" style={{ backgroundColor: 'var(--info-tip-bg)' }}>
+              <Handshake className="h-10 w-10 text-blue-600" />
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 transition-colors" style={{ color: 'var(--section-text)' }}>
+              {t('consignatie.title')}
+            </h2>
+            <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed transition-colors" style={{ color: 'var(--section-subtext)' }}>
+              {t('consignatie.subtitle')}
+            </p>
+            <p className="text-lg max-w-4xl mx-auto leading-relaxed mb-12 transition-colors" style={{ color: 'var(--section-subtext)' }}>
+              {t('consignatie.description')}
+            </p>
+          </div>
+
+          {/* CTA Section */}
+          <div className="text-center">
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <a href="https://wa.me/40770852489?text=Salut!%20Vreau%20să%20pun%20mașina%20mea%20în%20consignația%20AutoMode.%20Vă%20rog%20să%20mă%20contactați%20pentru%20o%20evaluare." target="_blank" rel="noopener noreferrer">
+                <Handshake className="mr-2 h-5 w-5" />
+                {t('consignatie.cta')}
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Warranty Section */}
       <section className="py-24 text-white relative overflow-hidden transition-colors" style={{ backgroundColor: 'var(--warranty-bg)' }}>
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-48 translate-x-48"></div>
@@ -429,40 +506,6 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-            {/* Warranty Feature 1 */}
-            <div className="backdrop-blur-sm p-8 rounded-2xl border text-center hover:shadow-md transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--warranty-card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.complete_protection.title')}</h3>
-              <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                {t('warranty.complete_protection.description')}
-              </p>
-            </div>
-
-            {/* Warranty Feature 2 */}
-            <div className="backdrop-blur-sm p-8 rounded-2xl border text-center hover:shadow-md transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--warranty-card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.quality_service.title')}</h3>
-              <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                {t('warranty.quality_service.description')}
-              </p>
-            </div>
-
-            {/* Warranty Feature 3 */}
-            <div className="backdrop-blur-sm p-8 rounded-2xl border text-center hover:shadow-md transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--warranty-card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 transition-colors" style={{ color: 'var(--warranty-card-text)' }}>{t('warranty.dedicated_support.title')}</h3>
-              <p className="leading-relaxed transition-colors" style={{ color: 'var(--warranty-card-subtext)' }}>
-                {t('warranty.dedicated_support.description')}
-              </p>
-            </div>
-          </div>
 
           {/* Warranty Details */}
           <div className="backdrop-blur-sm p-8 lg:p-12 rounded-3xl border mb-12 transition-colors" style={{ backgroundColor: 'var(--warranty-card-bg)', borderColor: 'var(--card-border)' }}>
@@ -526,6 +569,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* FAQ Section */}
       <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
@@ -667,6 +711,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* Floating WhatsApp Button */}
       <a

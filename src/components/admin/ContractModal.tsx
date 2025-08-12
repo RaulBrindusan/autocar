@@ -139,13 +139,54 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
   const supabase = createClient()
 
   // Handle user selection from dropdown
-  const handleUserSelect = (user: UserProfile) => {
+  const handleUserSelect = async (user: UserProfile) => {
     setSelectedUser(user)
+    
+    // Set basic user data
     setFormData(prev => ({
       ...prev,
       nume_prenume: user.full_name || '',
       email: user.email,
     }))
+
+    // Fetch user and document data for this user
+    try {
+      const response = await fetch(`/api/admin/user-documents?userId=${user.id}`)
+      if (response.ok) {
+        const result = await response.json()
+        
+        if (result.success) {
+          const { userData, documentData } = result
+          
+          // Populate form with user data from users table and document data from documents table
+          setFormData(prev => ({
+            ...prev,
+            // User data from users table
+            nume_prenume: userData.full_name || user.full_name || '',
+            email: userData.email || user.email,
+            // Address data from documents table
+            localitatea: documentData?.localitatea || '',
+            judetul: documentData?.judetul || '',
+            strada: documentData?.strada || '',
+            nr_strada: documentData?.nr_strada || '',
+            bl: documentData?.bl || '',
+            scara: documentData?.sc || '',
+            etaj: documentData?.etaj || '',
+            apartament: documentData?.apartment || '',
+            // ID document data from documents table
+            ci_seria: documentData?.serie || '',
+            ci_nr: documentData?.nr || '',
+            cnp: documentData?.cnp || '',
+            spclep: documentData?.slclep || '',
+            ci_data: documentData?.valabilitate || prev.ci_data,
+          }))
+        }
+      } else {
+        console.warn('Failed to fetch document data for user:', user.id)
+      }
+    } catch (error) {
+      console.error('Error fetching document data:', error)
+    }
   }
 
   // Handle manual input change for nume_prenume

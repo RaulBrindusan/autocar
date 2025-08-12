@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button"
 import { useState, useEffect } from "react"
 import PrestariServContract from '@/app/contracte/prestariserv'
 import DigitalSignature from '@/components/ui/DigitalSignature'
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface DatabaseContract {
   id: string
@@ -57,6 +58,7 @@ interface DatabaseContract {
 }
 
 export default function UserContractePage() {
+  const { t } = useLanguage()
   const [user, setUser] = useState<any>(null)
   const [contracts, setContracts] = useState<DatabaseContract[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -225,17 +227,17 @@ export default function UserContractePage() {
   }
 
   if (!user) {
-    return <div>Loading...</div>
+    return <div>{t('contracts.loading')}</div>
   }
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      draft: { color: "bg-gray-100 text-gray-800", icon: Clock, label: "Draft" },
-      semnat: { color: "bg-green-100 text-green-800", icon: CheckCircle, label: "Semnat" },
-      trimis_la_client: { color: "bg-blue-100 text-blue-800", icon: Clock, label: "Trimis la Client" },
-      semnat_de_client: { color: "bg-green-100 text-green-800", icon: CheckCircle, label: "Semnat de Client" },
-      archived: { color: "bg-gray-100 text-gray-800", icon: XCircle, label: "Arhivat" },
-      cancelled: { color: "bg-red-100 text-red-800", icon: XCircle, label: "Anulat" },
+      draft: { color: "bg-gray-100 text-gray-800", icon: Clock, label: t('contracts.status.draft') },
+      semnat: { color: "bg-green-100 text-green-800", icon: CheckCircle, label: t('contracts.status.signed') },
+      trimis_la_client: { color: "bg-blue-100 text-blue-800", icon: Clock, label: t('contracts.status.sent_to_client') },
+      semnat_de_client: { color: "bg-green-100 text-green-800", icon: CheckCircle, label: t('contracts.status.signed_by_client') },
+      archived: { color: "bg-gray-100 text-gray-800", icon: XCircle, label: t('contracts.status.archived') },
+      cancelled: { color: "bg-red-100 text-red-800", icon: XCircle, label: t('contracts.status.cancelled') },
     }
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft
@@ -263,9 +265,9 @@ export default function UserContractePage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Contractele Tale</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('contracts.title')}</h1>
           <p className="text-gray-600 mt-2">
-            Vezi și gestionează contractele tale cu Automode
+            {t('contracts.subtitle')}
           </p>
         </div>
 

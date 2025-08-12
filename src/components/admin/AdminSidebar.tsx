@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   LogOut,
-  UserCheck
+  UserCheck,
+  FolderOpen
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -55,6 +56,11 @@ const sidebarItems: SidebarItem[] = [
     name: "Utilizatori",
     href: "/admin/users",
     icon: Users
+  },
+  {
+    name: "Documente",
+    href: "/admin/documente",
+    icon: FolderOpen
   },
   {
     name: "Contracte",

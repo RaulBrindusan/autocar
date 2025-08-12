@@ -9,20 +9,20 @@ import { Button } from "@/components/ui/Button"
 import { Car, DollarSign, Settings, Calendar, Fuel, Cog, Gauge } from "lucide-react"
 import toast from "react-hot-toast"
 import { createClient } from "@/lib/supabase/client"
+import { useLanguage } from "@/contexts/LanguageContext"
 
-const carSelectionSchema = z.object({
-  make: z.string().min(1, "Selectează marca"),
-  model: z.string().min(1, "Selectează modelul"),
-  year: z.number().min(1985, "Anul trebuie să fie după 1985").max(new Date().getFullYear(), "Anul nu poate fi în viitor"),
-  fuelType: z.string().optional(),
-  transmission: z.string().optional(),
-  maxMileage: z.number().optional(),
-  budget: z.number().min(1000, "Bugetul minim este €1,000").max(500000, "Bugetul maxim este €500,000"),
-  features: z.array(z.string()).optional(),
-  additionalNotes: z.string().optional()
-})
-
-type CarSelectionData = z.infer<typeof carSelectionSchema>
+// Schema will be created dynamically with translations
+type CarSelectionData = {
+  make: string
+  model: string
+  year: number
+  fuelType?: string
+  transmission?: string
+  maxMileage?: number
+  budget: number
+  features?: string[]
+  additionalNotes?: string
+}
 
 interface Option {
   value: string
@@ -30,6 +30,21 @@ interface Option {
 }
 
 export function CarSelectionForm() {
+  const { t } = useLanguage()
+  
+  // Create schema with translations
+  const carSelectionSchema = z.object({
+    make: z.string().min(1, t('validation.select_make')),
+    model: z.string().min(1, t('validation.select_model')),
+    year: z.number().min(1985, t('validation.year_after_1985')).max(new Date().getFullYear(), t('validation.year_not_future')),
+    fuelType: z.string().optional(),
+    transmission: z.string().optional(),
+    maxMileage: z.number().optional(),
+    budget: z.number().min(1000, t('validation.budget_min')).max(500000, t('validation.budget_max')),
+    features: z.array(z.string()).optional(),
+    additionalNotes: z.string().optional()
+  })
+
   const [makes, setMakes] = useState<Option[]>([])
   const [models, setModels] = useState<Option[]>([])
   const [years, setYears] = useState<Option[]>([])
@@ -41,6 +56,8 @@ export function CarSelectionForm() {
   const [selectedFuelType, setSelectedFuelType] = useState<Option | null>(null)
   const [selectedTransmission, setSelectedTransmission] = useState<Option | null>(null)
   const [selectedFeatures, setSelectedFeatures] = useState<Option[]>([])
+  const [userRequestCount, setUserRequestCount] = useState(0)
+  const [isCheckingLimit, setIsCheckingLimit] = useState(true)
 
   const {
     register,
@@ -54,86 +71,86 @@ export function CarSelectionForm() {
 
   // Common car features
   const featuresOptions: Option[] = [
-    { value: "leather", label: "Interior din piele" },
-    { value: "sunroof", label: "Trapă" },
-    { value: "navigation", label: "Sistem de navigație" },
-    { value: "heated-seats", label: "Scaune încălzite" },
-    { value: "cooled-seats", label: "Scaune ventilate" },
-    { value: "heated-steering", label: "Volan încălzit" },
-    { value: "bluetooth", label: "Bluetooth" },
-    { value: "backup-camera", label: "Cameră de mers înapoi" },
-    { value: "360-camera", label: "Cameră 360°" },
-    { value: "cruise-control", label: "Cruise control" },
-    { value: "adaptive-cruise", label: "Cruise control adaptiv" },
-    { value: "keyless", label: "Pornire fără cheie" },
-    { value: "keyless-entry", label: "Acces fără cheie" },
-    { value: "premium-audio", label: "Sistem audio premium" },
-    { value: "xenon", label: "Faruri Xenon/LED" },
-    { value: "matrix-led", label: "Faruri Matrix LED" },
-    { value: "parking-sensors", label: "Senzori de parcare" },
-    { value: "auto-park", label: "Parcare automată" },
-    { value: "climate-control", label: "Climatizare automată" },
-    { value: "dual-zone-climate", label: "Climatizare bi-zonă" },
-    { value: "tri-zone-climate", label: "Climatizare tri-zonă" },
-    { value: "lane-assist", label: "Asistent de bandă" },
-    { value: "blind-spot", label: "Monitor unghi mort" },
-    { value: "collision-warning", label: "Avertizare coliziune" },
-    { value: "emergency-brake", label: "Frânare de urgență" },
-    { value: "traffic-sign", label: "Recunoaștere indicatoare" },
-    { value: "wireless-charging", label: "Încărcare wireless" },
-    { value: "apple-carplay", label: "Apple CarPlay" },
-    { value: "android-auto", label: "Android Auto" },
-    { value: "heads-up-display", label: "Head-up Display" },
-    { value: "panoramic-roof", label: "Plafonul panoramic" },
-    { value: "electric-seats", label: "Scaune electrice" },
-    { value: "memory-seats", label: "Scaune cu memorie" },
-    { value: "massage-seats", label: "Scaune cu masaj" },
-    { value: "sport-suspension", label: "Suspensie sport" },
-    { value: "air-suspension", label: "Suspensie pneumatică" },
-    { value: "awd", label: "Tracțiune integrală" },
-    { value: "sport-mode", label: "Moduri de conducere" },
-    { value: "start-stop", label: "Sistem Start-Stop" },
-    { value: "eco-mode", label: "Mod Eco" },
-    { value: "night-vision", label: "Vedere nocturnă" },
-    { value: "ambient-lighting", label: "Iluminare ambientală" }
+    { value: "leather", label: t('car_features.leather') },
+    { value: "sunroof", label: t('car_features.sunroof') },
+    { value: "navigation", label: t('car_features.navigation') },
+    { value: "heated-seats", label: t('car_features.heated_seats') },
+    { value: "cooled-seats", label: t('car_features.cooled_seats') },
+    { value: "heated-steering", label: t('car_features.heated_steering') },
+    { value: "bluetooth", label: t('car_features.bluetooth') },
+    { value: "backup-camera", label: t('car_features.backup_camera') },
+    { value: "360-camera", label: t('car_features.360_camera') },
+    { value: "cruise-control", label: t('car_features.cruise_control') },
+    { value: "adaptive-cruise", label: t('car_features.adaptive_cruise') },
+    { value: "keyless", label: t('car_features.keyless') },
+    { value: "keyless-entry", label: t('car_features.keyless_entry') },
+    { value: "premium-audio", label: t('car_features.premium_audio') },
+    { value: "xenon", label: t('car_features.xenon') },
+    { value: "matrix-led", label: t('car_features.matrix_led') },
+    { value: "parking-sensors", label: t('car_features.parking_sensors') },
+    { value: "auto-park", label: t('car_features.auto_park') },
+    { value: "climate-control", label: t('car_features.climate_control') },
+    { value: "dual-zone-climate", label: t('car_features.dual_zone_climate') },
+    { value: "tri-zone-climate", label: t('car_features.tri_zone_climate') },
+    { value: "lane-assist", label: t('car_features.lane_assist') },
+    { value: "blind-spot", label: t('car_features.blind_spot') },
+    { value: "collision-warning", label: t('car_features.collision_warning') },
+    { value: "emergency-brake", label: t('car_features.emergency_brake') },
+    { value: "traffic-sign", label: t('car_features.traffic_sign') },
+    { value: "wireless-charging", label: t('car_features.wireless_charging') },
+    { value: "apple-carplay", label: t('car_features.apple_carplay') },
+    { value: "android-auto", label: t('car_features.android_auto') },
+    { value: "heads-up-display", label: t('car_features.heads_up_display') },
+    { value: "panoramic-roof", label: t('car_features.panoramic_roof') },
+    { value: "electric-seats", label: t('car_features.electric_seats') },
+    { value: "memory-seats", label: t('car_features.memory_seats') },
+    { value: "massage-seats", label: t('car_features.massage_seats') },
+    { value: "sport-suspension", label: t('car_features.sport_suspension') },
+    { value: "air-suspension", label: t('car_features.air_suspension') },
+    { value: "awd", label: t('car_features.awd') },
+    { value: "sport-mode", label: t('car_features.sport_mode') },
+    { value: "start-stop", label: t('car_features.start_stop') },
+    { value: "eco-mode", label: t('car_features.eco_mode') },
+    { value: "night-vision", label: t('car_features.night_vision') },
+    { value: "ambient-lighting", label: t('car_features.ambient_lighting') }
   ]
 
   // Fuel type options
   const fuelTypeOptions: Option[] = [
-    { value: "benzina", label: "Benzină" },
-    { value: "motorina", label: "Motorină" },
-    { value: "hybrid", label: "Hibrid" },
-    { value: "electric", label: "Electric" },
-    { value: "gpl", label: "GPL" },
-    { value: "cng", label: "CNG" },
-    { value: "mild-hybrid", label: "Mild Hybrid" },
-    { value: "plug-in-hybrid", label: "Plug-in Hybrid" },
-    { value: "hydrogen", label: "Hidrogen" },
-    { value: "ethanol", label: "Etanol" },
-    { value: "lpg", label: "LPG" },
-    { value: "flex-fuel", label: "Flex Fuel" },
-    { value: "bi-fuel", label: "Bi-Fuel" },
-    { value: "range-extender", label: "Range Extender" }
+    { value: "benzina", label: t('fuel_types.benzina') },
+    { value: "motorina", label: t('fuel_types.motorina') },
+    { value: "hybrid", label: t('fuel_types.hybrid') },
+    { value: "electric", label: t('fuel_types.electric') },
+    { value: "gpl", label: t('fuel_types.gpl') },
+    { value: "cng", label: t('fuel_types.cng') },
+    { value: "mild-hybrid", label: t('fuel_types.mild_hybrid') },
+    { value: "plug-in-hybrid", label: t('fuel_types.plug_in_hybrid') },
+    { value: "hydrogen", label: t('fuel_types.hydrogen') },
+    { value: "ethanol", label: t('fuel_types.ethanol') },
+    { value: "lpg", label: t('fuel_types.lpg') },
+    { value: "flex-fuel", label: t('fuel_types.flex_fuel') },
+    { value: "bi-fuel", label: t('fuel_types.bi_fuel') },
+    { value: "range-extender", label: t('fuel_types.range_extender') }
   ]
 
   // Transmission options
   const transmissionOptions: Option[] = [
-    { value: "manuala", label: "Manuală" },
-    { value: "automata", label: "Automată" },
-    { value: "semiautomata", label: "Semiautomată" },
-    { value: "cvt", label: "CVT" },
-    { value: "dsg", label: "DSG" },
-    { value: "tiptronic", label: "Tiptronic" },
-    { value: "multitronic", label: "Multitronic" },
-    { value: "s-tronic", label: "S-Tronic" },
-    { value: "pdk", label: "PDK" },
-    { value: "zf-8hp", label: "ZF 8HP" },
-    { value: "torque-converter", label: "Torque Converter" },
-    { value: "dual-clutch", label: "Dual Clutch" },
-    { value: "single-speed", label: "Single Speed (Electric)" },
-    { value: "e-cvt", label: "e-CVT" },
-    { value: "amt", label: "AMT" },
-    { value: "imt", label: "iMT" }
+    { value: "manuala", label: t('transmission.manuala') },
+    { value: "automata", label: t('transmission.automata') },
+    { value: "semiautomata", label: t('transmission.semiautomata') },
+    { value: "cvt", label: t('transmission.cvt') },
+    { value: "dsg", label: t('transmission.dsg') },
+    { value: "tiptronic", label: t('transmission.tiptronic') },
+    { value: "multitronic", label: t('transmission.multitronic') },
+    { value: "s-tronic", label: t('transmission.s_tronic') },
+    { value: "pdk", label: t('transmission.pdk') },
+    { value: "zf-8hp", label: t('transmission.zf_8hp') },
+    { value: "torque-converter", label: t('transmission.torque_converter') },
+    { value: "dual-clutch", label: t('transmission.dual_clutch') },
+    { value: "single-speed", label: t('transmission.single_speed') },
+    { value: "e-cvt", label: t('transmission.e_cvt') },
+    { value: "amt", label: t('transmission.amt') },
+    { value: "imt", label: t('transmission.imt') }
   ]
 
   // Generate years (current year down to 1985)
@@ -149,6 +166,32 @@ export function CarSelectionForm() {
   // Fetch car makes on component mount
   useEffect(() => {
     fetchMakes()
+  }, [])
+
+  // Check user's current request count
+  useEffect(() => {
+    const checkUserRequestCount = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (user) {
+          const { count } = await supabase
+            .from('member_car_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+          
+          setUserRequestCount(count || 0)
+        }
+      } catch (error) {
+        console.error('Error checking request count:', error)
+        setUserRequestCount(0)
+      } finally {
+        setIsCheckingLimit(false)
+      }
+    }
+
+    checkUserRequestCount()
   }, [])
 
   const fetchMakes = async () => {
@@ -270,8 +313,17 @@ export function CarSelectionForm() {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       
       if (userError || !user) {
-        toast.error('Trebuie să fii conectat pentru a trimite o cerere.', {
+        toast.error(t('toast.login_required'), {
           duration: 4000,
+          position: 'top-center',
+        })
+        return
+      }
+
+      // Check if user has already reached the 3 request limit
+      if (userRequestCount >= 3) {
+        toast.error('Ai atins limita maximă de 3 cereri pentru mașini. Nu poți trimite mai multe cereri.', {
+          duration: 6000,
           position: 'top-center',
         })
         return
@@ -286,7 +338,7 @@ export function CarSelectionForm() {
 
       if (profileError) {
         console.error('Profile error:', profileError)
-        toast.error('Nu am putut accesa informațiile de profil.', {
+        toast.error(t('toast.profile_error'), {
           duration: 4000,
           position: 'top-center',
         })
@@ -367,7 +419,7 @@ export function CarSelectionForm() {
       if (insertError) {
         console.error('Database error:', insertError)
         console.error('Submission data:', submissionData)
-        toast.error(`Eroare bază de date: ${insertError.message || 'Eroare necunoscută'}`, {
+        toast.error(`${t('toast.database_error')}: ${insertError.message || 'Unknown error'}`, {
           duration: 6000,
           position: 'top-center',
         })
@@ -375,6 +427,9 @@ export function CarSelectionForm() {
       }
 
       console.log('Successfully saved car request with ID:', insertResult.id)
+      
+      // Update the local request count
+      setUserRequestCount(prev => prev + 1)
 
       // Send email notification
       try {
@@ -395,7 +450,7 @@ export function CarSelectionForm() {
             error: errorData
           })
           // Show warning to user but don't fail the operation
-          toast.error('Cererea a fost salvată, dar notificarea email a eșuat.', {
+          toast.error(t('toast.email_failed'), {
             duration: 4000,
             position: 'top-center',
           })
@@ -406,13 +461,13 @@ export function CarSelectionForm() {
       } catch (emailError) {
         console.error('Error sending email notification:', emailError)
         // Show warning to user but don't fail the operation
-        toast.error('Cererea a fost salvată, dar notificarea email a eșuat.', {
+        toast.error(t('toast.email_failed'), {
           duration: 4000,
           position: 'top-center',
         })
       }
 
-      toast.success('Cererea ta a fost trimisă cu succes! O vei găsi în lista de cereri.', {
+      toast.success(t('toast.request_success'), {
         duration: 5000,
         position: 'top-center',
         style: {
@@ -426,7 +481,7 @@ export function CarSelectionForm() {
       
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('A apărut o eroare. Te rugăm să încerci din nou.', {
+      toast.error(t('toast.general_error'), {
         duration: 4000,
         position: 'top-center',
       })
@@ -438,24 +493,59 @@ export function CarSelectionForm() {
       <div className="text-center mb-8">
         <Car className="h-12 w-12 text-blue-600 mx-auto mb-4" />
         <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-          Selectează Mașina Dorită
+          {t('car_form.title')}
         </h2>
         <p className="text-gray-600">
-          Completează detaliile despre mașina pe care o cauți
+          {t('car_form.subtitle')}
         </p>
       </div>
+
+      {/* Request Limit Status */}
+      {!isCheckingLimit && (
+        <div className={`mb-6 p-4 rounded-lg border ${
+          userRequestCount >= 3 
+            ? 'bg-red-50 border-red-200' 
+            : userRequestCount === 2
+            ? 'bg-yellow-50 border-yellow-200'
+            : 'bg-blue-50 border-blue-200'
+        }`}>
+          <div className="flex items-center">
+            <div className={`h-3 w-3 rounded-full mr-3 ${
+              userRequestCount >= 3 ? 'bg-red-500' : userRequestCount === 2 ? 'bg-yellow-500' : 'bg-blue-500'
+            }`}></div>
+            <div>
+              <p className={`font-medium ${
+                userRequestCount >= 3 ? 'text-red-800' : userRequestCount === 2 ? 'text-yellow-800' : 'text-blue-800'
+              }`}>
+                {userRequestCount >= 3 
+                  ? 'Ai atins limita maximă de cereri' 
+                  : `Ai folosit ${userRequestCount} din 3 cereri disponibile`}
+              </p>
+              <p className={`text-sm ${
+                userRequestCount >= 3 ? 'text-red-600' : userRequestCount === 2 ? 'text-yellow-600' : 'text-blue-600'
+              }`}>
+                {userRequestCount >= 3 
+                  ? 'Nu mai poți trimite cereri pentru mașini noi.' 
+                  : userRequestCount === 2
+                  ? 'Mai ai doar o cerere rămasă!'
+                  : `Îți mai rămân ${3 - userRequestCount} cereri.`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Make Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Marca *
+            {t('car_form.make_label')}
           </label>
           <Select
             options={makes}
             value={selectedMake}
             onChange={handleMakeChange}
-            placeholder="Selectează marca..."
+            placeholder={t('car_form.make_placeholder')}
             isLoading={loadingMakes}
             className="react-select-container"
             classNamePrefix="react-select"
@@ -470,13 +560,13 @@ export function CarSelectionForm() {
         {/* Model Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Modelul *
+            {t('car_form.model_label')}
           </label>
           <Select
             options={models}
             value={selectedModel}
             onChange={handleModelChange}
-            placeholder="Selectează modelul..."
+            placeholder={t('car_form.model_placeholder')}
             isLoading={loadingModels}
             isDisabled={!selectedMake}
             className="react-select-container"
@@ -493,13 +583,13 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Calendar className="h-4 w-4 inline mr-1" />
-            Anul *
+            {t('car_form.year_label')}
           </label>
           <Select
             options={years}
             value={selectedYear}
             onChange={handleYearChange}
-            placeholder="Selectează anul..."
+            placeholder={t('car_form.year_placeholder')}
             className="react-select-container"
             classNamePrefix="react-select"
             isSearchable
@@ -514,13 +604,13 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Fuel className="h-4 w-4 inline mr-1" />
-            Tipul de Combustibil (opțional)
+            {t('car_form.fuel_type_label')}
           </label>
           <Select
             options={fuelTypeOptions}
             value={selectedFuelType}
             onChange={handleFuelTypeChange}
-            placeholder="Selectează tipul de combustibil..."
+            placeholder={t('car_form.fuel_type_placeholder')}
             className="react-select-container"
             classNamePrefix="react-select"
             isSearchable
@@ -532,13 +622,13 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Cog className="h-4 w-4 inline mr-1" />
-            Tipul de Transmisie (opțional)
+            {t('car_form.transmission_label')}
           </label>
           <Select
             options={transmissionOptions}
             value={selectedTransmission}
             onChange={handleTransmissionChange}
-            placeholder="Selectează tipul de transmisie..."
+            placeholder={t('car_form.transmission_placeholder')}
             className="react-select-container"
             classNamePrefix="react-select"
             isSearchable
@@ -550,30 +640,30 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Gauge className="h-4 w-4 inline mr-1" />
-            Kilometrajul Maxim (opțional)
+            {t('car_form.max_mileage_label')}
           </label>
           <input
             type="number"
             {...register('maxMileage', { valueAsNumber: true })}
-            placeholder="ex: 150000"
+            placeholder={t('car_form.max_mileage_placeholder')}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
             min="0"
             max="500000"
             step="1000"
           />
-          <p className="text-gray-500 text-sm mt-1">în kilometri</p>
+          <p className="text-gray-500 text-sm mt-1">{t('car_form.max_mileage_hint')}</p>
         </div>
 
         {/* Budget Input */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <DollarSign className="h-4 w-4 inline mr-1" />
-            Buget (EUR) *
+            {t('car_form.budget_label')}
           </label>
           <input
             type="number"
             {...register('budget', { valueAsNumber: true })}
-            placeholder="ex: 25000"
+            placeholder={t('car_form.budget_placeholder')}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
             min="1000"
             max="500000"
@@ -588,13 +678,13 @@ export function CarSelectionForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Settings className="h-4 w-4 inline mr-1" />
-            Caracteristici Dorite (opțional)
+            {t('car_form.features_label')}
           </label>
           <Select
             options={featuresOptions}
             value={selectedFeatures}
             onChange={handleFeaturesChange}
-            placeholder="Selectează caracteristicile..."
+            placeholder={t('car_form.features_placeholder')}
             isMulti
             className="react-select-container"
             classNamePrefix="react-select"
@@ -605,11 +695,11 @@ export function CarSelectionForm() {
         {/* Additional Notes */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Note Adiționale (opțional)
+            {t('car_form.additional_notes_label')}
           </label>
           <textarea
             {...register('additionalNotes')}
-            placeholder="Detalii suplimentare despre mașina dorită, preferințe speciale..."
+            placeholder={t('car_form.additional_notes_placeholder')}
             rows={4}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-700 text-black"
           />
@@ -619,10 +709,17 @@ export function CarSelectionForm() {
         <div className="flex justify-center">
           <Button
             type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg py-4 px-8 text-lg font-semibold"
+            disabled={isSubmitting || userRequestCount >= 3 || isCheckingLimit}
+            className={`transition-all duration-300 py-4 px-8 text-lg font-semibold ${
+              userRequestCount >= 3 
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 hover:shadow-lg'
+            }`}
           >
-            {isSubmitting ? "Se trimite..." : "Trimite Cererea"}
+            {isCheckingLimit ? 'Se verifică...' :
+             isSubmitting ? t('car_form.submitting_button') :
+             userRequestCount >= 3 ? 'Limita atinsă' :
+             t('car_form.submit_button')}
           </Button>
         </div>
       </form>

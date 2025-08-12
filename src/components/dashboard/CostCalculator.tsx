@@ -3,8 +3,10 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function CostCalculator() {
+  const { t } = useLanguage()
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
   const [taxeOpenlane] = useState("450")
@@ -40,7 +42,7 @@ export function CostCalculator() {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">Calculator Costuri Import</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">{t('calc.title')}</h2>
       
       <Card className="w-full">
         <CardHeader>
@@ -54,7 +56,7 @@ export function CostCalculator() {
                   : "text-gray-700 border-transparent hover:bg-gray-50"
               }`}
             >
-              Fără TVA
+              {t('calc.tab.without_vat')}
             </Button>
             <Button
               variant="ghost"
@@ -65,7 +67,7 @@ export function CostCalculator() {
                   : "text-gray-700 border-transparent hover:bg-gray-50"
               }`}
             >
-              Cu TVA
+              {t('calc.tab.with_vat')}
             </Button>
           </div>
         </CardHeader>
@@ -75,12 +77,12 @@ export function CostCalculator() {
             <div className="space-y-4 pt-4">
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-black mb-2">
-                  Preț (EUR)
+                  {t('calc.price_label')}
                 </label>
                 <input
                   id="price"
                   type="number"
-                  placeholder="Introdu prețul"
+                  placeholder={t('calc.price_placeholder')}
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-900 text-black"
@@ -89,7 +91,7 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="taxe-openlane" className="block text-sm font-medium text-gray-700 mb-2">
-                  Taxe OpenLane (EUR)
+                  {t('calc.openlane_taxes')} (EUR)
                 </label>
                 <input
                   id="taxe-openlane"
@@ -105,7 +107,7 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="vat" className="block text-sm font-medium text-gray-700 mb-2">
-                  TVA 21% (EUR)
+                  {t('calc.vat')} (EUR)
                 </label>
                 <input
                   id="vat"
@@ -121,12 +123,12 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="transport" className="block text-sm font-medium text-gray-700 mb-2">
-                  Transport (EUR)
+                  {t('calc.transport_label')}
                 </label>
                 <input
                   id="transport"
                   type="number"
-                  placeholder="Introdu costul transportului"
+                  placeholder={t('calc.transport_placeholder')}
                   value={transport}
                   onChange={(e) => setTransport(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-black text-black"
@@ -135,7 +137,7 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="garantie" className="block text-sm font-medium text-gray-700 mb-2">
-                  Garanție (EUR)
+                  {t('calc.warranty')} (EUR)
                 </label>
                 <input
                   id="garantie"
@@ -148,7 +150,7 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="comision" className="block text-sm font-medium text-gray-700 mb-2">
-                  Comision (EUR)
+                  {t('calc.commission')} (EUR)
                 </label>
                 <input
                   id="comision"
@@ -162,7 +164,7 @@ export function CostCalculator() {
               <div className="border-t pt-4 mt-6">
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-semibold text-gray-900">Total:</span>
+                    <span className="text-lg font-semibold text-gray-900">{t('calc.total')}:</span>
                     <span className="text-xl font-bold text-blue-600">
                       {price ? total.toFixed(2) : "0.00"} EUR
                     </span>
@@ -174,7 +176,7 @@ export function CostCalculator() {
                         <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
                       </p>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-700">Avans necesar (20%):</span>
+                        <span className="text-sm font-medium text-gray-700">{t('calc.advance')}:</span>
                         <span className="text-lg font-bold text-orange-600">{advance.toFixed(2)} EUR</span>
                       </div>
                     </div>
@@ -188,12 +190,12 @@ export function CostCalculator() {
             <div className="space-y-4 pt-4">
               <div>
                 <label htmlFor="price-cu-tva" className="block text-sm font-medium text-black mb-2">
-                  Preț (EUR)
+                  {t('calc.price_label')}
                 </label>
                 <input
                   id="price-cu-tva"
                   type="number"
-                  placeholder="Introdu prețul"
+                  placeholder={t('calc.price_placeholder')}
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-900 text-black"
@@ -202,7 +204,7 @@ export function CostCalculator() {
 
               <div>
                 <label htmlFor="taxe-openlane-cu-tva" className="block text-sm font-medium text-gray-700 mb-2">
-                  Taxe OpenLane (EUR)
+                  {t('calc.openlane_taxes')} (EUR)
                 </label>
                 <input
                   id="taxe-openlane-cu-tva"
@@ -259,7 +261,7 @@ export function CostCalculator() {
               <div className="border-t pt-4 mt-6">
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-semibold text-gray-900">Total:</span>
+                    <span className="text-lg font-semibold text-gray-900">{t('calc.total')}:</span>
                     <span className="text-xl font-bold text-blue-600">
                       {price ? (total - calculatedVat).toFixed(2) : "0.00"} EUR
                     </span>
@@ -271,7 +273,7 @@ export function CostCalculator() {
                         <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
                       </p>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-700">Avans necesar (20%):</span>
+                        <span className="text-sm font-medium text-gray-700">{t('calc.advance')}:</span>
                         <span className="text-lg font-bold text-orange-600">{advance.toFixed(2)} EUR</span>
                       </div>
                     </div>

@@ -10,24 +10,15 @@ export function Footer() {
   
   return (
     <footer className="bg-blue-700 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
         {/* Desktop Layout */}
         <div className="hidden lg:flex lg:items-start lg:justify-between">
           {/* Company Info with Logo */}
           <div className="flex-1 max-w-md">
-            <div className="flex items-center mb-4">
-              <Image
-                src="/AUTO.svg"
-                alt="Automode"
-                width={400}
-                height={160}
-                className="block h-40 w-auto"
-              />
-            </div>
-            <p className="text-blue-100 mb-4">
+            <p className="text-blue-100 mb-4 pt-4">
               {t('footer.company_description')}
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2 mb-4">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-white" />
                 <span className="text-sm">contact@automode.ro</span>
@@ -41,10 +32,19 @@ export function Footer() {
                 <span className="text-sm">Str. Importului 123, București, România</span>
               </div>
             </div>
+            <div className="flex items-center">
+              <Image
+                src="/AUTO.svg"
+                alt="Automode"
+                width={400}
+                height={160}
+                className="block h-40 w-auto"
+              />
+            </div>
           </div>
 
           {/* Services */}
-          <div>
+          <div className="pt-4">
             <h3 className="text-lg font-semibold mb-4">{t('footer.services')}</h3>
             <ul className="space-y-2">
               <li>
@@ -61,7 +61,7 @@ export function Footer() {
           </div>
 
           {/* Legal */}
-          <div>
+          <div className="pt-4">
             <h3 className="text-lg font-semibold mb-4">{t('footer.legal')}</h3>
             <ul className="space-y-2">
               <li>

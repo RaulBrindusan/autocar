@@ -1,24 +1,44 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+"use client"
+
+import { createClient } from "@/lib/supabase/client"
 import { CarSelectionForm } from "@/components/car-selection/CarSelectionForm"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { useState, useEffect } from "react"
 
-export default async function CereriMasiniPage() {
-  const supabase = await createClient()
+export default function CereriMasiniPage() {
+  const { t } = useLanguage()
+  const [user, setUser] = useState<any>(null)
+  const [carRequests, setCarRequests] = useState<any[]>([])
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  useEffect(() => {
+    const fetchData = async () => {
+      const supabase = createClient()
+      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect("/login")
-  }
+      if (!user) {
+        window.location.href = "/login"
+        return
+      }
 
-  // Fetch user's car requests
-  const { data: carRequests, error } = await supabase
-    .from("member_car_requests")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
+      setUser(user)
+
+      // Fetch user's car requests
+      const { data: requests, error } = await supabase
+        .from("member_car_requests")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+
+      if (requests) {
+        setCarRequests(requests)
+      }
+    }
+
+    fetchData()
+  }, [])
 
 
   return (
@@ -29,8 +49,8 @@ export default async function CereriMasiniPage() {
         {/* Car Selection Form */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
           <div className="p-6 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900">Comandă Mașină Nouă</h2>
-            <p className="text-gray-600 mt-1">Completează formularul pentru a crea o cerere nouă</p>
+            <h2 className="text-xl font-semibold text-gray-900">{t('car_requests.new_order')}</h2>
+            <p className="text-gray-600 mt-1">{t('car_requests.form_description')}</p>
           </div>
           <div className="p-8">
             <CarSelectionForm />
@@ -52,24 +72,24 @@ export default async function CereriMasiniPage() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                       <div>
-                        <span className="font-medium">An:</span> {request.year || 'Nu specificat'}
+                        <span className="font-medium">{t('car_requests.year')}:</span> {request.year || t('car_requests.not_specified')}
                       </div>
                       <div>
-                        <span className="font-medium">Buget maxim:</span> {request.max_budget ? `€${request.max_budget.toLocaleString()}` : 'Nu specificat'}
+                        <span className="font-medium">{t('car_requests.max_budget')}:</span> {request.max_budget ? `€${request.max_budget.toLocaleString()}` : t('car_requests.not_specified')}
                       </div>
                       <div>
-                        <span className="font-medium">Combustibil:</span> {request.fuel_type || 'Nu specificat'}
+                        <span className="font-medium">{t('car_requests.fuel_type')}:</span> {request.fuel_type || t('car_requests.not_specified')}
                       </div>
                     </div>
                     
                     {request.additional_notes && (
                       <div className="mt-2 text-sm text-gray-600">
-                        <span className="font-medium">Cerințe suplimentare:</span> {request.additional_notes}
+                        <span className="font-medium">{t('car_requests.additional_requirements')}:</span> {request.additional_notes}
                       </div>
                     )}
                     
                     <div className="mt-3 text-xs text-gray-500">
-                      Creată pe {new Date(request.created_at).toLocaleDateString('ro-RO')}
+                      {t('car_requests.created_on')} {new Date(request.created_at).toLocaleDateString('ro-RO')}
                     </div>
                   </div>
                 </div>

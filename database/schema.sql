@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS public.users (
   full_name TEXT,
   phone TEXT,
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  id_document_uploaded BOOLEAN DEFAULT FALSE NOT NULL,
+  id_document_uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -177,6 +179,51 @@ CREATE TABLE IF NOT EXISTS public.member_car_requests (
   expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '90 days') -- Requests expire after 90 days by default
 );
 
+-- Create offers table
+CREATE TABLE IF NOT EXISTS public.offers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  member_car_request_id UUID NOT NULL REFERENCES public.member_car_requests(id) ON DELETE CASCADE,
+  link TEXT NOT NULL,
+  accepted BOOLEAN NULL, -- null = not responded, true = accepted, false = declined
+  sent_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  responded_at TIMESTAMP WITH TIME ZONE NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for offers table
+CREATE INDEX IF NOT EXISTS idx_offers_member_car_request_id ON public.offers(member_car_request_id);
+CREATE INDEX IF NOT EXISTS idx_offers_sent_at ON public.offers(sent_at);
+
+-- Create documents table
+CREATE TABLE IF NOT EXISTS public.documents (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  file_name TEXT NOT NULL,
+  file_path TEXT NOT NULL,
+  localitatea TEXT,
+  judetul TEXT,
+  strada TEXT,
+  nr_strada TEXT,
+  bl TEXT,
+  sc TEXT,
+  etaj TEXT,
+  apartment TEXT,
+  serie TEXT, -- Romanian ID document series (e.g., "RT", "BV", etc.)
+  nr TEXT, -- Romanian ID document number (alphanumeric)
+  cnp TEXT, -- Romanian personal identification number (13 digits)
+  slclep TEXT, -- License/permit number if present
+  valabilitate DATE, -- Validity date (first date from validity period)
+  processed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for documents table
+CREATE INDEX IF NOT EXISTS idx_documents_user_id ON public.documents(user_id);
+CREATE INDEX IF NOT EXISTS idx_documents_created_at ON public.documents(created_at);
+CREATE INDEX IF NOT EXISTS idx_documents_processed_at ON public.documents(processed_at);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.car_requests ENABLE ROW LEVEL SECURITY;
@@ -184,6 +231,8 @@ ALTER TABLE public.cost_estimates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.openlane_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contracte ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.member_car_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.offers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for users table
 CREATE POLICY "Users can view their own profile" ON public.users
@@ -260,6 +309,64 @@ CREATE POLICY "Admin can update any member car request" ON public.member_car_req
 CREATE POLICY "Admin can delete member car requests" ON public.member_car_requests
   FOR DELETE USING (is_admin());
 
+-- Create policies for offers table
+CREATE POLICY "Admin can view all offers" ON public.offers
+  FOR SELECT USING (is_admin());
+
+CREATE POLICY "Admin can create offers" ON public.offers
+  FOR INSERT WITH CHECK (is_admin());
+
+CREATE POLICY "Admin can update offers" ON public.offers
+  FOR UPDATE USING (is_admin());
+
+CREATE POLICY "Admin can delete offers" ON public.offers
+  FOR DELETE USING (is_admin());
+
+-- Allow users to view offers for their own car requests
+CREATE POLICY "Users can view offers for their own car requests" ON public.offers
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.member_car_requests mcr 
+      WHERE mcr.id = offers.member_car_request_id 
+      AND mcr.user_id = auth.uid()
+    )
+  );
+
+-- Allow users to respond to offers for their own car requests  
+CREATE POLICY "Users can respond to their own offers" ON public.offers
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.member_car_requests mcr 
+      WHERE mcr.id = offers.member_car_request_id 
+      AND mcr.user_id = auth.uid()
+    )
+  );
+
+-- Create policies for documents table
+CREATE POLICY "Users can view their own documents" ON public.documents
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create their own documents" ON public.documents
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own documents" ON public.documents
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own documents" ON public.documents
+  FOR DELETE USING (auth.uid() = user_id);
+
+CREATE POLICY "Admin can view all documents" ON public.documents
+  FOR SELECT USING (is_admin());
+
+CREATE POLICY "Admin can create documents for any user" ON public.documents
+  FOR INSERT WITH CHECK (is_admin());
+
+CREATE POLICY "Admin can update any document" ON public.documents
+  FOR UPDATE USING (is_admin());
+
+CREATE POLICY "Admin can delete any document" ON public.documents
+  FOR DELETE USING (is_admin());
+
 -- Create function to handle user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -320,6 +427,14 @@ CREATE TRIGGER handle_updated_at_contracte
 
 CREATE TRIGGER handle_updated_at_member_car_requests
   BEFORE UPDATE ON public.member_car_requests
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER handle_updated_at_offers
+  BEFORE UPDATE ON public.offers
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER handle_updated_at_documents
+  BEFORE UPDATE ON public.documents
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
 -- Create admin function to get member car request details
@@ -435,5 +550,65 @@ BEGIN
   FROM public.member_car_requests mcr
   WHERE mcr.user_id = member_user_id
   ORDER BY mcr.created_at DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create admin_get_users function to get all users with request counts
+CREATE OR REPLACE FUNCTION public.admin_get_users()
+RETURNS TABLE (
+  id UUID,
+  email TEXT,
+  full_name TEXT,
+  phone TEXT,
+  role TEXT,
+  id_document_uploaded BOOLEAN,
+  id_document_uploaded_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE,
+  updated_at TIMESTAMP WITH TIME ZONE,
+  car_requests_count BIGINT,
+  cost_estimates_count BIGINT,
+  openlane_submissions_count BIGINT
+) AS $$
+BEGIN
+  -- Check if the requesting user is an admin
+  IF NOT EXISTS (
+    SELECT 1 FROM public.users 
+    WHERE users.id = auth.uid() 
+    AND users.role = 'admin'
+  ) THEN
+    RAISE EXCEPTION 'Access denied. Admin role required.';
+  END IF;
+
+  RETURN QUERY
+  SELECT 
+    u.id,
+    u.email,
+    u.full_name,
+    u.phone,
+    u.role,
+    u.id_document_uploaded,
+    u.id_document_uploaded_at,
+    u.created_at,
+    u.updated_at,
+    COALESCE(mcr.count, 0) as car_requests_count,
+    COALESCE(ce.count, 0) as cost_estimates_count,
+    COALESCE(os.count, 0) as openlane_submissions_count
+  FROM public.users u
+  LEFT JOIN (
+    SELECT user_id, COUNT(*) as count 
+    FROM public.member_car_requests 
+    GROUP BY user_id
+  ) mcr ON u.id = mcr.user_id
+  LEFT JOIN (
+    SELECT user_id, COUNT(*) as count 
+    FROM public.cost_estimates 
+    GROUP BY user_id
+  ) ce ON u.id = ce.user_id
+  LEFT JOIN (
+    SELECT user_id, COUNT(*) as count 
+    FROM public.openlane_submissions 
+    GROUP BY user_id
+  ) os ON u.id = os.user_id
+  ORDER BY u.created_at DESC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

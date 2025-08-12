@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { 
   LayoutDashboard,
   Car, 
@@ -12,7 +12,9 @@ import {
   Menu,
   X,
   LogOut,
-  User
+  User,
+  Bell,
+  Gift
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -26,28 +28,6 @@ interface SidebarItem {
   count?: number
 }
 
-const sidebarItems: SidebarItem[] = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard
-  },
-  {
-    name: "Cereri Mașini",
-    href: "/dashboard/cereri-masini",
-    icon: Car
-  },
-  {
-    name: "Calculator Costuri",
-    href: "/dashboard/calculator",
-    icon: Calculator
-  },
-  {
-    name: "Contracte",
-    href: "/dashboard/contracte",
-    icon: FileText
-  }
-]
 
 interface UserSidebarProps {
   children: React.ReactNode
@@ -60,6 +40,35 @@ export function UserSidebar({ children }: UserSidebarProps) {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { t } = useLanguage()
+
+  const sidebarItems: SidebarItem[] = [
+    {
+      name: t('sidebar.dashboard'),
+      href: "/dashboard",
+      icon: LayoutDashboard
+    },
+    {
+      name: t('sidebar.car_requests'),
+      href: "/dashboard/cereri-masini",
+      icon: Car
+    },
+    {
+      name: "Oferte",
+      href: "/dashboard/oferte",
+      icon: Gift
+    },
+    {
+      name: t('sidebar.calculator'),
+      href: "/dashboard/calculator",
+      icon: Calculator
+    },
+    {
+      name: t('sidebar.contracts'),
+      href: "/dashboard/contracte",
+      icon: FileText
+    }
+  ]
 
   useEffect(() => {
     const supabase = createClient()
@@ -120,12 +129,12 @@ export function UserSidebar({ children }: UserSidebarProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Mobile menu button */}
       <div className="lg:hidden absolute top-4 right-4 z-50">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="bg-blue-600 p-2 rounded-lg shadow-md"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
         >
           <Menu className="h-6 w-6 text-white" />
         </button>
@@ -134,39 +143,26 @@ export function UserSidebar({ children }: UserSidebarProps) {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
-          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
+          className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-700 shadow-2xl transform transition-all duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:inset-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-            <div className="flex items-center justify-center w-full">
-              <Image
-                src="/logo.png"
-                alt="Automode Logo"
-                width={192}
-                height={192}
-                className="rounded-lg -my-16"
-              />
-            </div>
+          {/* Navigation */}
+          <nav className="flex-1 px-4 pt-4 space-y-2 overflow-y-auto relative">
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-600"
+              className="lg:hidden absolute top-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 z-10"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {sidebarItems.map((item) => {
               const isActive = pathname === item.href
               const Icon = item.icon
@@ -176,18 +172,20 @@ export function UserSidebar({ children }: UserSidebarProps) {
                   key={item.name}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`
-                    flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200
-                    ${isActive 
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }
-                  `}
+                  className={`group relative flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                    isActive 
+                      ? 'bg-white/10 text-white shadow-lg' 
+                      : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  }`}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
-                  <span className="font-medium">{item.name}</span>
+                  <div className="relative">
+                    <Icon className={`h-6 w-6 ${isActive ? 'text-white drop-shadow-sm' : 'text-white/80 drop-shadow-sm group-hover:text-white'}`} />
+                  </div>
+                  <span className={`text-base font-medium drop-shadow-sm ${isActive ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>
+                    {item.name}
+                  </span>
                   {item.count && (
-                    <span className="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+                    <span className="ml-auto bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm">
                       {item.count}
                     </span>
                   )}
@@ -197,24 +195,37 @@ export function UserSidebar({ children }: UserSidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-blue-500/20 p-4">
             {/* User Info */}
             {user && (
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-900">
-                  {userProfile?.full_name || user.email}
-                </p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+              <div className="mb-3 relative">
+                <div className="relative p-3 bg-white/10 backdrop-blur-sm rounded-lg">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center shadow-md">
+                      <span className="text-white font-semibold text-xs drop-shadow-sm">
+                        {(userProfile?.full_name || user.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-white truncate drop-shadow-sm">
+                        {userProfile?.full_name || user.email?.split('@')[0]}
+                      </p>
+                      <p className="text-xs text-white/70 truncate drop-shadow-sm">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
             
             {/* Logout Button */}
             <button 
               onClick={handleSignOutClick}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              className="group w-full flex items-center space-x-3 px-3 py-2 text-white/80 hover:text-white rounded-lg transition-all duration-200 hover:bg-white/10"
             >
-              <LogOut className="h-5 w-5 text-gray-400" />
-              <span className="font-medium">Ieșire</span>
+              <div className="relative">
+                <LogOut className="h-5 w-5 text-white/80 group-hover:text-white drop-shadow-sm" />
+              </div>
+              <span className="text-sm font-medium drop-shadow-sm">{t('sidebar.logout')}</span>
             </button>
           </div>
         </div>
@@ -222,11 +233,8 @@ export function UserSidebar({ children }: UserSidebarProps) {
 
       {/* Main content */}
       <div className="flex-1 lg:ml-0">
-        {/* Mobile spacing */}
-        <div className="lg:hidden h-2" />
-        
         {/* Content */}
-        <main className="p-2 lg:p-8">
+        <main className="px-2 pb-2 lg:px-4 lg:pb-4">
           {children}
         </main>
       </div>
