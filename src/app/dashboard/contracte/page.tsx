@@ -69,33 +69,7 @@ export default function UserContractePage() {
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
-    checkUser()
-  }, [checkUser])
-
-  // Auto-hide toast after 5 seconds
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => {
-        setToast(null)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [toast])
-
-  const checkUser = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      router.push('/login')
-      return
-    }
-    
-    setUser(user)
-    await fetchUserContracts(user)
-  }, [router])
-
-  const fetchUserContracts = async (currentUser: any) => {
+  const fetchUserContracts = useCallback(async (currentUser: any) => {
     try {
       setIsLoading(true)
       
@@ -139,7 +113,33 @@ export default function UserContractePage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [supabase])
+
+  const checkUser = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      router.push('/login')
+      return
+    }
+    
+    setUser(user)
+    await fetchUserContracts(user)
+  }, [router, supabase.auth, fetchUserContracts])
+
+  useEffect(() => {
+    checkUser()
+  }, [checkUser])
+
+  // Auto-hide toast after 5 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [toast])
 
   const handleSignContract = () => {
     setShowSignatureModal(true)
