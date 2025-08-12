@@ -235,7 +235,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Progress Tracker */}
-        <ProgressTracker carRequest={carRequest} />
+        <ProgressTracker carRequest={carRequest || undefined} />
 
         {/* Benefits Section */}
         <BenefitsSection />

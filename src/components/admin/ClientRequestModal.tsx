@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { X, Car, User, Mail, Phone, Calendar, Euro, Fuel, Cog, Gauge, FileText, Save, Trash2, Edit, Link, Send } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { createClient } from "@/lib/supabase/client"
@@ -60,7 +60,7 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
   const supabase = createClient()
 
   // Fuel type options
-  const fuelTypeOptions: Option[] = [
+  const fuelTypeOptions: Option[] = useMemo(() => [
     { value: "benzina", label: "Benzină" },
     { value: "motorina", label: "Motorină" },
     { value: "gasoline", label: "Benzină" },
@@ -78,10 +78,10 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
     { value: "bi-fuel", label: "Bi-Fuel" },
     { value: "range-extender", label: "Range Extender" },
     { value: "other", label: "Altul" }
-  ]
+  ], [])
 
   // Transmission options
-  const transmissionOptions: Option[] = [
+  const transmissionOptions: Option[] = useMemo(() => [
     { value: "manuala", label: "Manuală" },
     { value: "automata", label: "Automată" },
     { value: "manual", label: "Manuală" },
@@ -101,7 +101,7 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
     { value: "amt", label: "AMT" },
     { value: "imt", label: "iMT" },
     { value: "other", label: "Altul" }
-  ]
+  ], [])
 
   // Generate years on component mount
   useEffect(() => {
