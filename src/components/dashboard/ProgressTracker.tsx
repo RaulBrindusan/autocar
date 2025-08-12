@@ -288,6 +288,7 @@ export function ProgressTracker({ carRequest }: ProgressTrackerProps) {
           
           <div className="flex justify-between items-start">
             {visibleStages.map((stage, index) => {
+              if (!stage) return null
               const colors = getStageColor(stage.status)
               const Icon = stage.icon
 
