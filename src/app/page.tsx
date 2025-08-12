@@ -619,6 +619,24 @@ export default function Home() {
                 {t('faq.q4.answer')}
               </p>
             </div>
+
+            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+              <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
+                {t('faq.q5.question')}
+              </h3>
+              <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
+                {t('faq.q5.answer')}
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+              <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
+                {t('faq.q6.question')}
+              </h3>
+              <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
+                {t('faq.q6.answer')}
+              </p>
+            </div>
           </div>
         </div>
       </section>

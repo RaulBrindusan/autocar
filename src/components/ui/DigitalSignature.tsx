@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
+import Image from 'next/image';
 
 interface DigitalSignatureProps {
   onSave: (signature: string) => void;
@@ -77,10 +78,12 @@ export default function DigitalSignature({
                   Semnătura existentă:
                 </div>
                 <div className="border rounded-lg p-2 bg-gray-50">
-                  <img 
+                  <Image 
                     src={initialSignature} 
                     alt="Semnătura existentă" 
-                    className="max-h-24 mx-auto"
+                    width={200}
+                    height={96}
+                    className="max-h-24 mx-auto object-contain"
                   />
                 </div>
               </div>

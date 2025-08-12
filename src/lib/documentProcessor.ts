@@ -357,7 +357,7 @@ function extractRomanianIDData(text: string): ExtractedDocumentData {
     const matches = Array.from(text.matchAll(pattern))
     if (matches.length > 0) {
       // Take the first date found - typically the issue date, which we'll use as validity start
-      let firstDate = matches[0][1]
+      const firstDate = matches[0][1]
       console.log('Found first date:', firstDate)
       
       // Convert to YYYY-MM-DD format
