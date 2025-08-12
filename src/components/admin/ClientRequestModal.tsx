@@ -113,19 +113,6 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
     setYears(yearOptions)
   }, [])
 
-  useEffect(() => {
-    if (isOpen && requestId) {
-      fetchRequest()
-    } else if (!isOpen) {
-      // Reset states when modal closes
-      setSelectedYear(null)
-      setSelectedFuelType(null)
-      setSelectedTransmission(null)
-      setIsEditing(false)
-      setError(null)
-    }
-  }, [isOpen, requestId, fetchRequest])
-
   const fetchRequest = useCallback(async () => {
     if (!requestId) return
     
@@ -163,6 +150,19 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
       setIsLoading(false)
     }
   }, [requestId, fuelTypeOptions, transmissionOptions])
+
+  useEffect(() => {
+    if (isOpen && requestId) {
+      fetchRequest()
+    } else if (!isOpen) {
+      // Reset states when modal closes
+      setSelectedYear(null)
+      setSelectedFuelType(null)
+      setSelectedTransmission(null)
+      setIsEditing(false)
+      setError(null)
+    }
+  }, [isOpen, requestId, fetchRequest])
 
   const handleSave = async () => {
     if (!request || !editData) return
