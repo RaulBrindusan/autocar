@@ -46,12 +46,6 @@ export function MemberRequestModal({
   const [offerLink, setOfferLink] = useState("")
   const [sendingOffer, setSendingOffer] = useState(false)
 
-  useEffect(() => {
-    if (isOpen && requestId) {
-      fetchRequest()
-    }
-  }, [isOpen, requestId, fetchRequest])
-
   const fetchRequest = useCallback(async () => {
     if (!requestId) return
     
@@ -74,6 +68,12 @@ export function MemberRequestModal({
       setLoading(false)
     }
   }, [requestId])
+
+  useEffect(() => {
+    if (isOpen && requestId) {
+      fetchRequest()
+    }
+  }, [isOpen, requestId, fetchRequest])
 
   const handleSave = async () => {
     if (!requestId) return
