@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
+    // Only allow in development environment
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Debug endpoints disabled in production' }, { status: 404 })
+    }
+
     console.log('=== BREVO DEBUG ENDPOINT ===')
     
     // Check environment variables
     const envCheck = {
       BREVO_API_KEY: process.env.BREVO_API_KEY ? 'SET' : 'NOT SET',
-      EMAIL_FROM: process.env.EMAIL_FROM || 'NOT SET',
-      EMAIL_TO: process.env.EMAIL_TO || 'NOT SET',
+      EMAIL_FROM: process.env.EMAIL_FROM ? 'SET' : 'NOT SET',
+      EMAIL_TO: process.env.EMAIL_TO ? 'SET' : 'NOT SET',
       NODE_ENV: process.env.NODE_ENV || 'NOT SET'
     }
     

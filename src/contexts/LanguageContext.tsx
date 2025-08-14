@@ -130,7 +130,7 @@ const translations = {
     // Header Navigation
     'header.nav.calculator': 'Calculator Cost',
     'header.nav.order_car': 'Comandă Mașină',
-    'header.nav.send_openlane': 'Trimite OpenLane',
+    'header.nav.send_openlane': 'Trimite Link',
 
     // Header User Menu
     'header.user.my_account': 'Contul meu',
@@ -531,7 +531,7 @@ const translations = {
     // Header Navigation
     'header.nav.calculator': 'Cost Calculator',
     'header.nav.order_car': 'Order Car',
-    'header.nav.send_openlane': 'Send OpenLane',
+    'header.nav.send_openlane': 'Send Link',
 
     // Header User Menu
     'header.user.my_account': 'My Account',

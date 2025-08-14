@@ -224,6 +224,24 @@ CREATE INDEX IF NOT EXISTS idx_documents_user_id ON public.documents(user_id);
 CREATE INDEX IF NOT EXISTS idx_documents_created_at ON public.documents(created_at);
 CREATE INDEX IF NOT EXISTS idx_documents_processed_at ON public.documents(processed_at);
 
+-- Create private schema for security definer functions
+CREATE SCHEMA IF NOT EXISTS private;
+
+-- Security definer functions for better RLS performance
+CREATE OR REPLACE FUNCTION private.is_admin()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.users 
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  );
+END;
+$$;
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.car_requests ENABLE ROW LEVEL SECURITY;
@@ -236,30 +254,49 @@ ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for users table
 CREATE POLICY "Users can view their own profile" ON public.users
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT TO authenticated
+  USING ((SELECT auth.uid()) = id);
 
 CREATE POLICY "Users can update their own profile" ON public.users
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE TO authenticated
+  USING ((SELECT auth.uid()) = id)
+  WITH CHECK ((SELECT auth.uid()) = id);
 
 CREATE POLICY "Users can insert their own profile" ON public.users
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT TO authenticated
+  WITH CHECK ((SELECT auth.uid()) = id);
 
 -- Create policies for car_requests table
 CREATE POLICY "Users can view their own car requests" ON public.car_requests
-  FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+  FOR SELECT TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
-CREATE POLICY "Anyone can create car requests" ON public.car_requests
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anonymous users can create car requests" ON public.car_requests
+  FOR INSERT TO anon, authenticated
+  WITH CHECK (true);
 
 CREATE POLICY "Users can update their own car requests" ON public.car_requests
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
+
+-- Admin policy for car requests
+CREATE POLICY "Admins can view all car requests" ON public.car_requests
+  FOR SELECT TO authenticated
+  USING (private.is_admin());
+
+CREATE POLICY "Admins can update any car request" ON public.car_requests
+  FOR UPDATE TO authenticated
+  USING (private.is_admin());
 
 -- Create policies for cost_estimates table
 CREATE POLICY "Users can view their own cost estimates" ON public.cost_estimates
-  FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+  FOR SELECT TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
-CREATE POLICY "Anyone can create cost estimates" ON public.cost_estimates
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anonymous users can create cost estimates" ON public.cost_estimates
+  FOR INSERT TO anon, authenticated
+  WITH CHECK (true);
 
 -- Create policies for openlane_submissions table
 CREATE POLICY "Users can view their own openlane submissions" ON public.openlane_submissions
@@ -365,7 +402,16 @@ CREATE POLICY "Admin can update any document" ON public.documents
   FOR UPDATE USING (is_admin());
 
 CREATE POLICY "Admin can delete any document" ON public.documents
-  FOR DELETE USING (is_admin());
+  FOR DELETE TO authenticated
+  USING (private.is_admin());
+
+-- Restrictive policy for sensitive document operations (requires MFA)
+CREATE POLICY "Sensitive document operations require MFA" ON public.documents
+  AS RESTRICTIVE FOR ALL TO authenticated
+  USING (
+    (SELECT auth.jwt()->>'aal') = 'aal2' OR 
+    document_type != 'id_document'
+  );
 
 -- Create function to handle user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()

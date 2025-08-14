@@ -3,6 +3,11 @@ import { TransactionalEmailsApi, SendSmtpEmail } from '@getbrevo/brevo'
 
 export async function GET(request: NextRequest) {
   try {
+    // Only allow in development environment
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Debug endpoints disabled in production' }, { status: 404 })
+    }
+
     console.log('Testing Brevo API email configuration...')
     
     // Initialize Brevo API client

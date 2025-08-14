@@ -3,6 +3,16 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { createClient } from '@/lib/supabase/server'
 import { v4 as uuidv4 } from 'uuid'
 import { processDocumentWithOCR } from '@/lib/documentProcessor'
+import { 
+  fileUploadSchema, 
+  isValidFileExtension, 
+  hasValidFileSignature,
+  sanitizeFilename,
+  generateSecureFilename,
+  isUploadRateLimited,
+  type FileUploadInput 
+} from '@/lib/validation/file-upload'
+import { z } from 'zod'
 
 // Configure Cloudflare R2 client
 const r2Client = new S3Client({
@@ -30,19 +40,57 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
-    if (!allowedTypes.includes(file.type)) {
+    // Validate input with Zod schema
+    let validatedData: FileUploadInput
+    try {
+      validatedData = fileUploadSchema.parse({
+        userId,
+        file: {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        }
+      })
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          { 
+            error: 'Date de intrare invalide',
+            details: error.issues.map(err => ({
+              field: err.path.join('.'),
+              message: err.message
+            }))
+          },
+          { status: 400 }
+        )
+      }
+      throw error
+    }
+
+    // Rate limiting check
+    if (isUploadRateLimited(userId)) {
       return NextResponse.json(
-        { error: 'Tip de fișier neacceptat. Vă rugăm să încărcați JPG, PNG sau PDF' },
+        { error: 'Prea multe încărcări. Încercați din nou mai târziu.' },
+        { status: 429 }
+      )
+    }
+
+    // Validate file extension matches MIME type
+    if (!isValidFileExtension(file.name, file.type)) {
+      return NextResponse.json(
+        { error: 'Extensia fișierului nu corespunde tipului de fișier' },
         { status: 400 }
       )
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    // Read file buffer for signature validation
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    // Validate file signature (magic bytes)
+    if (!hasValidFileSignature(buffer, file.type)) {
       return NextResponse.json(
-        { error: 'Fișierul este prea mare. Dimensiunea maximă este 10MB' },
+        { error: 'Fișier corupt sau tip de fișier nevalid' },
         { status: 400 }
       )
     }
@@ -72,13 +120,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate unique filename
-    const fileExtension = file.name.split('.').pop() || 'jpg'
-    const filename = `id-documents/${userId}/${uuidv4()}.${fileExtension}`
-
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    // Generate secure filename
+    const filename = generateSecureFilename(userId, sanitizeFilename(file.name))
 
     // Upload to Cloudflare R2
     const command = new PutObjectCommand({
@@ -88,8 +131,10 @@ export async function POST(request: NextRequest) {
       ContentType: file.type,
       Metadata: {
         'user-id': userId,
-        'original-filename': file.name,
+        'original-filename': sanitizeFilename(file.name),
         'uploaded-at': new Date().toISOString(),
+        'file-size': file.size.toString(),
+        'content-type': file.type,
       },
     })
 

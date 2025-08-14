@@ -19,8 +19,52 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Automode - European Car Import Specialists",
-  description: "Import your dream European car with Automode. Professional car sourcing, import handling, and delivery services.",
+  metadataBase: new URL('https://automode.ro'),
+  title: "Automode - Mașini la Comandă",
+  description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de sursare, import și livrare autovehicule din Germania, Italia, Franța și alte țări europene.",
+  keywords: "import auto, import masini europa, import auto germania, import auto italia, import auto franta, masini second hand europa, calculator import auto, servicii import autovehicule romania",
+  authors: [{ name: "Automode Team" }],
+  robots: "index, follow",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
+  openGraph: {
+    title: "Automode - Specialiști în Importul de Automobile Europene",
+    description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de sursare, import și livrare.",
+    type: "website",
+    locale: "ro_RO",
+    url: "https://automode.ro",
+    siteName: "Automode",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Automode - Import Auto Europa",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Automode - Import Auto Europa",
+    description: "Importați mașina visurilor voastre din Europa cu servicii profesionale complete.",
+    images: ["/logo.png"],
+  },
+  alternates: {
+    canonical: "https://automode.ro",
+  },
+  manifest: "/site.webmanifest",
+  other: {
+    "google-site-verification": "your-google-site-verification-code",
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ro" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors`}
       >

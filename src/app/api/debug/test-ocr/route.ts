@@ -3,6 +3,11 @@ import { processDocumentWithOCR } from '@/lib/documentProcessor'
 
 export async function POST(request: NextRequest) {
   try {
+    // Only allow in development environment
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Debug endpoints disabled in production' }, { status: 404 })
+    }
+
     // Get form data
     const formData = await request.formData()
     const file = formData.get('file') as File

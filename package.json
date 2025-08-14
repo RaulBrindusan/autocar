@@ -12,7 +12,7 @@
     "@aws-sdk/client-s3": "^3.864.0",
     "@azure-rest/ai-document-intelligence": "^1.1.0",
     "@azure/core-auth": "^1.10.0",
-    "@getbrevo/brevo": "^2.5.0",
+    "@getbrevo/brevo": "^3.0.1",
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.1.1",
     "@supabase/ssr": "^0.6.1",

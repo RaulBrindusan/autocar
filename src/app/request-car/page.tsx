@@ -2,12 +2,15 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
+import { usePageTitle } from "@/hooks/usePageTitle"
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import { Car, Link2 } from "lucide-react"
 import { CarSelectionForm } from "@/components/car-selection/CarSelectionForm"
 import { OpenLaneForm } from "@/components/car-selection/OpenLaneForm"
 
 function RequestCarContent() {
+  usePageTitle("Cerere Mașină | Importă Autovehicule din Europa")
+  
   const [selectedIndex, setSelectedIndex] = useState(0)
   const searchParams = useSearchParams()
   

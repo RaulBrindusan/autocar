@@ -2,10 +2,13 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { usePageTitle } from "@/hooks/usePageTitle"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 
 export default function CalculatorPage() {
+  usePageTitle("Calculator Import Auto | Calculează Costurile de Import")
+  
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
   const [taxeOpenlane] = useState("450")

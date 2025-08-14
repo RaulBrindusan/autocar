@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { X, Cookie, Settings } from 'lucide-react'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { X, Settings } from 'lucide-react'
 
 interface CookiePreferences {
   essential: boolean
@@ -12,6 +14,7 @@ interface CookiePreferences {
 }
 
 export function CookieConsent() {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -22,12 +25,15 @@ export function CookieConsent() {
   })
 
   useEffect(() => {
+    // Only show on homepage
+    const isHomepage = pathname === '/'
+    
     // Check if user has already made a choice
     const cookieConsent = localStorage.getItem('cookie-consent')
-    if (!cookieConsent) {
+    if (!cookieConsent && isHomepage) {
       setIsVisible(true)
     }
-  }, [])
+  }, [pathname])
 
   const handleAcceptAll = () => {
     const allAccepted = {
@@ -102,7 +108,13 @@ export function CookieConsent() {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <Cookie className="h-6 w-6 text-blue-600" />
+                <Image 
+                  src="/logo.png" 
+                  alt="Automode Logo" 
+                  width={24} 
+                  height={24}
+                  className="h-6 w-6 object-contain"
+                />
                 <h3 className="text-lg font-semibold text-gray-900">
                   Setări Cookie-uri
                 </h3>
@@ -227,7 +239,13 @@ export function CookieConsent() {
             {/* Left side - Message and links */}
             <div className="flex-1">
               <div className="flex items-start space-x-3">
-                <Cookie className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <Image 
+                  src="/logo.png" 
+                  alt="Automode Logo" 
+                  width={20} 
+                  height={20}
+                  className="h-5 w-5 mt-0.5 flex-shrink-0 object-contain"
+                />
                 <div>
                   <p className="text-gray-800 text-sm font-medium mb-1">
                     Acest site utilizează cookie-uri

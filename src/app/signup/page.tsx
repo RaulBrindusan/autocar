@@ -1,4 +1,10 @@
 import { AuthForm } from "@/components/auth/AuthForm"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Automode - Înregistrare | Creează Cont Import Auto Europa",
+  description: "Creați un cont Automode pentru a începe importul mașinii dvs. din Europa. Acces la calculator de costuri, urmărire comenzi și asistență completă.",
+}
 
 export default function SignupPage() {
   return (

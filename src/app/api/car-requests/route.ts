@@ -1,16 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { carRequestSchema, sanitizeString, isRateLimited, type CarRequestInput } from '@/lib/validation/car-request'
+import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json()
+    // Rate limiting check
+    const forwarded = request.headers.get('x-forwarded-for')
+    const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown'
     
-    // Validate required fields
-    if (!data.make || !data.model || !data.year || !data.budget || !data.name || !data.phone) {
+    if (isRateLimited(ip)) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
+    // Parse and validate request body
+    let data: unknown
+    try {
+      data = await request.json()
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
         { status: 400 }
       )
+    }
+
+    // Validate input with Zod schema
+    let validatedData: CarRequestInput
+    try {
+      validatedData = carRequestSchema.parse(data)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          { 
+            error: 'Invalid input data',
+            details: error.issues.map(err => ({
+              field: err.path.join('.'),
+              message: err.message
+            }))
+          },
+          { status: 400 }
+        )
+      }
+      throw error
     }
 
     // Create Supabase client
@@ -19,22 +53,33 @@ export async function POST(request: NextRequest) {
     // Get current user (if authenticated)
     const { data: { user } } = await supabase.auth.getUser()
 
+    // Sanitize string inputs to prevent XSS
+    const sanitizedData = {
+      make: sanitizeString(validatedData.make),
+      model: sanitizeString(validatedData.model),
+      name: sanitizeString(validatedData.name),
+      phone: sanitizeString(validatedData.phone),
+      fuelType: validatedData.fuelType ? sanitizeString(validatedData.fuelType) : null,
+      transmission: validatedData.transmission ? sanitizeString(validatedData.transmission) : null,
+      additionalNotes: validatedData.additionalNotes ? sanitizeString(validatedData.additionalNotes) : null,
+    }
+
     // Prepare the car request data for database insertion
     const carRequestData = {
       user_id: user?.id || null, // null if user is not authenticated
-      brand: data.make,
-      model: data.model,
-      year: data.year,
-      fuel_type: data.fuelType || null,
-      transmission: data.transmission || null,
-      mileage_max: data.maxMileage || null,
-      max_budget: data.budget,
+      brand: sanitizedData.make,
+      model: sanitizedData.model,
+      year: validatedData.year,
+      fuel_type: sanitizedData.fuelType,
+      transmission: sanitizedData.transmission,
+      mileage_max: validatedData.maxMileage || null,
+      max_budget: validatedData.budget,
       preferred_color: null, // This could be added later if needed
-      additional_requirements: data.additionalNotes || null,
-      contact_name: data.name,
-      contact_email: `${data.name.toLowerCase().replace(/\s+/g, '.')}@contact.placeholder`, // Generate a placeholder email
-      contact_phone: data.phone,
-      custom_features: data.features || [],
+      additional_requirements: sanitizedData.additionalNotes,
+      contact_name: sanitizedData.name,
+      contact_email: `${sanitizedData.name.toLowerCase().replace(/\s+/g, '.')}@contact.placeholder`, // Generate a placeholder email
+      contact_phone: sanitizedData.phone,
+      custom_features: validatedData.features || [],
       status: 'pending'
     }
 
@@ -48,15 +93,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Database error:', error)
-      console.error('Error details:', error.details)
-      console.error('Error hint:', error.hint)
-      console.error('Error code:', error.code)
       return NextResponse.json(
         { 
-          error: 'Failed to save car request to database', 
-          details: error.message,
-          code: error.code,
-          hint: error.hint
+          error: 'Failed to save car request to database'
+          // Don't expose internal error details in production
         },
         { status: 500 }
       )
