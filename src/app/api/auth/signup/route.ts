@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
     const validData = validationResult.data
 
     // Create Supabase client
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Attempt to sign up the user
     const { data: authData, error: authError } = await supabase.auth.signUp({
