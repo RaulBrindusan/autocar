@@ -25,11 +25,11 @@ export function Footer() {
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-white" />
-                <span className="text-sm">+40 123 456 789</span>
+                <span className="text-sm">0750462307</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-white" />
-                <span className="text-sm">Str. Importului 123, București, România</span>
+                <span className="text-sm">Viorele 9, Satu Mare</span>
               </div>
             </div>
             <div className="flex items-center">
@@ -107,11 +107,11 @@ export function Footer() {
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <Phone className="h-4 w-4 text-white" />
-                  <span className="text-sm">+40 123 456 789</span>
+                  <span className="text-sm">0750462307</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <MapPin className="h-4 w-4 text-white" />
-                  <span className="text-sm">Str. Importului 123, București, România</span>
+                  <span className="text-sm">Viorele 9, Satu Mare</span>
                 </div>
               </div>
             </div>

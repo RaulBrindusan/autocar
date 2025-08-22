@@ -192,7 +192,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+40 123 456 789"
+                  placeholder="0750462307"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:border-transparent text-gray-900 placeholder-gray-400"
                   required
                 />

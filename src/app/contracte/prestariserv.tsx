@@ -60,14 +60,12 @@ export default function PrestariServContract({ data }: ContractProps) {
           <div className="mb-4">
             <p className="mb-2"><strong>Între</strong></p>
             <p className="mb-4">
-              <strong>S.C. ALLY TRADING SOLUTIONS S.R.L.</strong> cu sediul în Mun. București, Sect. 4, 
-              Str. Drumul Gilăului, Nr. 42, Cam. 1, Bl. 1, Et. 2, Ap. 19, înregistrată la Registrul 
-              Comerțului sub Nr. J40/7505/2023, având Cod Unic de Înregistrare RO48019440, 
+              <strong>Automode S.R.L.</strong> cu sediul în Strada Viorele 9, Comuna Păulești, Satu Mare, având Cod Unic de Înregistrare RO48019440, 
               cont IBAN Euro: RO80 BTRL EURC RT0C L425 3701 și cont IBAN Lei: RO36 BTRL RONC RT0C L425 3701 
               deschise la Banca Transilvania S.A., reprezentată legal de
             </p>
             <p className="mb-4">
-              <strong>VALENTIN FLORIN</strong> în calitate de Administrator, denumit în continuare <strong>PRESTATOR</strong>
+              <strong>BU TEREZIA</strong> în calitate de Administrator, denumit în continuare <strong>PRESTATOR</strong>
             </p>
           </div>
 
@@ -152,7 +150,7 @@ export default function PrestariServContract({ data }: ContractProps) {
               <p><strong>Art. 4.1.</strong> Clientul se obligă să:</p>
               <div className="ml-4 space-y-3">
                 <p>a) precizeze în cele ce urmează suma maximă pe care prestatorul o poate licita pe platforma online de licitații, această sumă fiind de <span className="font-bold text-lg">{data?.suma_licitatie || '………………….'}</span> (cifre) de Euro (și litere: ……………................................... de Euro). Această sumă NU INCLUDE costurile specifice țării de unde se vinde produsul, onorariul licitației, costul de transport al produsului la adresa prestatorului, comisionul prestatorului și taxa pe valoarea adăugată (TVA) aplicată la suma costurilor menționate anterior;</p>
-                <p>b) achite înainte de participarea prestatorului la licitație, un avans procentual de 20% din suma maximă de licitație mentionată la punctul a), în cazul în care produsul dorit se va putea achiziționa de către prestator doar prin intermediul unei licitații în care prețul final de vânzare nu este specificat;</p>
+                <p>b) achite înainte de participarea prestatorului la licitație, un avans procentual de 25% din suma maximă de licitație mentionată la punctul a), în cazul în care produsul dorit se va putea achiziționa de către prestator doar prin intermediul unei licitații în care prețul final de vânzare nu este specificat;</p>
                 <p>c) achite în maxim 24 de ore după câștigarea licitației și atribuirea autoturismului către PRESTATOR, diferența din valoarea totală a prețului cu care a fost câștigată licitația plus costurile specifice țării de unde se vinde produsul (cost necesar pentru radierea autoturismului în țara respectivă), onorariul licitației, costul transportului oferit de către OPENLANE EUROPE NV către adresa PRESTATORULUI, comisionul PRESTATORULUI care reprezintă valoarea fixă de 400 Euro și valoarea taxei pe valoare adăugată (TVA) aplicată la suma costurilor menționate anterior, toate acestea fiind menționate în Anexa Nr. 1. Această diferență de bani se consideră achitată doar când banii vor fi prezenți în contul bancar al PRESTATORULUI;</p>
                 <p>d) achite avans de 100% din prețul total detaliat în Articolul 3.3 doar în cazul în care autoturismul menționat în Anexa Nr. 1 are un preț final de vânzare specificat de către vânzător și nu este necesară o licitație pentru achiziția acestuia;</p>
                 <p>e) achite în Lei după sosirea autoturismului la adresa prestatorului, contravalorea serviciilor pe care prestatorul urmează să le efectueze conform Articolului 4.2, punctul d), și anume: eliberarea numerelor roșii provizorii, polița RCA, efectuarea RAR, obținerea de la RAR a unui Certificat de Conformitate (dacă este cazul). Toate aceste costuri exprimate în Lei sunt menționate în Anexa Nr. 2;</p>
@@ -179,7 +177,7 @@ export default function PrestariServContract({ data }: ContractProps) {
           <h2 className="text-lg font-bold uppercase mb-4">CAP. V: MODALITĂȚI DE PLATĂ</h2>
           
           <div className="space-y-4">
-            <p><strong>Art. 5.1</strong> Clientul va achita în Euro prin virament bancar în contul prestatorului avansul de 20% menționat și descris în Articolul 4.1, punctul b) sau avansul de 100% menționat și descris în Articolul 4.1, punctul d) din acest contract (Cont IBAN Euro: RO80 BTRL EURC RT0C L425 3701);</p>
+            <p><strong>Art. 5.1</strong> Clientul va achita în Euro prin virament bancar în contul prestatorului avansul de 25% menționat și descris în Articolul 4.1, punctul b) sau avansul de 100% menționat și descris în Articolul 4.1, punctul d) din acest contract (Cont IBAN Euro: RO80 BTRL EURC RT0C L425 3701);</p>
             <p><strong>Art. 5.2</strong> Clientul va achita în Euro prin virament bancar în contul prestatorului, restul prețului total menționat și descris în Articolul 4.1, punctul c) din acest contract (Cont IBAN Euro: RO80 BTRL EURC RT0C L425 3701);</p>
             <p><strong>Art. 5.3</strong> Clientul va achita în Lei prin virament bancar în contul prestatorului, contravaloarea serviciilor menționate și descrise în Articolul 4.1, punctul e), respectiv în Articolul 4.2, punctul e) (Cont IBAN Lei: RO36 BTRL RONC RT0C L425 3701).</p>
           </div>
@@ -228,7 +226,7 @@ export default function PrestariServContract({ data }: ContractProps) {
             <div>
               <p><strong>Art. 9.1</strong> Orice corespondență între părți, legată de executarea contractului, trebuie transmisă doar pe adresa de E-mail după cum urmează:</p>
               <div className="ml-4 space-y-2">
-                <p>a) adresa de E-mail a prestatorului: <strong>contact@dealerautomobile.ro</strong></p>
+                <p>a) adresa de E-mail a prestatorului: <strong>contact@automode.ro</strong></p>
                 <p>b) adresa de E-mail a clientului: <strong>{data?.email || '……………………………………………………………………………………'}</strong></p>
               </div>
             </div>
@@ -251,7 +249,7 @@ export default function PrestariServContract({ data }: ContractProps) {
           <div className="grid grid-cols-2 gap-8">
             <div className="text-center">
               <p className="mb-8"><strong>PRESTATOR,</strong></p>
-              <p className="mb-2"><strong>S.C. ALLY TRADING SOLUTIONS S.R.L.</strong></p>
+              <p className="mb-2"><strong>AUTOMODE S.R.L.</strong></p>
               
               {/* Prestator Signature */}
               <div className="mb-8 min-h-[100px] flex flex-col items-center justify-center">
@@ -278,7 +276,7 @@ export default function PrestariServContract({ data }: ContractProps) {
               </div>
               
               <p><strong>ADMINISTRATOR,</strong></p>
-              <p><strong>VALENTIN FLORIN</strong></p>
+              <p><strong>BU TEREZIA</strong></p>
             </div>
             <div className="text-center">
               <p className="mb-8"><strong>CLIENT,</strong></p>

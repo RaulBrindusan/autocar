@@ -171,19 +171,19 @@ export default function DashboardPage() {
               </p>
             </div>
             
-            {/* Notifications */}
-            <div className="flex items-center space-x-4">
+            {/* Notifications - Temporarily hidden */}
+            {/* <div className="flex items-center space-x-4">
               <NotificationSystem />
-            </div>
+            </div> */}
           </div>
 
-          {/* ID Document Upload - Show only if not uploaded */}
-          {!idDocumentUploaded && user && (
+          {/* ID Document Upload - Temporarily hidden */}
+          {/* {!idDocumentUploaded && user && (
             <IdDocumentUpload 
               userId={user.id}
               onUploadComplete={handleUploadComplete}
             />
-          )}
+          )} */}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12">

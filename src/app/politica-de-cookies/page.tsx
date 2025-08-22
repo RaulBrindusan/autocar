@@ -22,7 +22,7 @@ export default function CookiePolicy() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. Cum Utilizăm Cookie-urile</h2>
               <p className="text-gray-700 mb-4">
-                Automode utilizează cookie-uri pentru a îmbunătăți experiența dumneavoastră pe site-ul nostru. 
+                Automode SRL utilizează cookie-uri pentru a îmbunătăți experiența dumneavoastră pe site-ul nostru. 
                 Acestea ne ajută să:
               </p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
@@ -180,8 +180,8 @@ export default function CookiePolicy() {
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
                 <li>Email: privacy@automode.ro</li>
-                <li>Telefon: +40 123 456 789</li>
-                <li>Adresă: Str. Importului 123, București, România</li>
+                <li>Telefon: 0750462307</li>
+                <li>Adresă: Viorele 9, Satu Mare</li>
               </ul>
             </section>
 

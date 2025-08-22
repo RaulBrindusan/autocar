@@ -212,11 +212,11 @@ Trimis de pe automode.ro
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'Automode', 
-      email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
+      name: 'Automode SRL', 
+      email: process.env.EMAIL_FROM || 'contact@automode.ro' 
     }
     // Parse multiple email addresses
-    const emailToString = process.env.EMAIL_TO || 'contact@codemint.ro'
+    const emailToString = process.env.EMAIL_TO || 'contact@automode.ro'
     const emailAddresses = emailToString.split(',').map(email => email.trim())
     emailMessage.to = emailAddresses.map(email => ({ 
       email: email, 
@@ -332,11 +332,11 @@ Trimis de pe automode.ro
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'Automode', 
-      email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
+      name: 'Automode SRL', 
+      email: process.env.EMAIL_FROM || 'contact@automode.ro' 
     }
     // Parse multiple email addresses
-    const emailToString = process.env.EMAIL_TO || 'contact@codemint.ro'
+    const emailToString = process.env.EMAIL_TO || 'contact@automode.ro'
     const emailAddresses = emailToString.split(',').map(email => email.trim())
     emailMessage.to = emailAddresses.map(email => ({ 
       email: email, 
@@ -456,8 +456,8 @@ Email: ${process.env.EMAIL_FROM}
     emailMessage.htmlContent = htmlContent
     emailMessage.textContent = emailContent
     emailMessage.sender = { 
-      name: 'Automode', 
-      email: process.env.EMAIL_FROM || 'noreply@codemint.ro' 
+      name: 'Automode SRL', 
+      email: process.env.EMAIL_FROM || 'contact@automode.ro' 
     }
     emailMessage.to = [{ 
       email: data.email, 

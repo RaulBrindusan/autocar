@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/auth/AuthForm"
+import { EnhancedAuthForm } from "@/components/auth/EnhancedAuthForm"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function SignupPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <AuthForm mode="signup" />
+      <EnhancedAuthForm mode="signup" />
     </div>
   )
 }

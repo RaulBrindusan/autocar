@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: [
         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
-        ...(process.env.NODE_ENV === 'production' ? ['https://your-domain.com'] : [])
+        ...(process.env.NODE_ENV === 'production' ? ['https://automode.ro'] : [])
       ],
     },
   },
@@ -142,7 +142,7 @@ const nextConfig: NextConfig = {
             value: 'http',
           },
         ],
-        destination: 'https://your-domain.com/:path*',
+        destination: 'https://automode.ro/:path*',
         permanent: true,
       },
     ] : []

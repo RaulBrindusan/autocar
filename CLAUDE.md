@@ -42,7 +42,8 @@ npm run lint
 - **cost_estimates** - Saved cost calculations from the calculator
 - **openlane_submissions** - OpenLane auction link submissions
 - **member_requests** - Membership applications with approval workflow
-- **contracts** - Contract management with digital signature support
+- **member_car_requests** - Comprehensive car import requests for registered members with detailed vehicle specifications, condition tracking, and preference management
+- **contracts** - Contract management with digital signature support (prestari servicii type)
 - **user_documents** - Document storage with OCR processing capabilities
 
 All tables use Row Level Security (RLS) with proper access policies.
@@ -105,7 +106,9 @@ The project uses Supabase SSR package for server-side rendering compatibility. C
 - `middleware.ts` - Middleware helper for authentication
 
 ### MCP Server Integration
-Configured for AI assistant interactions with Supabase. The `.mcp.json` file contains server configuration for Claude Desktop integration.
+Configured for AI assistant interactions with Supabase and Context7. The `.mcp.json` file contains server configuration for Claude Desktop integration:
+- **Supabase MCP**: Database operations, user management, and admin functions
+- **Context7**: Documentation retrieval and library reference lookup
 
 ## Coding Conventions
 
@@ -150,19 +153,26 @@ Uses Brevo (formerly SendinBlue) for transactional emails:
 - **Image Processing**: html2canvas for capturing digital signatures
 
 ### Next.js Configuration
-- **Image Optimization**: Configured remote patterns for OpenLane, Copart, and Unsplash images
+- **Image Optimization**: Configured remote patterns for OpenLane, Copart, Unsplash, and Supabase storage
+- **Security Headers**: Comprehensive security headers including HSTS, XSS protection, and CSP
 - **Turbopack**: Used for faster development builds
 - **App Router**: Utilizes Next.js 15 App Router architecture
+- **API Timeouts**: OpenLane scraping endpoint configured with 30s timeout via vercel.json
 
 ## Current Development Rules
 
-1. First think through the problem, read the codebase for relevant files, and write a plan to tasks/todo.md
-2. The plan should have a list of todo items that you can check off as you complete them
-3. Before you begin working, check in with me and I will verify the plan
-4. Then, begin working on the todo items, marking them as complete as you go
-5. Please every step of the way just give me a high level explanation of what changes you made
-6. Make every task and code change you do as simple as possible. We want to avoid making any massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity
-7. Finally, add a review section to the todo.md file with a summary of the changes you made and any other relevant information
+1. **Planning Phase**: First think through the problem, read the codebase for relevant files, and write a plan using TodoWrite tool
+2. **Task Management**: The plan should have a list of todo items that you can check off as you complete them
+3. **Approval Process**: Before you begin working, check in with me and I will verify the plan
+4. **Execution**: Then, begin working on the todo items, marking them as complete as you go
+5. **Communication**: Please every step of the way just give me a high level explanation of what changes you made
+6. **Simplicity First**: Make every task and code change you do as simple as possible. We want to avoid making any massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity
+7. **Documentation**: Finally, add a review section to the todo.md file with a summary of the changes you made and any other relevant information
+
+### Lint and Build Validation
+ALWAYS run lint and build commands after significant changes:
+- `npm run lint` - ESLint validation
+- `npm run build` - Production build verification
 
 ### Security Review Process
 After completing any work, check through all code to ensure:
@@ -173,3 +183,17 @@ After completing any work, check through all code to ensure:
 
 ### Learning Review Process
 When requested, explain functionality and code changes in detail, walking through what was changed and how it works, acting like a senior engineer teaching code.
+
+## Important Context Notes
+
+### Project Architecture Patterns
+- **Component Organization**: Features are organized by domain (auth, admin, car-selection, dashboard, etc.)
+- **Form Validation**: Consistent use of React Hook Form + Zod for all user inputs
+- **State Management**: React Context for theme and language preferences, Supabase for data persistence
+- **Error Handling**: Consistent error boundaries and toast notifications via react-hot-toast
+- **Type Safety**: Full TypeScript coverage with generated database types from Supabase
+
+### Development Dependencies
+- **Playwright**: Available for E2E testing (not currently configured)
+- **ESLint**: Next.js configuration with custom rules
+- **Tailwind CSS v4**: Latest version with PostCSS integration

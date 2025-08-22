@@ -14,7 +14,7 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. Informații Generale</h2>
               <p className="text-gray-700 mb-4">
                 Acești Termeni și Condiții ("Termeni") reglementează utilizarea site-ului web automode.ro 
-                ("Site-ul") și serviciile oferite de Automode ("noi", "Compania").
+                ("Site-ul") și serviciile oferite de Automode SRL ("noi", "Compania").
               </p>
               <p className="text-gray-700 mb-4">
                 Prin accesarea și utilizarea Site-ului nostru, acceptați în totalitate acești Termeni. 
@@ -25,7 +25,7 @@ export default function TermsAndConditions() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. Serviciile Noastre</h2>
               <p className="text-gray-700 mb-4">
-                Automode oferă servicii de intermediere pentru importul de vehicule din Europa, incluzând:
+                Automode SRL oferă servicii de intermediere pentru importul de vehicule din Europa, incluzând:
               </p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
                 <li>Găsirea și selecția vehiculelor conform cerințelor clientului</li>
@@ -60,7 +60,7 @@ export default function TermsAndConditions() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">5. Limitarea Răspunderii</h2>
               <p className="text-gray-700 mb-4">
-                Automode își asumă responsabilitatea pentru serviciile prestate în conformitate cu 
+                Automode SRL își asumă responsabilitatea pentru serviciile prestate în conformitate cu 
                 legislația română în vigoare. Nu suntem responsabili pentru:
               </p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
@@ -74,7 +74,7 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">6. Proprietatea Intelectuală</h2>
               <p className="text-gray-700 mb-4">
                 Conținutul Site-ului, inclusiv texte, imagini, logo-uri și design, este protejat de 
-                drepturile de proprietate intelectuală și aparține Automode sau licențiatorilor săi.
+                drepturile de proprietate intelectuală și aparține Automode SRL sau licențiatorilor săi.
               </p>
             </section>
 
@@ -108,9 +108,11 @@ export default function TermsAndConditions() {
                 Pentru întrebări privind acești Termeni, ne puteți contacta la:
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
+                <li>Denumire: Automode SRL</li>
+                <li>Administrator: Bu Terezia</li>
                 <li>Email: contact@automode.ro</li>
-                <li>Telefon: +40 123 456 789</li>
-                <li>Adresă: Str. Importului 123, București, România</li>
+                <li>Telefon: 0750462307</li>
+                <li>Adresă: Viorele 9, Satu Mare</li>
               </ul>
             </section>
           </div>

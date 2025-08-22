@@ -27,10 +27,11 @@ export default function PrivacyPolicy() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. Operatorul de Date</h2>
               <p className="text-gray-700 mb-4">Operatorul de date cu caracter personal este:</p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                <li><strong>Denumire:</strong> Automode</li>
+                <li><strong>Denumire:</strong> Automode SRL</li>
+                <li><strong>Administrator:</strong> Bu Terezia</li>
                 <li><strong>Email:</strong> contact@automode.ro</li>
-                <li><strong>Telefon:</strong> +40 123 456 789</li>
-                <li><strong>Adresă:</strong> Str. Importului 123, București, România</li>
+                <li><strong>Telefon:</strong> 0750462307</li>
+                <li><strong>Adresă:</strong> Viorele 9, Satu Mare</li>
               </ul>
             </section>
 
@@ -165,7 +166,7 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
                 <li>Email: privacy@automode.ro</li>
-                <li>Telefon: +40 123 456 789</li>
+                <li>Telefon: 0750462307</li>
               </ul>
               <p className="text-gray-700 mb-4">
                 De asemenea, aveți dreptul să depuneți o plângere la Autoritatea Națională de 

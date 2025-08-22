@@ -59,7 +59,7 @@ export default function GDPRPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Exercitarea Drepturilor</h2>
             <p className="text-gray-700 leading-relaxed">
-              Pentru a vă exercita drepturile GDPR, vă rugăm să ne contactați la: noreply@codemint.ro
+              Pentru a vă exercita drepturile GDPR, vă rugăm să ne contactați la: contact@automode.ro
             </p>
             <p className="text-gray-700 leading-relaxed mt-4">
               Vom răspunde solicitărilor dumneavoastră în termen de 30 de zile de la primirea acestora.

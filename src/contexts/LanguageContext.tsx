@@ -148,7 +148,7 @@ const translations = {
     'footer.terms_conditions': 'Termeni și Condiții',
     'footer.privacy_policy': 'Politica de Confidențialitate',
     'footer.cookies_policy': 'Politica de Cookie-uri',
-    'footer.copyright': 'Made by Codemint',
+    'footer.copyright': 'Automode SRL',
 
     // Dashboard Sidebar
     'sidebar.dashboard': 'Dashboard',
@@ -549,7 +549,7 @@ const translations = {
     'footer.terms_conditions': 'Terms and Conditions',
     'footer.privacy_policy': 'Privacy Policy',
     'footer.cookies_policy': 'Cookies Policy',
-    'footer.copyright': 'Made by Codemint',
+    'footer.copyright': 'Automode SRL',
 
     // Dashboard Sidebar
     'sidebar.dashboard': 'Dashboard',
