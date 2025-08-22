@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 
 interface ContractData {
   // Contract identification
@@ -255,9 +256,11 @@ export default function PrestariServContract({ data }: ContractProps) {
               <div className="mb-8 min-h-[100px] flex flex-col items-center justify-center">
                 {data?.prestator_signature ? (
                   <div className="p-2">
-                    <img 
+                    <Image 
                       src={data.prestator_signature} 
                       alt="Semnătura Prestator" 
+                      width={200}
+                      height={80}
                       className="max-w-[200px] max-h-[80px] object-contain"
                       style={{
                         filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
@@ -285,9 +288,11 @@ export default function PrestariServContract({ data }: ContractProps) {
               <div className="mb-8 min-h-[100px] flex flex-col items-center justify-center">
                 {data?.client_signature ? (
                   <div className="p-2">
-                    <img 
+                    <Image 
                       src={data.client_signature} 
                       alt="Semnătura Client" 
+                      width={200}
+                      height={80}
                       className="max-w-[200px] max-h-[80px] object-contain"
                       style={{
                         filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
@@ -323,9 +328,11 @@ export default function PrestariServContract({ data }: ContractProps) {
             <div className="mt-4 flex justify-center">
               {data?.client_signature ? (
                 <div className="p-2">
-                  <img 
+                  <Image 
                     src={data.client_signature} 
                     alt="Semnătura Client Confirmare" 
+                    width={150}
+                    height={60}
                     className="max-w-[150px] max-h-[60px] object-contain"
                     style={{
                       filter: 'hue-rotate(210deg) saturate(2) brightness(0.8)',
