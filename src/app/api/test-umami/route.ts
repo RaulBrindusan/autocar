@@ -19,6 +19,13 @@ export async function GET() {
     
     console.log('Testing URL:', url)
     
+    if (!config.apiToken) {
+      return NextResponse.json({
+        success: false,
+        error: 'UMAMI_API_TOKEN not configured'
+      }, { status: 400 })
+    }
+
     const response = await fetch(url, {
       headers: {
         'x-umami-api-key': config.apiToken,
