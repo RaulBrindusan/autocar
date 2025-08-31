@@ -94,7 +94,17 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
       
       // Turnstile validation (skip in development)
       const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
-      if (!isDevelopment && !turnstile.isVerified) {
+      const hasTurnstileKey = !!process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
+      
+      console.log('Turnstile validation check:', {
+        isDevelopment,
+        hasTurnstileKey,
+        turnstileVerified: turnstile.isVerified,
+        turnstileToken: turnstile.token
+      })
+      
+      // Only require Turnstile if we have a site key and not in development
+      if (!isDevelopment && hasTurnstileKey && !turnstile.isVerified) {
         errors.turnstile = "Vă rugăm să completați verificarea de securitate"
       }
     } else {
@@ -109,12 +119,29 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Form submission started')
     setLoading(true)
     setError(null)
     setMessage(null)
     
+    // Debug form state
+    console.log('Form state:', {
+      email,
+      fullName,
+      acceptTerms,
+      acceptPrivacy,
+      turnstileVerified: turnstile.isVerified,
+      turnstileToken: turnstile.token,
+      mode
+    })
+    
     // Validate form
-    if (!validateForm()) {
+    const isValid = validateForm()
+    console.log('Form validation result:', isValid)
+    console.log('Field errors:', fieldErrors)
+    
+    if (!isValid) {
+      console.log('Form validation failed, stopping submission')
       setLoading(false)
       return
     }
@@ -134,6 +161,8 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
           turnstileToken: turnstile.token
         }
 
+        console.log('Making API request to /api/auth/signup with data:', signupData)
+        
         const response = await fetch('/api/auth/signup', {
           method: 'POST',
           headers: {
@@ -142,7 +171,11 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
           body: JSON.stringify(signupData),
         })
 
+        console.log('API response status:', response.status)
+        console.log('API response headers:', Object.fromEntries(response.headers.entries()))
+
         const result = await response.json()
+        console.log('API response data:', result)
 
         if (!response.ok) {
           // Handle specific error codes
@@ -501,7 +534,7 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
 
           <Button
             type="submit"
-            disabled={loading || (mode === "signup" && !turnstile.isVerified && !!turnstileSiteKey && !(process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'))}
+            disabled={loading}
             className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
