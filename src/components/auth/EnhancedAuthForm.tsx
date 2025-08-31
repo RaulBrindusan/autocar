@@ -142,6 +142,8 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
     
     if (!isValid) {
       console.log('Form validation failed, stopping submission')
+      // Force show validation errors on screen
+      setError(`Erori de validare: ${Object.values(fieldErrors).join(', ')}`)
       setLoading(false)
       return
     }
