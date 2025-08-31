@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button"
 import { Settings, Shield } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { UserProfile } from "@/lib/auth-utils"
+import { trackAuth } from "@/lib/umami"
 
 export function UserMenu() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -137,6 +138,7 @@ export function UserMenu() {
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
+      trackAuth.logout()
       router.push('/login')
     } catch (err) {
       console.error('Error signing out:', err)

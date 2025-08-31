@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button"
 import { Link2, ExternalLink, AlertCircle, CheckCircle2, Loader2, User, Phone } from "lucide-react"
 import { CarDataDisplay } from "./CarDataDisplay"
 import toast from "react-hot-toast"
+import { trackOpenLane } from "@/lib/umami"
 
 const openLaneSchema = z.object({
   url: z.string()
@@ -124,6 +125,9 @@ export function OpenLaneForm() {
           duration: 5000,
           position: 'top-center',
         })
+        
+        // Track the successful OpenLane link submission
+        trackOpenLane.linkSubmitted(data.url)
       } else {
         // Just extract the data first
         await extractCarData(data.url)

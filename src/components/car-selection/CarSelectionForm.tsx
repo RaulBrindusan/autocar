@@ -10,6 +10,7 @@ import { Car, DollarSign, Settings, Calendar, Fuel, Cog, Gauge } from "lucide-re
 import toast from "react-hot-toast"
 import { createClient } from "@/lib/supabase/client"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { trackCarSelection, trackCarRequest } from "@/lib/umami"
 
 // Schema will be created dynamically with translations
 type CarSelectionData = {
@@ -269,6 +270,9 @@ export function CarSelectionForm() {
     if (option) {
       setValue('make', option.value)
       fetchModels(option.value)
+      
+      // Track car make selection
+      trackCarSelection.makeSelected(option.value)
     }
   }
 
@@ -276,6 +280,11 @@ export function CarSelectionForm() {
     setSelectedModel(option)
     if (option) {
       setValue('model', option.value)
+      
+      // Track car model selection
+      if (selectedMake) {
+        trackCarSelection.modelSelected(selectedMake.value, option.value)
+      }
     }
   }
 
@@ -283,6 +292,9 @@ export function CarSelectionForm() {
     setSelectedYear(option)
     if (option) {
       setValue('year', parseInt(option.value))
+      
+      // Track car year selection
+      trackCarSelection.yearSelected(option.value)
     }
   }
 
@@ -474,6 +486,12 @@ export function CarSelectionForm() {
           background: '#10B981',
           color: 'white',
         },
+      })
+
+      // Track successful member car request submission
+      trackCarRequest.memberRequestSubmitted({
+        budget: data.budget,
+        carType: `${data.make} ${data.model} ${data.year}`
       })
 
       // Reset form after successful submission

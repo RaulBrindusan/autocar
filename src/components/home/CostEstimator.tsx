@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Calculator } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/Button"
+import { trackCostCalculator } from "@/lib/umami"
 
 export function CostEstimator() {
   const [carPrice, setCarPrice] = useState("")
@@ -29,6 +30,13 @@ export function CostEstimator() {
     
     const total = price + importTax + vat + serviceFee + shipping + registration
     setEstimatedCost(total)
+    
+    // Track the cost calculation event
+    trackCostCalculator.calculate({
+      make: 'unknown',
+      model: 'unknown', 
+      price: price
+    })
   }
 
   const saveEstimate = async () => {
@@ -64,6 +72,12 @@ export function CostEstimator() {
       } else {
         setError(null)
         alert("Estimarea a fost salvată!")
+        
+        // Track the save estimate event
+        trackCostCalculator.saveEstimate({
+          totalCost: estimatedCost,
+          currency: 'EUR'
+        })
       }
     } catch (err) {
       console.error('Error saving estimate:', err)

@@ -79,17 +79,38 @@ Uses Supabase Auth with automatic user profile creation via database triggers. P
 ## Development Workflow
 
 ### Environment Setup
-Required environment variables:
+Required environment variables (see `.env.example` for complete reference):
 ```
+# Core Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_ACCESS_TOKEN=your_personal_access_token (for MCP)
 SUPABASE_PROJECT_REF=your_project_reference (for MCP)
-BREVO_API_KEY=your_brevo_api_key (for email notifications)
-AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=your_azure_ai_endpoint (for OCR)
-AZURE_DOCUMENT_INTELLIGENCE_KEY=your_azure_ai_key (for OCR)
-AWS_ACCESS_KEY_ID=your_aws_access_key (for S3 storage)
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key (for S3 storage)
+
+# Email Configuration (Brevo)
+BREVO_API_KEY=your_brevo_api_key
+EMAIL_FROM=contact@automode.ro
+EMAIL_TO=contact@automode.ro
+
+# Document Processing (OCR)
+AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=your_azure_ai_endpoint
+AZURE_DOCUMENT_INTELLIGENCE_KEY=your_azure_ai_key
+
+# File Storage (AWS S3)
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+
+# Optional: Rate Limiting (Upstash Redis)
+UPSTASH_REDIS_REST_URL=your_upstash_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+
+# Optional: Bot Protection (Cloudflare Turnstile)
+NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=your_turnstile_site_key
+CLOUDFLARE_TURNSTILE_SECRET=your_turnstile_secret_key
+
+# Application Configuration
+NEXT_PUBLIC_SITE_URL=https://automode.ro
+NODE_ENV=production
 ```
 
 ### Database Changes
@@ -106,9 +127,10 @@ The project uses Supabase SSR package for server-side rendering compatibility. C
 - `middleware.ts` - Middleware helper for authentication
 
 ### MCP Server Integration
-Configured for AI assistant interactions with Supabase and Context7. The `.mcp.json` file contains server configuration for Claude Desktop integration:
-- **Supabase MCP**: Database operations, user management, and admin functions
+Configured for AI assistant interactions with Context7. The `.mcp.json` file contains server configuration for Claude Desktop integration:
 - **Context7**: Documentation retrieval and library reference lookup
+
+**Note**: Supabase MCP server is available but requires additional configuration in Claude Desktop with your project credentials.
 
 ## Coding Conventions
 
@@ -197,3 +219,5 @@ When requested, explain functionality and code changes in detail, walking throug
 - **Playwright**: Available for E2E testing (not currently configured)
 - **ESLint**: Next.js configuration with custom rules
 - **Tailwind CSS v4**: Latest version with PostCSS integration
+- **Upstash Redis**: Optional rate limiting (fallback to memory if not configured)
+- **Cloudflare Turnstile**: Optional bot protection (skipped if not configured)

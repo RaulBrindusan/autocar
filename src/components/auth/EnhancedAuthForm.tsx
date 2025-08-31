@@ -92,8 +92,9 @@ export function EnhancedAuthForm({ mode }: AuthFormProps) {
         errors.password = passwordValidation.feedback[0] || "Parola nu respectă cerințele"
       }
       
-      // Turnstile validation
-      if (!turnstile.isVerified) {
+      // Turnstile validation (skip in development)
+      const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
+      if (!isDevelopment && !turnstile.isVerified) {
         errors.turnstile = "Vă rugăm să completați verificarea de securitate"
       }
     } else {

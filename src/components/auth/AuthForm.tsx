@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/Button"
 import { Mail, Lock, User, AlertCircle, Phone } from "lucide-react"
+import { trackAuth } from "@/lib/umami"
 
 interface AuthFormProps {
   mode: "login" | "signup"
@@ -26,6 +27,13 @@ export function AuthForm({ mode }: AuthFormProps) {
     setLoading(true)
     setError(null)
     setMessage(null)
+    
+    // Track auth attempt
+    if (mode === "signup") {
+      trackAuth.signupStarted()
+    } else {
+      trackAuth.loginStarted()
+    }
 
     // Check if Supabase is configured
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -51,6 +59,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         if (error) throw error
         
         setMessage("Te rugăm să verifici emailul pentru a-ți confirma contul.")
+        trackAuth.signupCompleted()
       } else {
         const { error, data } = await supabase.auth.signInWithPassword({
           email,
@@ -87,6 +96,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           router.push("/dashboard")
         }
         
+        trackAuth.loginCompleted()
         router.refresh()
       }
     } catch (error: any) {
