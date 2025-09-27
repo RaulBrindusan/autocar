@@ -4,7 +4,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/Button"
 import { CostEstimator } from "@/components/home/CostEstimator"
-import { InternationalAuctions } from "@/components/home/InternationalAuctions"
 import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle, Handshake, DollarSign, FileText, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -159,8 +158,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* International Auctions Section */}
-      <InternationalAuctions />
 
       {/* How It Works Section */}
       <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
