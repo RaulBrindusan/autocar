@@ -5,9 +5,11 @@ import Link from "next/link"
 import { usePageTitle } from "@/hooks/usePageTitle"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
+import { useTheme } from "@/contexts/ThemeContext"
 
 export default function CalculatorPage() {
   usePageTitle("Calculator Import Auto | Calculează Costurile de Import")
+  const { theme } = useTheme()
   
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
@@ -41,23 +43,23 @@ export default function CalculatorPage() {
   const calculatedVat = calculateVat()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={`min-h-screen py-8 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Calculator Cost</h1>
-          <p className="mt-2 text-gray-600">Calculează costurile pentru importul mașinii tale</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Calculator Cost</h1>
+          <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Calculează costurile pentru importul mașinii tale</p>
         </div>
 
-        <Card className="w-full">
+        <Card className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
           <CardHeader>
-            <div className="flex space-x-1 rounded-lg bg-gray-100 p-1 border border-gray-200">
+            <div className={`flex space-x-1 rounded-lg p-1 border ${theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-100 border-gray-200'}`}>
               <Button
                 variant="ghost"
                 onClick={() => setActiveTab("fara-tva")}
                 className={`flex-1 border ${
                   activeTab === "fara-tva"
-                    ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                    : "text-gray-700 border-transparent hover:bg-gray-50"
+                    ? `bg-blue-600 text-white border-blue-700 shadow-sm ${theme === 'dark' ? 'bg-blue-500 border-blue-600' : ''}`
+                    : `border-transparent ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-50'}`
                 }`}
               >
                 Fără TVA
@@ -67,8 +69,8 @@ export default function CalculatorPage() {
                 onClick={() => setActiveTab("cu-tva")}
                 className={`flex-1 border ${
                   activeTab === "cu-tva"
-                    ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                    : "text-gray-700 border-transparent hover:bg-gray-50"
+                    ? `bg-blue-600 text-white border-blue-700 shadow-sm ${theme === 'dark' ? 'bg-blue-500 border-blue-600' : ''}`
+                    : `border-transparent ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-50'}`
                 }`}
               >
                 Cu TVA
@@ -80,7 +82,7 @@ export default function CalculatorPage() {
             {activeTab === "fara-tva" && (
               <div className="space-y-4 pt-4">
                 <div>
-                  <label htmlFor="price" className="block text-sm font-medium text-black mb-2">
+                  <label htmlFor="price" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
                     Preț (EUR)
                   </label>
                   <input
@@ -89,12 +91,12 @@ export default function CalculatorPage() {
                     placeholder="Introdu prețul"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-900 text-black"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${theme === 'dark' ? 'border-gray-600 placeholder-gray-400 text-gray-100 bg-gray-700' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white'}`}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="taxe-openlane" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="taxe-openlane" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Taxe OpenLane (EUR)
                   </label>
                   <input
@@ -102,15 +104,15 @@ export default function CalculatorPage() {
                     type="number"
                     value={taxeOpenlane}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     Prețul este aproximativ deoarece diferă pentru fiecare țară
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="vat" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="vat" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     TVA 21% (EUR)
                   </label>
                   <input
@@ -118,15 +120,15 @@ export default function CalculatorPage() {
                     type="number"
                     value={calculatedVat.toFixed(2)}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-blue-50 text-blue-700 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-blue-900/30 text-blue-300' : 'border-gray-300 bg-blue-50 text-blue-700'}`}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     TVA se calculează pe baza prețului + taxe OpenLane (21%)
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="transport" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="transport" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Transport (EUR)
                   </label>
                   <input
@@ -134,12 +136,12 @@ export default function CalculatorPage() {
                     type="number"
                     value={transport}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="comision" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="comision" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Comision (EUR)
                   </label>
                   <input
@@ -147,27 +149,27 @@ export default function CalculatorPage() {
                     type="number"
                     value={comision}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                 </div>
 
-                <div className="border-t pt-4 mt-6">
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                <div className={`border-t pt-4 mt-6 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-lg font-semibold text-gray-900">Total:</span>
-                      <span className="text-xl font-bold text-blue-600">
+                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Total:</span>
+                      <span className={`text-xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
                         {price ? total.toFixed(2) : "0.00"} EUR
                       </span>
                     </div>
-                    
+
                     {price && (
-                      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <p className="text-sm text-gray-700 mb-2">
+                      <div className={`mt-4 p-3 border rounded-lg ${theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700' : 'bg-yellow-50 border-yellow-200'}`}>
+                        <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
                         </p>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-700">Avans necesar (20%):</span>
-                          <span className="text-lg font-bold text-orange-600">{advance.toFixed(2)} EUR</span>
+                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Avans necesar (20%):</span>
+                          <span className={`text-lg font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>{advance.toFixed(2)} EUR</span>
                         </div>
                       </div>
                     )}
@@ -179,7 +181,7 @@ export default function CalculatorPage() {
             {activeTab === "cu-tva" && (
               <div className="space-y-4 pt-4">
                 <div>
-                  <label htmlFor="price-cu-tva" className="block text-sm font-medium text-black mb-2">
+                  <label htmlFor="price-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
                     Preț (EUR)
                   </label>
                   <input
@@ -188,12 +190,12 @@ export default function CalculatorPage() {
                     placeholder="Introdu prețul"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-900 text-black"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${theme === 'dark' ? 'border-gray-600 placeholder-gray-400 text-gray-100 bg-gray-700' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white'}`}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="taxe-openlane-cu-tva" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="taxe-openlane-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Taxe OpenLane (EUR)
                   </label>
                   <input
@@ -201,15 +203,15 @@ export default function CalculatorPage() {
                     type="number"
                     value={taxeOpenlane}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                     Prețul este aproximativ deoarece diferă pentru fiecare țară
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="transport-cu-tva" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="transport-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Transport (EUR)
                   </label>
                   <input
@@ -217,12 +219,12 @@ export default function CalculatorPage() {
                     type="number"
                     value={transport}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="comision-cu-tva" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="comision-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     Comision (EUR)
                   </label>
                   <input
@@ -230,27 +232,27 @@ export default function CalculatorPage() {
                     type="number"
                     value={comision}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                 </div>
 
-                <div className="border-t pt-4 mt-6">
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                <div className={`border-t pt-4 mt-6 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-lg font-semibold text-gray-900">Total:</span>
-                      <span className="text-xl font-bold text-blue-600">
+                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Total:</span>
+                      <span className={`text-xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
                         {price ? (total - calculatedVat).toFixed(2) : "0.00"} EUR
                       </span>
                     </div>
-                    
+
                     {price && (
-                      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <p className="text-sm text-gray-700 mb-2">
+                      <div className={`mt-4 p-3 border rounded-lg ${theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700' : 'bg-yellow-50 border-yellow-200'}`}>
+                        <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                           <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
                         </p>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-700">Avans necesar (20%):</span>
-                          <span className="text-lg font-bold text-orange-600">{advance.toFixed(2)} EUR</span>
+                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Avans necesar (20%):</span>
+                          <span className={`text-lg font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>{advance.toFixed(2)} EUR</span>
                         </div>
                       </div>
                     )}
@@ -263,24 +265,24 @@ export default function CalculatorPage() {
 
         {/* Call to Action Section */}
         <div className="mt-12 max-w-2xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 text-white text-center shadow-xl">
+          <div className={`rounded-2xl p-8 text-white text-center shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-blue-700 to-blue-800' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
             <div className="mb-6">
               <h3 className="text-2xl font-bold mb-3">Gata să Îți Cumperi Mașina de Vis?</h3>
-              <p className="text-blue-100 leading-relaxed">
-                Acum că știi costurile exacte, creează-ți un cont gratuit și începe procesul de comandă. 
+              <p className={`leading-relaxed ${theme === 'dark' ? 'text-blue-200' : 'text-blue-100'}`}>
+                Acum că știi costurile exacte, creează-ți un cont gratuit și începe procesul de comandă.
                 Echipa noastră te va ghida pas cu pas spre mașina perfectă.
               </p>
             </div>
-            
+
             <div className="flex justify-center">
-              <Button asChild size="lg" className="bg-gray-50 text-blue-700 hover:bg-gray-100 hover:text-blue-800 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Button asChild size="lg" className={`font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg ${theme === 'dark' ? 'bg-gray-100 text-blue-800 hover:bg-white hover:text-blue-900' : 'bg-gray-50 text-blue-700 hover:bg-gray-100 hover:text-blue-800'}`}>
                 <Link href="/signup">
                   Creează Cont Gratuit
                 </Link>
               </Button>
             </div>
-            
-            <div className="mt-6 text-sm text-blue-200">
+
+            <div className={`mt-6 text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-200'}`}>
               ✓ Cont gratuit • ✓ Fără obligații • ✓ Suport personalizat
             </div>
           </div>
