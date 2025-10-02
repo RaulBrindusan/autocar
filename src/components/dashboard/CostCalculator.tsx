@@ -10,8 +10,7 @@ export function CostCalculator() {
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
   const [taxeOpenlane] = useState("450")
-  const [transport, setTransport] = useState("")
-  const [garantie] = useState("200")
+  const [transport] = useState("800")
   const [comision] = useState("500")
 
   const calculateTotal = () => {
@@ -19,10 +18,9 @@ export function CostCalculator() {
     const taxeNum = parseFloat(taxeOpenlane) || 0
     const vatNum = calculateVat()
     const transportNum = parseFloat(transport) || 0
-    const garantieNum = parseFloat(garantie) || 0
     const comisionNum = parseFloat(comision) || 0
-    
-    return priceNum + taxeNum + vatNum + transportNum + garantieNum + comisionNum
+
+    return priceNum + taxeNum + vatNum + transportNum + comisionNum
   }
 
   const calculateVat = () => {
@@ -128,21 +126,7 @@ export function CostCalculator() {
                 <input
                   id="transport"
                   type="number"
-                  placeholder={t('calc.transport_placeholder')}
                   value={transport}
-                  onChange={(e) => setTransport(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-black text-black"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="garantie" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('calc.warranty')} (EUR)
-                </label>
-                <input
-                  id="garantie"
-                  type="number"
-                  value={garantie}
                   disabled
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
@@ -225,21 +209,7 @@ export function CostCalculator() {
                 <input
                   id="transport-cu-tva"
                   type="number"
-                  placeholder="Introdu costul transportului"
                   value={transport}
-                  onChange={(e) => setTransport(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-black text-black"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="garantie-cu-tva" className="block text-sm font-medium text-gray-700 mb-2">
-                  Garanție (EUR)
-                </label>
-                <input
-                  id="garantie-cu-tva"
-                  type="number"
-                  value={garantie}
                   disabled
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
