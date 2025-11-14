@@ -7,8 +7,8 @@ import { Footer } from './Footer'
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
-  // Hide header and footer on login page
-  const hideLayout = pathname === '/login'
+  // Hide header and footer on login page and dashboard
+  const hideLayout = pathname === '/login' || pathname?.startsWith('/dashboard')
 
   if (hideLayout) {
     return <>{children}</>
