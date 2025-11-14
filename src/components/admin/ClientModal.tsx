@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, Users, Mail, Phone, Calendar, Car, Euro, Plus, Edit, Save, Trash2, Settings, Fuel, Cog, Gauge } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { DeleteConfirmModal } from '@/components/ui/DeleteConfirmModal'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 import Select from 'react-select'
 
 interface Option {

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+// import { createClient } from '@/lib/supabase/server'
 import { createWorker } from 'tesseract.js'
 import DocumentIntelligence, { getLongRunningPoller } from '@azure-rest/ai-document-intelligence'
 import { AzureKeyCredential } from '@azure/core-auth'

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Search, User, ChevronDown } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 
 interface UserProfile {
   id: string

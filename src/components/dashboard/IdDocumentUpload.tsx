@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 import { Upload, FileText, CheckCircle, AlertCircle, X } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 

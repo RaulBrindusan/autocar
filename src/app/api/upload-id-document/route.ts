@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
-import { createClient } from '@/lib/supabase/server'
+// import { createClient } from '@/lib/supabase/server'
 import { v4 as uuidv4 } from 'uuid'
 import { processDocumentWithOCR } from '@/lib/documentProcessor'
 import { 

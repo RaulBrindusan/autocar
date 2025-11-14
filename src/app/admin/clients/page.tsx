@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth-utils"
+// import { requireAdmin } from "@/lib/auth-utils"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { ClientsGrid } from "@/components/admin/ClientsGrid"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { 
   Gift, 
@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import toast from "react-hot-toast"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
+// import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface Offer {
   id: string

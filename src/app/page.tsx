@@ -7,7 +7,7 @@ import { CostEstimator } from "@/components/home/CostEstimator"
 import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle, Handshake, DollarSign, FileText, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from 'next/navigation'
 
 // Car Carousel Component
@@ -45,42 +45,16 @@ const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, ba
 export default function Home() {
   const { t } = useLanguage()
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
+  const { user, loading } = useAuth()
 
   useEffect(() => {
-    const checkUserAndRedirect = async () => {
-      try {
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        
-        if (user) {
-          // Get user profile with role
-          const { data: profile } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-          
-          if (profile?.role === 'admin') {
-            router.replace('/admin')
-            return
-          } else if (profile?.role === 'user') {
-            router.replace('/dashboard')
-            return
-          }
-        }
-        
-        setIsLoading(false)
-      } catch (error) {
-        console.error('Error checking user:', error)
-        setIsLoading(false)
-      }
+    if (!loading && user) {
+      // Redirect logged in users to dashboard
+      router.replace('/dashboard')
     }
+  }, [user, loading, router])
 
-    checkUserAndRedirect()
-  }, [router])
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

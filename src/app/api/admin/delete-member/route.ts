@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server"
-import { createAdminClient } from "@/lib/supabase/admin"
+// import { createClient } from "@/lib/supabase/server"
+// import { createAdminClient } from "@/lib/supabase/admin"
 import { NextRequest, NextResponse } from "next/server"
 
 // DELETE - Delete a member and their requests (admin only)

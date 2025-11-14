@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Users, Plus, Search, Filter, User, Mail, Phone, Shield, Calendar, Eye, Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { UsersModal } from './UsersModal'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 
 interface User {
   id: string

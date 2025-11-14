@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Car, User, Mail, Phone, Calendar, Euro, Fuel, Cog, Gauge, FileText, Save, Trash2, Edit, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 import Select from 'react-select'
 
 interface CarRequest {

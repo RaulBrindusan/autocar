@@ -18,9 +18,9 @@ import {
   UserCheck,
   FolderOpen
 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
-import type { UserProfile } from "@/lib/auth-utils"
+// import { createClient } from "@/lib/supabase/client"
+// import type { User as SupabaseUser } from "@supabase/supabase-js"
+// import type { UserProfile } from "@/lib/auth-utils"
 import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal"
 
 interface SidebarItem {

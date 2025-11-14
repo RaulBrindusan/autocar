@@ -8,7 +8,7 @@ import PrestariServContract from '@/app/contracte/prestariserv'
 import { ContractModal } from '@/components/admin/ContractModal'
 import DigitalSignature from '@/components/ui/DigitalSignature'
 import { generatePDFFromHTML } from '@/lib/pdf-utils'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 import { Eye, Download, Plus, FileText, Trash2, Edit, PenTool, Send } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 

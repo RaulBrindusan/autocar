@@ -8,7 +8,7 @@ import Select from "react-select"
 import { Button } from "@/components/ui/Button"
 import { Car, DollarSign, Settings, Calendar, Fuel, Cog, Gauge } from "lucide-react"
 import toast from "react-hot-toast"
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { trackCarSelection, trackCarRequest } from "@/lib/umami"
 

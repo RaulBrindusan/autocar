@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, FileText, User, Phone, Mail, CreditCard, Calendar, Save, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { UserSearchDropdown } from '@/components/ui/UserSearchDropdown'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client'
 import { z } from 'zod'
 
 interface Contract {

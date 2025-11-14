@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { redirect } from "next/navigation"
 import { Car, FileText, FileCheck } from "lucide-react"
 import { BenefitsSection } from "@/components/dashboard/BenefitsSection"
@@ -11,8 +11,8 @@ import { IdDocumentUpload } from "@/components/dashboard/IdDocumentUpload"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
-import type { UserProfile } from "@/lib/auth-utils"
+// import type { User as SupabaseUser } from "@supabase/supabase-js"
+// import type { UserProfile } from "@/lib/auth-utils"
 import type { CarRequest } from "@/components/dashboard/ProgressTracker"
 
 export default function DashboardPage() {

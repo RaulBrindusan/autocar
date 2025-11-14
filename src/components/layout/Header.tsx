@@ -4,141 +4,30 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import { Car, Menu, X, Settings, LogOut, User, Mail } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Menu, X, Settings, LogOut, User, Mail } from "lucide-react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { UserMenu } from "@/components/auth/UserMenu"
 import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { LanguageToggle } from "@/components/ui/LanguageToggle"
-import { createClient } from "@/lib/supabase/client"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
-import type { UserProfile } from "@/lib/auth-utils"
+import { useAuth } from "@/contexts/AuthContext"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Header() {
   const { t } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
-  
+  const { user, signOut } = useAuth()
+
   const navigation = [
     { name: t('header.nav.calculator'), href: "/calculator" },
     { name: t('header.nav.order_car'), href: "/request-car?tab=car" },
     { name: t('header.nav.send_openlane'), href: "/request-car?tab=openlane" },
   ]
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [user, setUser] = useState<SupabaseUser | null>(null)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  
-  useEffect(() => {
-    const supabase = createClient()
-    
-    const getUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-        
-        if (user) {
-          console.log('Header: Authenticated user ID:', user.id) // Debug log
-          
-          // Check auth context
-          const { data: authCheck } = await supabase.auth.getSession()
-          console.log('Header: Auth session exists:', !!authCheck.session)
-          
-          const { data: profile, error: profileError } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", user.id)
-            .single()
-          
-          if (profileError) {
-            console.error('Header: Error fetching user profile:', {
-              code: profileError.code,
-              message: profileError.message,
-              details: profileError.details,
-              hint: profileError.hint
-            })
-            // Create user if they don't exist
-            if (profileError.code === 'PGRST116') {
-              try {
-                const { data: newProfile, error: insertError } = await supabase
-                  .from("users")
-                  .insert({
-                    id: user.id,
-                    email: user.email!,
-                    full_name: user.user_metadata?.full_name || null,
-                    phone: user.user_metadata?.phone || null,
-                    role: 'user'
-                  })
-                  .select()
-                  .single()
-                
-                if (insertError) {
-                  console.error('Header: Error creating user profile:', insertError)
-                  // Set basic profile as fallback
-                  setUserProfile({
-                    id: user.id,
-                    email: user.email!,
-                    full_name: user.user_metadata?.full_name || null,
-                    phone: user.user_metadata?.phone || null,
-                    role: 'user',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                  })
-                } else {
-                  setUserProfile(newProfile)
-                }
-              } catch (insertErr) {
-                console.error('Header: Error creating user:', insertErr)
-                // Set basic profile as fallback
-                setUserProfile({
-                  id: user.id,
-                  email: user.email!,
-                  full_name: user.user_metadata?.full_name || null,
-                  phone: user.user_metadata?.phone || null,
-                  role: 'user',
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString()
-                })
-              }
-            } else {
-              // For other errors, set basic profile
-              setUserProfile({
-                id: user.id,
-                email: user.email!,
-                full_name: user.user_metadata?.full_name || null,
-                phone: user.user_metadata?.phone || null,
-                role: 'user',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              })
-            }
-          } else {
-            setUserProfile(profile)
-          }
-        }
-      } catch (err) {
-        console.error('Error getting user:', err)
-      }
-    }
-
-    getUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null)
-        if (!session?.user) {
-          setUserProfile(null)
-        }
-      }
-    )
-
-    return () => subscription.unsubscribe()
-  }, [])
 
   const handleSignOut = async () => {
     try {
-      const supabase = createClient()
-      await supabase.auth.signOut()
+      await signOut()
       setMobileMenuOpen(false)
       router.push('/login')
     } catch (err) {
@@ -146,29 +35,9 @@ export function Header() {
     }
   }
 
-  const handleAccountClick = async () => {
-    let currentProfile = userProfile
-    if (!currentProfile && user) {
-      try {
-        const supabase = createClient()
-        const { data: profile } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", user.id)
-          .single()
-        
-        if (profile) {
-          setUserProfile(profile)
-          currentProfile = profile
-        }
-      } catch (err) {
-        console.error('Error fetching profile:', err)
-      }
-    }
-    
-    const targetPath = currentProfile?.role === 'admin' ? '/admin' : '/dashboard'
+  const handleAccountClick = () => {
     setMobileMenuOpen(false)
-    router.push(targetPath)
+    router.push('/dashboard')
   }
 
   return (
@@ -212,7 +81,34 @@ export function Header() {
             <div className="hidden md:flex md:items-center md:space-x-2">
               <LanguageToggle />
               {!user && <ThemeToggle />}
-              <UserMenu />
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <Button
+                    onClick={handleAccountClick}
+                    variant="ghost"
+                    size="sm"
+                    className="text-blue-100 hover:text-white"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    {t('header.user.my_account')}
+                  </Button>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="ghost"
+                    size="sm"
+                    className="text-blue-100 hover:text-white"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('header.user.sign_out')}
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="text-blue-100 hover:text-white">
+                    {t('header.user.sign_in')}
+                  </Button>
+                </Link>
+              )}
             </div>
 
             {/* Mobile hamburger menu */}
@@ -283,23 +179,17 @@ export function Header() {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {userProfile?.full_name || 'User'}
+                        User
                       </p>
                       <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                         <Mail className="h-3 w-3 mr-1" />
                         {user.email}
                       </div>
-                      {userProfile?.role === 'admin' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 mt-1">
-                          {t('header.user.administrator')}
-                        </span>
-                      )}
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="space-y-2">
-                    
                     <button
                       onClick={handleAccountClick}
                       className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -307,7 +197,7 @@ export function Header() {
                       <Settings className="h-4 w-4 mr-3" />
                       {t('header.user.my_account')}
                     </button>
-                    
+
                     <button
                       onClick={handleSignOut}
                       className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
@@ -326,15 +216,6 @@ export function Header() {
                   >
                     <User className="h-4 w-4 mr-3" />
                     {t('header.user.sign_in')}
-                  </Link>
-                  
-                  <Link
-                    href="/signup"
-                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    {t('header.user.create_account')}
                   </Link>
                 </div>
               )}

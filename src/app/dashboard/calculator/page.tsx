@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { CostCalculator } from "@/components/dashboard/CostCalculator"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useEffect, useState } from "react"

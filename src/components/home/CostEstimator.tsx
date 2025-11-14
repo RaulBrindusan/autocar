@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Calculator } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/Button"
 import { trackCostCalculator } from "@/lib/umami"
 

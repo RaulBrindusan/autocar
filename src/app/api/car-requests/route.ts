@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+// import { createClient } from '@/lib/supabase/server'
 import { carRequestSchema, sanitizeString, isRateLimited, type CarRequestInput } from '@/lib/validation/car-request'
 import { z } from 'zod'
 

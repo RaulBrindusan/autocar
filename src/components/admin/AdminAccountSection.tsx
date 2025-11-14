@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { User, Shield, Mail, Phone, Calendar, X } from "lucide-react"
 import { Button } from "@/components/ui/Button"
-import type { UserProfile } from "@/lib/auth-utils"
+// import type { UserProfile } from "@/lib/auth-utils"
 
 interface AdminAccountSectionProps {
   adminProfile: UserProfile
