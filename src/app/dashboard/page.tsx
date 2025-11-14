@@ -51,7 +51,7 @@ function DashboardContent() {
   }, [cars]);
 
   const handleCarClick = (carId: string) => {
-    router.push(`/car/${carId}`);
+    router.push(`/dashboard/car/${carId}`);
   };
 
   return (

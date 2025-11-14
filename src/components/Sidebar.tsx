@@ -42,6 +42,11 @@ export default function Sidebar() {
             />
           </div>
 
+          {/* Divider */}
+          <div className="px-8 pb-4">
+            <div className="h-px bg-white/30"></div>
+          </div>
+
           {/* Navigation */}
           <nav className="flex-1 px-2 pb-4 space-y-1">
             {navItems.map((item) => {
