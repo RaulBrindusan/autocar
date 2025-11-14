@@ -20,8 +20,6 @@ export function Header() {
 
   const navigation = [
     { name: t('header.nav.calculator'), href: "/calculator" },
-    { name: t('header.nav.order_car'), href: "/request-car?tab=car" },
-    { name: t('header.nav.send_openlane'), href: "/request-car?tab=openlane" },
   ]
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -37,7 +35,8 @@ export function Header() {
 
   const handleAccountClick = () => {
     setMobileMenuOpen(false)
-    router.push('/dashboard')
+    // Dashboard page removed during Firebase migration
+    router.push('/')
   }
 
   return (

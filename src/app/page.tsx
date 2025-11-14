@@ -48,8 +48,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      // Redirect logged in users to dashboard
-      router.replace('/dashboard')
+      // Dashboard removed during Firebase migration - user stays on homepage
     }
   }, [user, loading, router])
 
@@ -83,7 +82,7 @@ export default function Home() {
               </p>
               <div className="flex flex-row gap-4 mb-8 items-center justify-center sm:justify-start">
                 <Button asChild size="lg" className="text-base px-6 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/request-car">{t('hero.cta.primary')}</Link>
+                  <Link href="/calculator">{t('hero.cta.primary')}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-base px-6 py-4 h-14 font-semibold border-gray-300 text-black bg-white hover:bg-gray-50 hover:text-black transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
                   <Link href="/calculator">{t('hero.cta.secondary')}</Link>
@@ -524,7 +523,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button asChild size="lg" variant="secondary" className="bg-white text-blue-600 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl w-60 shadow-lg hover:bg-white hover:text-blue-600">
-                <Link href="/request-car" className="text-blue-600 hover:text-blue-600 whitespace-nowrap">
+                <Link href="/calculator" className="text-blue-600 hover:text-blue-600 whitespace-nowrap">
                   <Shield className="mr-2 h-5 w-5" />
                   {t('warranty.cta.primary')}
                 </Link>
