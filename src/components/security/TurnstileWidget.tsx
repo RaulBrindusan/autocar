@@ -118,7 +118,7 @@ export function TurnstileWidget({
         handleTurnstileError('render_failed')
       }
     }
-  }, [isLoaded, siteKey, onSuccess, onExpired, theme, size, widgetId, showFallback, retryCount])
+  }, [isLoaded, siteKey, onSuccess, onExpired, theme, size, widgetId, showFallback, retryCount, handleTurnstileError])
 
   const reset = () => {
     if (widgetId && window.turnstile) {
