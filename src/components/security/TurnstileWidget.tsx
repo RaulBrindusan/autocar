@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 interface TurnstileWidgetProps {
   siteKey: string
@@ -76,9 +76,9 @@ export function TurnstileWidget({
     }
   }, [widgetId])
 
-  const handleTurnstileError = (errorCode?: string) => {
+  const handleTurnstileError = useCallback((errorCode?: string) => {
     console.error('Turnstile error:', errorCode)
-    
+
     if (errorCode === '110200') {
       setError('Configurare domeniu incorectă. Contactați suportul.')
     } else if (errorCode === '110110') {
@@ -86,17 +86,17 @@ export function TurnstileWidget({
     } else {
       setError('Verificarea de securitate a eșuat')
     }
-    
+
     // After 3 failed attempts or specific errors, show fallback
     if (enableFallback && (retryCount >= 2 || errorCode === '110200' || errorCode === '110110')) {
       setTimeout(() => {
         setShowFallback(true)
       }, 5000) // Show fallback after 5 seconds
     }
-    
+
     setRetryCount(prev => prev + 1)
     onError?.(errorCode)
-  }
+  }, [enableFallback, retryCount, onError])
 
   useEffect(() => {
     if (isLoaded && ref.current && window.turnstile && !widgetId && !showFallback) {

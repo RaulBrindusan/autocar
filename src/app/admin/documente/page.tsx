@@ -1,14 +1,12 @@
-// import { requireAdmin } from "@/lib/auth-utils"
 import { AdminLayout } from "@/components/admin/AdminLayout"
-import { AdminDocumentsList } from "@/components/admin/AdminDocumentsList"
 
-export default async function AdminDocumentsPage() {
-  // Require admin role to access this page
-  await requireAdmin()
-
+export default function Page() {
   return (
     <AdminLayout>
-      <AdminDocumentsList />
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Admin - Documente</h1>
+        <p className="text-gray-600">Această pagină este în curs de migrare către Firebase.</p>
+      </div>
     </AdminLayout>
   )
 }

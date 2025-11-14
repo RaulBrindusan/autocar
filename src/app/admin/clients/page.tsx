@@ -1,15 +1,11 @@
-// import { requireAdmin } from "@/lib/auth-utils"
 import { AdminLayout } from "@/components/admin/AdminLayout"
-import { ClientsGrid } from "@/components/admin/ClientsGrid"
 
-export default async function ClientsPage() {
-  // Require admin role to access this page
-  await requireAdmin()
-
+export default function Page() {
   return (
     <AdminLayout>
-      <div className="max-w-7xl mx-auto">
-        <ClientsGrid />
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Admin - Clients</h1>
+        <p className="text-gray-600">Această pagină este în curs de migrare către Firebase.</p>
       </div>
     </AdminLayout>
   )

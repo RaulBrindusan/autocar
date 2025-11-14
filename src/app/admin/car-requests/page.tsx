@@ -1,21 +1,11 @@
-// import { requireAdmin } from "@/lib/auth-utils"
-// import { createClient } from "@/lib/supabase/server"
 import { AdminLayout } from "@/components/admin/AdminLayout"
-import { CarRequestsGrid } from "@/components/admin/CarRequestsGrid"
 
-export default async function CarRequestsPage() {
-  // Require admin role to access this page
-  await requireAdmin()
-  
-  const supabase = await createClient()
-
-  // Fetch all car requests using admin function
-  const { data: carRequests } = await supabase.rpc('admin_get_recent_car_requests', { limit_count: 100 })
-
+export default function CarRequestsPage() {
   return (
     <AdminLayout>
-      <div className="max-w-7xl mx-auto">
-        <CarRequestsGrid carRequests={carRequests || []} />
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Cereri Mașini</h1>
+        <p className="text-gray-600">Această pagină este în curs de migrare către Firebase.</p>
       </div>
     </AdminLayout>
   )

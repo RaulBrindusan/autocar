@@ -1,19 +1,12 @@
-// import { requireAdmin } from "@/lib/auth-utils"
 import { AdminLayout } from "@/components/admin/AdminLayout"
-import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard"
 
-export const metadata = {
-  title: "Analytics - Automode Admin",
-  description: "Website analytics and performance metrics"
-}
-
-export default async function AnalyticsPage() {
-  // Require admin role to access this page
-  await requireAdmin()
-
+export default function Page() {
   return (
     <AdminLayout>
-      <AnalyticsDashboard />
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Admin - Analytics</h1>
+        <p className="text-gray-600">Această pagină este în curs de migrare către Firebase.</p>
+      </div>
     </AdminLayout>
   )
 }
