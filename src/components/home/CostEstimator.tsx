@@ -50,7 +50,7 @@ export function CostEstimator() {
     
     setLoading(true)
     try {
-      const supabase = createClient()
+      // const supabase = createClient() // Firebase migration
       const { data: { user } } = await supabase.auth.getUser()
       
       if (!user) {

@@ -61,7 +61,7 @@ export function CarRequestModal({ isOpen, onClose, requestId, onRequestUpdated }
   const [selectedTimelineStage, setSelectedTimelineStage] = useState<Option | null>(null)
   const [selectedAuctionResult, setSelectedAuctionResult] = useState<Option | null>(null)
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Fuel type options
   const fuelTypeOptions: Option[] = [

@@ -57,7 +57,7 @@ export function ClientRequestModal({ isOpen, onClose, requestId, onRequestUpdate
   const [offerLink, setOfferLink] = useState("")
   const [sendingOffer, setSendingOffer] = useState(false)
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Fuel type options
   const fuelTypeOptions: Option[] = useMemo(() => [

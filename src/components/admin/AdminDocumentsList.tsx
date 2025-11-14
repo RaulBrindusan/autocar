@@ -31,7 +31,7 @@ export function AdminDocumentsList() {
       setLoading(true)
       setError(null)
 
-      const supabase = createClient()
+      // const supabase = createClient() // Firebase migration
       
       // Check if user is admin
       const { data: { user } } = await supabase.auth.getUser()

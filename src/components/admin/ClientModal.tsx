@@ -125,7 +125,7 @@ export function ClientModal({ isOpen, onClose, client, mode, onClientUpdated }: 
   const [selectedTransmission, setSelectedTransmission] = useState<Option | null>(null)
   const [selectedFeatures, setSelectedFeatures] = useState<Option[]>([])
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Common car features
   const featuresOptions: Option[] = [

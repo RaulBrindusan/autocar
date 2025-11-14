@@ -50,7 +50,7 @@ export function UsersModal({ isOpen, onClose, mode, user, onUserUpdated }: Users
   })
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof UserFormData, string>>>({})
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Initialize form data when modal opens
   useEffect(() => {

@@ -71,7 +71,7 @@ export function UserSidebar({ children }: UserSidebarProps) {
   ]
 
   useEffect(() => {
-    const supabase = createClient()
+    // const supabase = createClient() // Firebase migration
     
     const getUser = async () => {
       try {
@@ -114,7 +114,7 @@ export function UserSidebar({ children }: UserSidebarProps) {
 
   const handleConfirmSignOut = async () => {
     try {
-      const supabase = createClient()
+      // const supabase = createClient() // Firebase migration
       await supabase.auth.signOut()
       setSidebarOpen(false)
       setShowLogoutModal(false)

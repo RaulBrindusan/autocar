@@ -43,7 +43,7 @@ export function ClientsGrid() {
   const [sortBy, setSortBy] = useState<'created_at' | 'full_name' | 'email'>('created_at')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   useEffect(() => {
     fetchUsers()

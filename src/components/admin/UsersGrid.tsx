@@ -42,7 +42,7 @@ export function UsersGrid() {
   const [modalMode, setModalMode] = useState<'view' | 'create' | 'edit'>('view')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   useEffect(() => {
     fetchUsers()

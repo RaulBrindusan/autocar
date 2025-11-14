@@ -173,7 +173,7 @@ export function CarSelectionForm() {
   useEffect(() => {
     const checkUserRequestCount = async () => {
       try {
-        const supabase = createClient()
+        // const supabase = createClient() // Firebase migration
         const { data: { user } } = await supabase.auth.getUser()
         
         if (user) {
@@ -319,7 +319,7 @@ export function CarSelectionForm() {
 
   const onSubmit = async (data: CarSelectionData) => {
     try {
-      const supabase = createClient()
+      // const supabase = createClient() // Firebase migration
       
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser()

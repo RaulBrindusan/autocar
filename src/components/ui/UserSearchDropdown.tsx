@@ -35,7 +35,7 @@ export function UserSearchDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Fetch users with 'user' role
   useEffect(() => {

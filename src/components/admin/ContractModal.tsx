@@ -136,7 +136,7 @@ export function ContractModal({ isOpen, onClose, onContractCreated, editingContr
     status: 'draft'
   })
 
-  const supabase = createClient()
+  // const supabase = createClient() // Firebase migration
 
   // Handle user selection from dropdown
   const handleUserSelect = async (user: UserProfile) => {
