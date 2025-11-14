@@ -35,8 +35,7 @@ export function Header() {
 
   const handleAccountClick = () => {
     setMobileMenuOpen(false)
-    // Dashboard page removed during Firebase migration
-    router.push('/')
+    router.push('/dashboard')
   }
 
   return (

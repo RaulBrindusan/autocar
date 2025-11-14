@@ -48,7 +48,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      // Dashboard removed during Firebase migration - user stays on homepage
+      router.replace('/dashboard')
     }
   }, [user, loading, router])
 
