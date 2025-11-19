@@ -63,8 +63,14 @@ export async function GET() {
       for (const [page, data] of Object.entries(topEventsData)) {
         // Handle the nested data structure from Mixpanel
         const views = typeof data === 'number' ? data : (data as any).count || 0
+
+        // Skip invalid pages or pages with 0 views
+        if (!page || views === 0 || page === 'undefined' || page === 'null' || page === 'error' || page === 'request') {
+          continue
+        }
+
         topPages.push({
-          page: page === '' || page === 'undefined' || page === 'null' ? '/' : page,
+          page: page === '' ? '/' : page,
           views: views
         })
       }
@@ -83,20 +89,29 @@ export async function GET() {
     if (customPageData) {
       for (const [page, data] of Object.entries(customPageData)) {
         const views = typeof data === 'number' ? data : (data as any).count || 0
+
+        // Skip invalid pages or pages with 0 views
+        if (!page || views === 0 || page === 'undefined' || page === 'null' || page === 'error' || page === 'request') {
+          continue
+        }
+
         const existingPage = topPages.find(p => p.page === page)
         if (existingPage) {
           existingPage.views += views
         } else {
           topPages.push({
-            page: page === '' || page === 'undefined' || page === 'null' ? '/' : page,
+            page: page === '' ? '/' : page,
             views: views
           })
         }
       }
     }
 
-    // Re-sort after merging
+    // Re-sort after merging and filter out any remaining invalid entries
     topPages.sort((a, b) => b.views - a.views)
+
+    // Final filter to ensure only valid pages with views > 0
+    const validTopPages = topPages.filter(p => p.views > 0 && p.page && p.page !== 'error' && p.page !== 'request')
 
     // Calculate average session duration (estimate based on events)
     const avgSessionMinutes = Math.floor(Math.random() * 5) + 2 // Placeholder - would need session data
@@ -107,7 +122,7 @@ export async function GET() {
       totalPageViews,
       uniqueUsers,
       avgSessionDuration,
-      topPages: topPages.slice(0, 10),
+      topPages: validTopPages.slice(0, 10),
       dashboardUrl: 'https://mixpanel.com/project/3297262',
       lastUpdated: new Date().toISOString(),
     })
