@@ -26,10 +26,20 @@ class MixpanelTracking {
       persistence: 'localStorage',
       ignore_dnt: true, // Important: ignore Do Not Track to ensure tracking works
       api_host: 'https://api-eu.mixpanel.com',
+      // Enable autocapture
+      autocapture: true,
+      // Enable session replay
+      record_sessions_percent: 100,
     })
 
     this.isInitialized = true
     console.log('Mixpanel initialized with token:', token)
+
+    // Identify anonymous users immediately to enable user profiles
+    const deviceId = mixpanel.get_distinct_id()
+    if (deviceId) {
+      mixpanel.identify(deviceId)
+    }
   }
 
   public static getInstance(): MixpanelTracking {

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
 import { onAuthChange, signOut as firebaseSignOut } from '@/lib/firebase/auth';
+import { Mixpanel } from '@/lib/mixpanel';
 
 interface AuthContextType {
   user: User | null;
@@ -32,6 +33,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthChange((user) => {
       setUser(user);
       setLoading(false);
+
+      // Track user in Mixpanel
+      if (user) {
+        // User logged in - identify them
+        Mixpanel.identify(user.uid);
+        Mixpanel.setUserProperties({
+          $email: user.email,
+          $name: user.displayName || user.email?.split('@')[0] || 'Unknown',
+          signInProvider: user.providerData[0]?.providerId || 'unknown',
+        });
+        Mixpanel.trackEvent('User Logged In');
+      } else {
+        // User logged out
+        Mixpanel.trackEvent('User Logged Out');
+      }
     });
 
     return () => unsubscribe();
