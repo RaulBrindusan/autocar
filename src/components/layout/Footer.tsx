@@ -48,11 +48,6 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">{t('footer.services')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
-                  {t('footer.order_car')}
-                </Link>
-              </li>
-              <li>
                 <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
                   {t('footer.cost_calculator')}
                 </Link>
@@ -120,11 +115,6 @@ export function Footer() {
             <div className="text-center md:text-left">
               <h3 className="text-lg font-semibold mb-4">{t('footer.services')}</h3>
               <ul className="space-y-2">
-                <li>
-                  <Link href="/request-car" className="text-blue-100 hover:text-white transition-colors">
-                    {t('footer.order_car')}
-                  </Link>
-                </li>
                 <li>
                   <Link href="/calculator" className="text-blue-100 hover:text-white transition-colors">
                     {t('footer.cost_calculator')}

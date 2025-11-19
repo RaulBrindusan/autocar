@@ -276,7 +276,7 @@ export default function CalculatorPage() {
 
             <div className="flex justify-center">
               <Button asChild size="lg" className={`font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg ${theme === 'dark' ? 'bg-gray-100 text-blue-800 hover:bg-white hover:text-blue-900' : 'bg-gray-50 text-blue-700 hover:bg-gray-100 hover:text-blue-800'}`}>
-                <Link href="/signup">
+                <Link href="/login">
                   Creează Cont Gratuit
                 </Link>
               </Button>

@@ -8,12 +8,14 @@ import mixpanel from 'mixpanel-browser'
  */
 class MixpanelTracking {
   private static _instance: MixpanelTracking | null = null
+  private isInitialized: boolean = false
 
   private constructor() {
     const token = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN
 
     if (!token) {
       console.warn('Mixpanel: NEXT_PUBLIC_MIXPANEL_TOKEN is not set')
+      this.isInitialized = false
       return
     }
 
@@ -26,6 +28,7 @@ class MixpanelTracking {
       api_host: 'https://api-eu.mixpanel.com',
     })
 
+    this.isInitialized = true
     console.log('Mixpanel initialized with token:', token)
   }
 
@@ -40,6 +43,10 @@ class MixpanelTracking {
    * Track a generic event
    */
   protected track(name: string, data: Record<string, any> = {}): void {
+    if (!this.isInitialized) {
+      console.warn('Mixpanel: Not initialized, skipping track call')
+      return
+    }
     mixpanel.track(name, data)
   }
 
@@ -47,6 +54,8 @@ class MixpanelTracking {
    * Track page view
    */
   public pageViewed(): void {
+    if (!this.isInitialized) return
+
     this.track('Page View', {
       page: typeof window !== 'undefined' ? window.location.pathname : '',
     })
@@ -56,6 +65,7 @@ class MixpanelTracking {
    * Identify a user
    */
   public identify(userId: string): void {
+    if (!this.isInitialized) return
     mixpanel.identify(userId)
   }
 
@@ -63,6 +73,7 @@ class MixpanelTracking {
    * Set user properties
    */
   public setUserProperties(properties: Record<string, any>): void {
+    if (!this.isInitialized) return
     mixpanel.people.set(properties)
   }
 
@@ -70,6 +81,7 @@ class MixpanelTracking {
    * Track custom event with properties
    */
   public trackEvent(eventName: string, properties?: Record<string, any>): void {
+    if (!this.isInitialized) return
     this.track(eventName, properties)
   }
 }
