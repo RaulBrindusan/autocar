@@ -96,7 +96,7 @@ export default function CarDetailPage() {
             Înapoi la Stoc
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Image Gallery */}
             <ImageGallery images={images} alt={`${car.make} ${car.model}`} />
 

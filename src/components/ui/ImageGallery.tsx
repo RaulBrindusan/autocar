@@ -42,21 +42,29 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
   return (
     <>
       {/* Main Image */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden w-full h-auto cursor-pointer" onClick={() => setIsOpen(true)}>
-        <div className="relative">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onClick={() => setIsOpen(true)}>
+        <div className="relative w-full">
           <Image
             src={images[0]}
             alt={alt}
             width={800}
             height={600}
-            className="w-full h-auto"
+            className="w-full h-auto block"
             priority
+            quality={85}
+            loading="eager"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
           />
           {images.length > 1 && (
             <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
               +{images.length - 1} poze
             </div>
           )}
+          {/* Preload next images */}
+          {images.slice(1, 3).map((img, idx) => (
+            <link key={idx} rel="preload" as="image" href={img} />
+          ))}
         </div>
       </div>
 
@@ -104,8 +112,18 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               width={1200}
               height={900}
               className="object-contain w-full h-full"
-              priority
+              quality={90}
+              loading="eager"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
             />
+            {/* Preload adjacent images for smoother navigation */}
+            {images[currentIndex + 1] && (
+              <link rel="preload" as="image" href={images[currentIndex + 1]} />
+            )}
+            {images[currentIndex - 1] && (
+              <link rel="preload" as="image" href={images[currentIndex - 1]} />
+            )}
           </div>
 
           {/* Next Button */}
@@ -142,6 +160,8 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
                     width={80}
                     height={80}
                     className="object-cover w-full h-full"
+                    quality={60}
+                    loading="lazy"
                   />
                 </button>
               ))}
