@@ -76,7 +76,7 @@ export default function StocPage() {
                         loading="eager"
                         priority={cars.indexOf(car) < 6}
                         placeholder="blur"
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIApD5fRAAAAABJRU5ErkJggg=="
+                        blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">
