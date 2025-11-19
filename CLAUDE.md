@@ -108,6 +108,9 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
 NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=your_turnstile_site_key
 CLOUDFLARE_TURNSTILE_SECRET=your_turnstile_secret_key
 
+# Analytics (Plausible)
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=automode.ro
+
 # Application Configuration
 NEXT_PUBLIC_SITE_URL=https://automode.ro
 NODE_ENV=production
@@ -173,6 +176,15 @@ Uses Brevo (formerly SendinBlue) for transactional emails:
 - **File Storage**: AWS S3 integration for document storage
 - **PDF Generation**: jsPDF for contract generation with digital signatures
 - **Image Processing**: html2canvas for capturing digital signatures
+
+### Analytics Integration
+- **Plausible Analytics**: Privacy-friendly, cookieless web analytics via `@plausible-analytics/tracker`
+  - Configured in `PlausibleProvider` component at `src/components/analytics/PlausibleProvider.tsx`
+  - Auto-captures pageviews for SPA navigation
+  - Tracks outbound links and file downloads
+  - Does not track on localhost by default
+  - Custom event tracking available via `import { track } from '@plausible-analytics/tracker'`
+  - Example: `track('signup', { props: { tier: 'startup' } })`
 
 ### Next.js Configuration
 - **Image Optimization**: Configured remote patterns for OpenLane, Copart, Unsplash, and Supabase storage
