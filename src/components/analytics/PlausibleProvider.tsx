@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
-import { init } from '@plausible-analytics/tracker'
+import { useEffect, useState } from 'react'
 
 /**
  * Plausible Analytics Provider
@@ -16,7 +15,18 @@ import { init } from '@plausible-analytics/tracker'
  * - Tracks outbound links and file downloads
  */
 export function PlausibleProvider() {
+  const [isMounted, setIsMounted] = useState(false)
+
   useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    // Only run in the browser after component is mounted
+    if (!isMounted || typeof window === 'undefined') {
+      return
+    }
+
     const domain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN
 
     if (!domain) {
@@ -24,29 +34,34 @@ export function PlausibleProvider() {
       return
     }
 
-    // Initialize Plausible Analytics
-    init({
-      domain,
-      // Auto-capture pageviews for SPA navigation
-      autoCapturePageviews: true,
-      // Support hash-based routing (Next.js App Router compatibility)
-      hashBasedRouting: false,
-      // Track outbound link clicks
-      outboundLinks: true,
-      // Track file downloads
-      fileDownloads: true,
-      // Track form submissions
-      formSubmissions: false,
-      // Don't track on localhost
-      captureOnLocalhost: false,
-      // Log ignored events in development
-      logging: process.env.NODE_ENV === 'development',
-      // Bind to window for installation verification
-      bindToWindow: true,
-    })
+    // Dynamically import Plausible to avoid SSR issues
+    import('@plausible-analytics/tracker').then(({ init }) => {
+      // Initialize Plausible Analytics
+      init({
+        domain,
+        // Auto-capture pageviews for SPA navigation
+        autoCapturePageviews: true,
+        // Support hash-based routing (Next.js App Router compatibility)
+        hashBasedRouting: false,
+        // Track outbound link clicks
+        outboundLinks: true,
+        // Track file downloads
+        fileDownloads: true,
+        // Track form submissions
+        formSubmissions: false,
+        // Don't track on localhost
+        captureOnLocalhost: false,
+        // Log ignored events in development
+        logging: process.env.NODE_ENV === 'development',
+        // Bind to window for installation verification
+        bindToWindow: true,
+      })
 
-    console.log('Plausible Analytics initialized for domain:', domain)
-  }, [])
+      console.log('Plausible Analytics initialized for domain:', domain)
+    }).catch((error) => {
+      console.error('Failed to initialize Plausible Analytics:', error)
+    })
+  }, [isMounted])
 
   return null
 }
