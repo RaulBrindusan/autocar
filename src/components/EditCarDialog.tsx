@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { updateCar } from '@/lib/firebase/firestore';
-import { uploadCarImage, uploadCarReport } from '@/lib/firebase/storage';
+import { uploadCarImage, uploadCarReport, uploadCarGalleryImages } from '@/lib/firebase/storage';
 import { Car } from '@/lib/types';
 
 interface EditCarDialogProps {
@@ -25,6 +25,8 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(car.imageUrl || '');
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(car.images || []);
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [reportFileName, setReportFileName] = useState<string>(car.reportCV ? 'Raport existent' : '');
   const [loading, setLoading] = useState(false);
@@ -58,6 +60,39 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Validate all files
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        setError('Toate fișierele trebuie să fie imagini');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError(`Imaginea ${file.name} trebuie să fie mai mică de 5MB`);
+        return;
+      }
+    }
+
+    setGalleryFiles(files);
+    setError('');
+
+    // Create previews
+    const previewPromises = files.map(file => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(previewPromises).then(previews => {
+      setGalleryPreviews(previews);
+    });
   };
 
   const handleReportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,10 +129,11 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     try {
       let imageUrl = car.imageUrl;
       let reportPath = car.reportCV;
+      let galleryUrls = car.images || [];
 
       // Upload new image if selected
       if (imageFile) {
-        setUploadProgress(20);
+        setUploadProgress(15);
         const { url, error: uploadError } = await uploadCarImage(imageFile);
 
         if (uploadError) {
@@ -107,12 +143,31 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
         }
 
         imageUrl = url || '';
-        setUploadProgress(40);
+        setUploadProgress(30);
+      }
+
+      // Upload gallery images if selected
+      if (galleryFiles.length > 0) {
+        setUploadProgress(35);
+        const { urls, error: galleryError } = await uploadCarGalleryImages(
+          galleryFiles,
+          car.id,
+          (progress) => setUploadProgress(35 + progress * 0.3) // 35-65%
+        );
+
+        if (galleryError) {
+          setError(`Eroare la încărcarea galeriei: ${galleryError}`);
+          setLoading(false);
+          return;
+        }
+
+        galleryUrls = urls || [];
+        setUploadProgress(65);
       }
 
       // Upload new report if selected
       if (reportFile) {
-        setUploadProgress(50);
+        setUploadProgress(70);
         const { path, error: reportError } = await uploadCarReport(reportFile, car.id);
 
         if (reportError) {
@@ -122,7 +177,7 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
         }
 
         reportPath = path || undefined;
-        setUploadProgress(70);
+        setUploadProgress(85);
       }
 
       const profit = calculateProfit();
@@ -131,10 +186,11 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
         ...formData,
         profit: profit.toString(),
         imageUrl: imageUrl,
+        images: galleryUrls.length > 0 ? galleryUrls : undefined,
         reportCV: reportPath
       };
 
-      setUploadProgress(90);
+      setUploadProgress(95);
       const { error: updateError } = await updateCar(car.id, updateData);
 
       if (updateError) {
@@ -175,7 +231,7 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Imagine Mașină
+                Imagine Mașină (Principală)
               </label>
               <div className="flex items-center space-x-4">
                 {imagePreview ? (
@@ -199,6 +255,44 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                     disabled={loading}
                   />
                 </label>
+              </div>
+            </div>
+
+            {/* Gallery Images Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Galerie Imagini (Multiple)
+              </label>
+              <div className="space-y-3">
+                {galleryPreviews.length > 0 && (
+                  <div className="grid grid-cols-4 gap-2">
+                    {galleryPreviews.map((preview, idx) => (
+                      <div key={idx} className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-gray-300">
+                        <img src={preview} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                          {idx + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <label className="cursor-pointer bg-green-50 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors border border-green-200 inline-flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm font-medium">
+                    {galleryPreviews.length > 0 ? 'Schimbă Galeria' : 'Adaugă Imagini Galerie'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryChange}
+                    className="hidden"
+                    disabled={loading}
+                  />
+                </label>
+                <p className="text-xs text-gray-500">Poți selecta multiple imagini (max 5MB fiecare)</p>
               </div>
             </div>
 

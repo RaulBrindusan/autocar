@@ -144,3 +144,58 @@ export const uploadCarReport = async (file: File, carId: string): Promise<{ path
     return { path: null, error: error.message };
   }
 };
+
+/**
+ * Upload multiple images to Firebase Storage for a car gallery
+ * @param files - Array of image files to upload
+ * @param carId - The car ID for the storage folder path
+ * @returns Object with URLs array and error
+ */
+export const uploadCarGalleryImages = async (
+  files: File[],
+  carId: string,
+  onProgress?: (progress: number) => void
+): Promise<{ urls: string[] | null; error: string | null }> => {
+  try {
+    const urls: string[] = [];
+    const totalFiles = files.length;
+
+    // Upload each file
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        return { urls: null, error: `File ${file.name} is not an image` };
+      }
+
+      // Validate file size (5MB max per image)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        return { urls: null, error: `Image ${file.name} must be less than 5MB` };
+      }
+
+      // Generate unique filename with index for ordering
+      const timestamp = Date.now();
+      const imageId = `${timestamp}_${i}`;
+      const storageRef = ref(storage, `selling/${carId}/${imageId}.jpg`);
+
+      // Upload file
+      await uploadBytes(storageRef, file);
+
+      // Get download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      urls.push(downloadURL);
+
+      // Update progress
+      if (onProgress) {
+        const progress = Math.round(((i + 1) / totalFiles) * 100);
+        onProgress(progress);
+      }
+    }
+
+    return { urls, error: null };
+  } catch (error: any) {
+    return { urls: null, error: error.message };
+  }
+};

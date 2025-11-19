@@ -16,6 +16,7 @@ export default function CarDetailPage() {
   const [images, setImages] = useState<string[]>([])
   const [reportUrl, setReportUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
     const fetchCarData = async () => {
@@ -24,42 +25,53 @@ export default function CarDetailPage() {
         const { car: carData, error: carError } = await getCar(carId)
         if (carError || !carData) {
           setError('Mașina nu a fost găsită')
+          setInitialLoad(false)
           return
         }
         setCar(carData)
+        setInitialLoad(false)
 
-        // Use stored images array if available, otherwise fetch from folder with caching
-        if (carData.images && carData.images.length > 0) {
-          // Fast path: Use pre-stored image URLs from Firestore
-          setImages(carData.images)
-        } else {
-          // Fallback: Fetch from storage folder with session caching
-          const folderImages = await getImagesFromFolderCached(`selling/${carId}`)
-          if (folderImages.length > 0) {
-            setImages(folderImages)
-          } else if (carData.imageUrl) {
-            setImages([carData.imageUrl])
-          }
+        // IMMEDIATE: Show primary image instantly if available
+        if (carData.imageUrl) {
+          setImages([carData.imageUrl])
         }
 
-        // Fetch report URL if needed
+        // BACKGROUND: Load gallery images after primary image is set
+        setTimeout(async () => {
+          // Use stored images array if available, otherwise fetch from folder with caching
+          if (carData.images && carData.images.length > 0) {
+            // Fast path: Use pre-stored image URLs from Firestore
+            setImages(carData.images)
+          } else {
+            // Fallback: Fetch from storage folder with session caching
+            const folderImages = await getImagesFromFolderCached(`selling/${carId}`)
+            if (folderImages.length > 0) {
+              setImages(folderImages)
+            }
+          }
+        }, 0)
+
+        // BACKGROUND: Fetch report URL (non-blocking)
         if (carData.reportCV) {
-          const url = await getDownloadUrlFromPath(carData.reportCV)
-          setReportUrl(url)
+          getDownloadUrlFromPath(carData.reportCV).then(url => {
+            if (url) setReportUrl(url)
+          })
         }
       } catch (err) {
         setError('A apărut o eroare la încărcarea datelor')
+        setInitialLoad(false)
       }
     }
 
     fetchCarData()
   }, [carId])
 
-  if (error || (car === null && !error)) {
+  // Only show error state after initial load completes
+  if (error && !initialLoad) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Mașina nu a fost găsită'}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error}</h2>
           <button
             onClick={() => router.push('/stoc')}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -74,18 +86,24 @@ export default function CarDetailPage() {
   if (!car) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Back Button */}
-          <button
-            onClick={() => router.push('/stoc')}
-            className="mb-6 flex items-center text-blue-600 hover:text-blue-700 font-medium"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Înapoi la Stoc
-          </button>
+    <>
+      {/* Preload primary image for instant display */}
+      {images.length > 0 && (
+        <link rel="preload" as="image" href={images[0]} fetchPriority="high" />
+      )}
+
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {/* Back Button */}
+            <button
+              onClick={() => router.push('/stoc')}
+              className="mb-6 flex items-center text-blue-600 hover:text-blue-700 font-medium"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Înapoi la Stoc
+            </button>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Image Gallery */}
@@ -186,7 +204,8 @@ export default function CarDetailPage() {
               </div>
             </div>
           )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
