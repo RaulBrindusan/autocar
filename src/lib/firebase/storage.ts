@@ -70,3 +70,46 @@ export const getImagesFromFolder = async (folderPath: string): Promise<string[]>
     return [];
   }
 };
+
+/**
+ * Get download URL from a Firebase Storage path
+ * @param storagePath - The storage path (e.g., "reports/car1.pdf")
+ * @returns Download URL or null if error
+ */
+export const getDownloadUrlFromPath = async (storagePath: string): Promise<string | null> => {
+  try {
+    const fileRef = ref(storage, storagePath);
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error('Error getting download URL:', error);
+    return null;
+  }
+};
+
+// Upload CarVertical report PDF to Firebase Storage
+export const uploadCarReport = async (file: File, carId: string): Promise<{ path: string | null; error: string | null }> => {
+  try {
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      return { path: null, error: 'Only PDF files are allowed' };
+    }
+
+    // Validate file size (10MB max)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      return { path: null, error: 'PDF size must be less than 10MB' };
+    }
+
+    // Create storage path
+    const storagePath = `reports/${carId}/carvertical-report.pdf`;
+    const storageRef = ref(storage, storagePath);
+
+    // Upload file
+    await uploadBytes(storageRef, file);
+
+    return { path: storagePath, error: null };
+  } catch (error: any) {
+    return { path: null, error: error.message };
+  }
+};

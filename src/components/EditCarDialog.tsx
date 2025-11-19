@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { updateCar } from '@/lib/firebase/firestore';
-import { uploadCarImage } from '@/lib/firebase/storage';
+import { uploadCarImage, uploadCarReport } from '@/lib/firebase/storage';
 import { Car } from '@/lib/types';
 
 interface EditCarDialogProps {
@@ -18,11 +18,15 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     km: car.km,
     fuel: car.fuel,
     engine: car.engine,
+    transmisie: car.transmisie || '',
+    echipare: car.echipare || '',
     buyingprice: car.buyingprice,
     askingprice: car.askingprice
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(car.imageUrl || '');
+  const [reportFile, setReportFile] = useState<File | null>(null);
+  const [reportFileName, setReportFileName] = useState<string>(car.reportCV ? 'Raport existent' : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -56,6 +60,25 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     }
   };
 
+  const handleReportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        setError('Te rog să selectezi un fișier PDF');
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Raportul trebuie să fie mai mic de 10MB');
+        return;
+      }
+
+      setReportFile(file);
+      setReportFileName(file.name);
+      setError('');
+    }
+  };
+
   const calculateProfit = () => {
     const buying = parseFloat(formData.buyingprice) || 0;
     const asking = parseFloat(formData.askingprice) || 0;
@@ -70,10 +93,11 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
 
     try {
       let imageUrl = car.imageUrl;
+      let reportPath = car.reportCV;
 
       // Upload new image if selected
       if (imageFile) {
-        setUploadProgress(30);
+        setUploadProgress(20);
         const { url, error: uploadError } = await uploadCarImage(imageFile);
 
         if (uploadError) {
@@ -83,7 +107,22 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
         }
 
         imageUrl = url || '';
-        setUploadProgress(60);
+        setUploadProgress(40);
+      }
+
+      // Upload new report if selected
+      if (reportFile) {
+        setUploadProgress(50);
+        const { path, error: reportError } = await uploadCarReport(reportFile, car.id);
+
+        if (reportError) {
+          setError(`Eroare la încărcarea raportului: ${reportError}`);
+          setLoading(false);
+          return;
+        }
+
+        reportPath = path || undefined;
+        setUploadProgress(70);
       }
 
       const profit = calculateProfit();
@@ -91,10 +130,11 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
       const updateData: Partial<Car> = {
         ...formData,
         profit: profit.toString(),
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        reportCV: reportPath
       };
 
-      setUploadProgress(80);
+      setUploadProgress(90);
       const { error: updateError } = await updateCar(car.id, updateData);
 
       if (updateError) {
@@ -155,6 +195,38 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
+                    className="hidden"
+                    disabled={loading}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* CarVertical Report Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Raport CarVertical (PDF)
+              </label>
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-700">
+                        {reportFileName || 'Niciun raport încărcat'}
+                      </p>
+                      <p className="text-xs text-gray-500">PDF, max 10MB</p>
+                    </div>
+                  </div>
+                </div>
+                <label className="cursor-pointer bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors">
+                  <span className="text-sm font-medium">Alege PDF</span>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleReportChange}
                     className="hidden"
                     disabled={loading}
                   />
@@ -241,6 +313,35 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                   value={formData.engine}
                   onChange={handleInputChange}
                   required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+                />
+              </div>
+            </div>
+
+            {/* Transmission and Equipment */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Transmisie</label>
+                <select
+                  name="transmisie"
+                  value={formData.transmisie}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+                >
+                  <option value="">Selectează</option>
+                  <option value="Manuală">Manuală</option>
+                  <option value="Automată">Automată</option>
+                  <option value="Semiautomată">Semiautomată</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Echipare</label>
+                <input
+                  type="text"
+                  name="echipare"
+                  value={formData.echipare}
+                  onChange={handleInputChange}
+                  placeholder="ex: Bose Edition, Premium"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
                 />
               </div>

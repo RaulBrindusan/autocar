@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { getCar } from '@/lib/firebase/firestore'
-import { getImagesFromFolder } from '@/lib/firebase/storage'
+import { getImagesFromFolder, getDownloadUrlFromPath } from '@/lib/firebase/storage'
 import { Car } from '@/lib/types'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 
@@ -14,6 +14,7 @@ export default function CarDetailPage() {
 
   const [car, setCar] = useState<Car | null>(null)
   const [images, setImages] = useState<string[]>([])
+  const [reportUrl, setReportUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -46,6 +47,12 @@ export default function CarDetailPage() {
           setImages(folderImages)
         } else if (carData.imageUrl) {
           setImages([carData.imageUrl])
+        }
+
+        // Fetch report URL if reportCV path exists
+        if (carData.reportCV) {
+          const url = await getDownloadUrlFromPath(carData.reportCV)
+          setReportUrl(url)
         }
 
         setLoading(false)
@@ -98,7 +105,24 @@ export default function CarDetailPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Image Gallery */}
-            <ImageGallery images={images} alt={`${car.make} ${car.model}`} />
+            <div className="space-y-4">
+              <ImageGallery images={images} alt={`${car.make} ${car.model}`} />
+
+              {/* Report Button */}
+              {reportUrl && (
+                <a
+                  href={reportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-gray-800 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-gray-900 transition-colors flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Vezi raportul
+                </a>
+              )}
+            </div>
 
             {/* Details Section */}
             <div className="space-y-6">

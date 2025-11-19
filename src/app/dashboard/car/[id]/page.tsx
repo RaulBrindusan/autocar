@@ -7,6 +7,7 @@ import EditCarDialog from '@/components/EditCarDialog';
 import AddExpenseDialog from '@/components/AddExpenseDialog';
 import EditExpenseDialog from '@/components/EditExpenseDialog';
 import { getCar, deleteCar, onCarExpensesSnapshot, deleteExpense, calculateTotalExpenses, calculateProfit } from '@/lib/firebase/firestore';
+import { getDownloadUrlFromPath } from '@/lib/firebase/storage';
 import { Car, Expense } from '@/lib/types';
 
 export default function CarDetailPage() {
@@ -30,6 +31,7 @@ function CarDetailContent() {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteExpenseId, setDeleteExpenseId] = useState<string | null>(null);
+  const [reportUrl, setReportUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Load car data
@@ -41,6 +43,12 @@ function CarDetailContent() {
       }
       setCar(car);
       setLoading(false);
+
+      // Fetch report URL if reportCV path exists
+      if (car.reportCV) {
+        const url = await getDownloadUrlFromPath(car.reportCV);
+        setReportUrl(url);
+      }
     };
 
     loadCar();
@@ -235,8 +243,25 @@ function CarDetailContent() {
                 <DetailRow label="Kilometri" value={`${car.km} km`} />
                 <DetailRow label="Tip Combustibil" value={car.fuel} />
                 <DetailRow label="Motor" value={car.engine} />
+                {car.transmisie && <DetailRow label="Transmisie" value={car.transmisie} />}
+                {car.echipare && <DetailRow label="Echipare" value={car.echipare} />}
               </div>
             </div>
+
+            {/* Report Button */}
+            {reportUrl && (
+              <a
+                href={reportUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-gray-800 text-white text-center py-3 px-6 rounded-xl font-semibold hover:bg-gray-900 transition-colors flex items-center justify-center shadow-md"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Vezi raportul
+              </a>
+            )}
           </div>
         </div>
       </main>

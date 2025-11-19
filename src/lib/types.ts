@@ -11,6 +11,7 @@ export interface Car {
   transmisie?: string;   // Transmisie (e.g., "Automată", "Manuală")
   echipare?: string;     // Echipare (e.g., "Bose Edition", "Premium")
   dotari?: string;       // Dotări complete (features list)
+  reportCV?: string;     // Storage path to vehicle report PDF
   buyingprice: string;   // Preț Cumpărare (matches Firestore field)
   askingprice: string;   // Preț Cerut (matches Firestore field)
   profit: string;        // Calculated profit

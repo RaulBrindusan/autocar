@@ -54,6 +54,19 @@ service firebase.storage {
       allow read, list: if true;
     }
 
+    // Reports folder - for CarVertical PDFs
+    match /reports/{carId}/{fileName} {
+      // Allow read for all users (public access for reports)
+      allow read: if true;
+
+      // Allow create/update/delete for authenticated users
+      allow create, update: if isSignedIn()
+                            && request.resource.size < 10 * 1024 * 1024
+                            && request.resource.contentType == 'application/pdf';
+
+      allow delete: if isSignedIn();
+    }
+
     // Deny all other requests
     match /{allPaths=**} {
       allow read, write: if false;
