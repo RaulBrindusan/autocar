@@ -18,6 +18,18 @@ export default function CarDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [initialLoad, setInitialLoad] = useState(true)
   const [showPdfViewer, setShowPdfViewer] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
+      setIsMobile(mobile)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     const fetchCarData = async () => {
@@ -227,45 +239,47 @@ export default function CarDetailPage() {
 
       {/* PDF Viewer Modal */}
       {showPdfViewer && reportUrl && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <div className="relative w-full h-full max-w-6xl max-h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="relative w-full h-full max-w-6xl max-h-[95vh] sm:max-h-[90vh] bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-2xl flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-gray-800 text-white">
-              <h3 className="text-lg font-semibold flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center justify-between p-3 sm:p-4 bg-gray-800 text-white flex-shrink-0">
+              <h3 className="text-sm sm:text-lg font-semibold flex items-center truncate mr-2">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Raport CarVertical - {car.make} {car.model}
+                <span className="hidden sm:inline">Raport CarVertical - {car.make} {car.model}</span>
+                <span className="sm:hidden">Raport CV</span>
               </h3>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                 <a
                   href={reportUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors flex items-center"
+                  download
+                  className="px-2 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center"
                 >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Descarcă
+                  <span className="hidden sm:inline">Descarcă</span>
                 </a>
                 <button
                   onClick={() => setShowPdfViewer(false)}
-                  className="text-white hover:text-gray-300 transition-colors p-2"
+                  className="text-white hover:text-gray-300 transition-colors p-1 sm:p-2"
+                  aria-label="Close"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
 
-            {/* PDF Viewer */}
-            <div className="w-full h-[calc(100%-4rem)]">
+            {/* PDF Viewer Content */}
+            <div className="flex-1 overflow-auto bg-gray-100">
               <iframe
-                src={reportUrl}
-                className="w-full h-full border-0"
+                src={`https://docs.google.com/viewer?url=${encodeURIComponent(reportUrl)}&embedded=true`}
+                className="w-full h-full border-0 bg-white"
                 title="Raport CarVertical"
+                style={{ minHeight: '600px' }}
               />
             </div>
           </div>
