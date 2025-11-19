@@ -109,7 +109,7 @@ NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=your_turnstile_site_key
 CLOUDFLARE_TURNSTILE_SECRET=your_turnstile_secret_key
 
 # Analytics (Plausible)
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=automode.ro
+NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL=https://plausible.io/js/pa-MaQKuj9O1yKejZ1QwX16k.js
 
 # Application Configuration
 NEXT_PUBLIC_SITE_URL=https://automode.ro
@@ -178,13 +178,13 @@ Uses Brevo (formerly SendinBlue) for transactional emails:
 - **Image Processing**: html2canvas for capturing digital signatures
 
 ### Analytics Integration
-- **Plausible Analytics**: Privacy-friendly, cookieless web analytics via `@plausible-analytics/tracker`
+- **Plausible Analytics**: Privacy-friendly, cookieless web analytics via custom script
   - Configured in `PlausibleProvider` component at `src/components/analytics/PlausibleProvider.tsx`
-  - Auto-captures pageviews for SPA navigation
-  - Tracks outbound links and file downloads
-  - Does not track on localhost by default
-  - Custom event tracking available via `import { track } from '@plausible-analytics/tracker'`
-  - Example: `track('signup', { props: { tier: 'startup' } })`
+  - Auto-captures pageviews automatically
+  - Lightweight script loading with Next.js Script component
+  - Custom event tracking available via `window.plausible()`
+  - Example: `window.plausible('signup', { props: { plan: 'premium' } })`
+  - Script URL configured via `NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL` environment variable
 
 ### Next.js Configuration
 - **Image Optimization**: Configured remote patterns for OpenLane, Copart, Unsplash, and Supabase storage
