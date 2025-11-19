@@ -51,22 +51,22 @@ export default function AnalyticsDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900">
             Analitice Site
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Statistici și date despre vizitatorii site-ului
+          <p className="mt-2 text-gray-600">
+            Statistici și date despre vizitatorii site-ului (Ultimele 30 zile)
           </p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Page Views */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
                 <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,10 +75,10 @@ export default function AnalyticsDashboard() {
                 </svg>
               </div>
               <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-500">
                   Vizualizări Pagini
                 </p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <p className="text-2xl font-semibold text-gray-900">
                   {isLoading ? '...' : stats.totalPageViews.toLocaleString()}
                 </p>
               </div>
@@ -86,7 +86,7 @@ export default function AnalyticsDashboard() {
           </div>
 
           {/* Unique Users */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
                 <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,10 +94,10 @@ export default function AnalyticsDashboard() {
                 </svg>
               </div>
               <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-500">
                   Utilizatori Unici
                 </p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <p className="text-2xl font-semibold text-gray-900">
                   {isLoading ? '...' : stats.uniqueUsers.toLocaleString()}
                 </p>
               </div>
@@ -105,7 +105,7 @@ export default function AnalyticsDashboard() {
           </div>
 
           {/* Avg Session Duration */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
                 <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,10 +113,10 @@ export default function AnalyticsDashboard() {
                 </svg>
               </div>
               <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-500">
                   Durată Medie Sesiune
                 </p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <p className="text-2xl font-semibold text-gray-900">
                   {isLoading ? '...' : stats.avgSessionDuration}
                 </p>
               </div>
@@ -124,7 +124,7 @@ export default function AnalyticsDashboard() {
           </div>
 
           {/* Top Pages Count */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-purple-500 rounded-md p-3">
                 <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,10 +132,10 @@ export default function AnalyticsDashboard() {
                 </svg>
               </div>
               <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-500">
                   Pagini Populare
                 </p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <p className="text-2xl font-semibold text-gray-900">
                   {isLoading ? '...' : stats.topPages.length}
                 </p>
               </div>
@@ -144,44 +144,44 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Top Pages Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">
               Cele Mai Vizitate Pagini
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Pagină
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Vizualizări
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={2} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={2} className="px-6 py-4 text-center text-gray-500">
                       Se încarcă...
                     </td>
                   </tr>
                 ) : stats.topPages.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={2} className="px-6 py-4 text-center text-gray-500">
                       Nu există date disponibile
                     </td>
                   </tr>
                 ) : (
                   stats.topPages.map((page, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {page.page || '/'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {page.views.toLocaleString()}
                       </td>
                     </tr>
@@ -192,19 +192,19 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
 
-        {/* Mixpanel Dashboard Embed */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        {/* Mixpanel Dashboard Link */}
+        <div className="bg-white rounded-lg shadow p-6">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-gray-900">
               Dashboard Complet Mixpanel
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-gray-500">
               Pentru detalii avansate, accesați{' '}
               <a
                 href="https://mixpanel.com/project/3297262"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                className="text-blue-600 hover:text-blue-500"
               >
                 dashboard-ul Mixpanel →
               </a>
