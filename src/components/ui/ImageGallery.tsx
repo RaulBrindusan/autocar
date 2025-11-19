@@ -62,8 +62,18 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
 
   const handleOpenLightbox = () => {
     setIsOpen(true)
-    // Preload first few images when opening lightbox
-    preloadAdjacentImages(0)
+    // Aggressively preload ALL images when opening lightbox for instant navigation
+    const allIndices = Array.from({ length: images.length }, (_, i) => i)
+    setLoadedImages(new Set(allIndices))
+
+    // Trigger browser preload for all images
+    images.forEach(img => {
+      const link = document.createElement('link')
+      link.rel = 'preload'
+      link.as = 'image'
+      link.href = img
+      document.head.appendChild(link)
+    })
   }
 
   return (
@@ -142,17 +152,28 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               height={900}
               className="object-contain w-full h-full"
               quality={85}
-              priority={loadedImages.has(currentIndex)}
-              loading={loadedImages.has(currentIndex) ? "eager" : "lazy"}
+              priority={true}
+              loading="eager"
               placeholder="blur"
               blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
             />
           </div>
 
-          {/* Preload adjacent images for instant navigation */}
-          {Array.from(loadedImages).map(idx => {
-            if (idx === currentIndex || !images[idx]) return null
-            return <link key={idx} rel="prefetch" as="image" href={images[idx]} />
+          {/* Hidden preload images - load all images in background for instant navigation */}
+          {images.map((img, idx) => {
+            if (idx === currentIndex) return null
+            return (
+              <div key={idx} className="hidden">
+                <Image
+                  src={img}
+                  alt={`Preload ${idx}`}
+                  width={1200}
+                  height={900}
+                  priority={true}
+                  loading="eager"
+                />
+              </div>
+            )
           })}
 
           {/* Next Button */}

@@ -38,16 +38,35 @@ export default function CarDetailPage() {
 
         // BACKGROUND: Load gallery images after primary image is set
         setTimeout(async () => {
+          let galleryImages: string[] = []
+
           // Use stored images array if available, otherwise fetch from folder with caching
           if (carData.images && carData.images.length > 0) {
             // Fast path: Use pre-stored image URLs from Firestore
+            galleryImages = carData.images
             setImages(carData.images)
           } else {
             // Fallback: Fetch from storage folder with session caching
             const folderImages = await getImagesFromFolderCached(`selling/${carId}`)
             if (folderImages.length > 0) {
+              galleryImages = folderImages
               setImages(folderImages)
             }
+          }
+
+          // PREFETCH: Preload all gallery images in background for instant lightbox
+          if (galleryImages.length > 0) {
+            galleryImages.forEach(imgUrl => {
+              const link = document.createElement('link')
+              link.rel = 'prefetch'
+              link.as = 'image'
+              link.href = imgUrl
+              document.head.appendChild(link)
+
+              // Also create Image object to trigger browser cache
+              const img = new Image()
+              img.src = imgUrl
+            })
           }
         }, 0)
 
