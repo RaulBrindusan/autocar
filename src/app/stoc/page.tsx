@@ -9,13 +9,13 @@ import { Car } from '@/lib/types'
 export default function StocPage() {
   const router = useRouter()
   const [cars, setCars] = useState<Car[]>([])
-  const [loading, setLoading] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
     // Subscribe to real-time updates
     const unsubscribe = onCarsSnapshot((carsData) => {
       setCars(carsData)
-      setLoading(false)
+      setInitialLoad(false)
     })
 
     return () => unsubscribe()
@@ -38,13 +38,9 @@ export default function StocPage() {
             </p>
           </div>
 
-          {/* Loading State */}
-          {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-            </div>
-          ) : cars.length === 0 ? (
-            /* Empty State */
+          {/* Cars Grid or Empty State */}
+          {cars.length === 0 && !initialLoad ? (
+            /* Empty State - only show after data loads */
             <div className="text-center py-20">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +54,7 @@ export default function StocPage() {
                 Verifică din nou în curând pentru noi vehicule adăugate.
               </p>
             </div>
-          ) : (
+          ) : cars.length > 0 ? (
             /* Cars Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {cars.map((car) => (
@@ -168,7 +164,7 @@ export default function StocPage() {
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
       </div>
     </div>
   )

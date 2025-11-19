@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { getCar } from '@/lib/firebase/firestore'
-import { getImagesFromFolder, getDownloadUrlFromPath } from '@/lib/firebase/storage'
+import { getImagesFromFolderCached, getDownloadUrlFromPath } from '@/lib/firebase/storage'
 import { Car } from '@/lib/types'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 
@@ -15,65 +15,47 @@ export default function CarDetailPage() {
   const [car, setCar] = useState<Car | null>(null)
   const [images, setImages] = useState<string[]>([])
   const [reportUrl, setReportUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCarData = async () => {
       try {
-        // Fetch car details
+        // Fetch car details first (fast)
         const { car: carData, error: carError } = await getCar(carId)
         if (carError || !carData) {
           setError('Mașina nu a fost găsită')
-          setLoading(false)
           return
         }
         setCar(carData)
 
-        // Fetch images from storage folder
-        // Try multiple folder paths: selling/car1, selling/carId, or use imageUrl
-        let folderImages: string[] = []
-
-        // First try selling/car1 (the default gallery folder)
-        folderImages = await getImagesFromFolder('selling/car1')
-
-        // If no images in car1, try using the carId as folder name
-        if (folderImages.length === 0) {
-          folderImages = await getImagesFromFolder(`selling/${carId}`)
+        // Use stored images array if available, otherwise fetch from folder with caching
+        if (carData.images && carData.images.length > 0) {
+          // Fast path: Use pre-stored image URLs from Firestore
+          setImages(carData.images)
+        } else {
+          // Fallback: Fetch from storage folder with session caching
+          const folderImages = await getImagesFromFolderCached(`selling/${carId}`)
+          if (folderImages.length > 0) {
+            setImages(folderImages)
+          } else if (carData.imageUrl) {
+            setImages([carData.imageUrl])
+          }
         }
 
-        // If images found in folder, use them; otherwise use imageUrl if available
-        if (folderImages.length > 0) {
-          setImages(folderImages)
-        } else if (carData.imageUrl) {
-          setImages([carData.imageUrl])
-        }
-
-        // Fetch report URL if reportCV path exists
+        // Fetch report URL if needed
         if (carData.reportCV) {
           const url = await getDownloadUrlFromPath(carData.reportCV)
           setReportUrl(url)
         }
-
-        setLoading(false)
       } catch (err) {
         setError('A apărut o eroare la încărcarea datelor')
-        setLoading(false)
       }
     }
 
     fetchCarData()
   }, [carId])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (error || !car) {
+  if (error || (car === null && !error)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
@@ -88,6 +70,8 @@ export default function CarDetailPage() {
       </div>
     )
   }
+
+  if (!car) return null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">

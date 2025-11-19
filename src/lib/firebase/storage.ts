@@ -60,13 +60,44 @@ export const getImagesFromFolder = async (folderPath: string): Promise<string[]>
     const folderRef = ref(storage, folderPath);
     const result = await listAll(folderRef);
 
-    // Get download URLs for all items in the folder
+    // Get download URLs for all items in the folder in parallel
     const urlPromises = result.items.map(itemRef => getDownloadURL(itemRef));
     const urls = await Promise.all(urlPromises);
 
     return urls;
   } catch (error) {
     console.error('Error fetching images from folder:', error);
+    return [];
+  }
+};
+
+/**
+ * Fetch and cache image URLs from a folder with client-side caching
+ * Uses sessionStorage to avoid repeated Storage API calls during the same session
+ * @param folderPath - The path to the folder (e.g., "selling/car1")
+ * @returns Array of image URLs
+ */
+export const getImagesFromFolderCached = async (folderPath: string): Promise<string[]> => {
+  try {
+    // Check cache first
+    const cacheKey = `images_${folderPath}`;
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // Fetch from Storage
+    const urls = await getImagesFromFolder(folderPath);
+
+    // Cache for this session
+    if (urls.length > 0) {
+      sessionStorage.setItem(cacheKey, JSON.stringify(urls));
+    }
+
+    return urls;
+  } catch (error) {
+    console.error('Error fetching cached images:', error);
     return [];
   }
 };
