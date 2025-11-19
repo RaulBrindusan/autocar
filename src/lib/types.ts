@@ -8,10 +8,14 @@ export interface Car {
   km: string;            // Kilometri
   fuel: string;          // Tip Combustibil
   engine: string;        // Motor
+  transmisie?: string;   // Transmisie (e.g., "Automată", "Manuală")
+  echipare?: string;     // Echipare (e.g., "Bose Edition", "Premium")
+  dotari?: string;       // Dotări complete (features list)
   buyingprice: string;   // Preț Cumpărare (matches Firestore field)
   askingprice: string;   // Preț Cerut (matches Firestore field)
   profit: string;        // Calculated profit
-  imageUrl?: string;     // Firebase Storage URL
+  imageUrl?: string;     // Firebase Storage URL (primary image)
+  images?: string[];     // Array of image URLs for gallery
   timestamp: number;     // For sorting
 }
 

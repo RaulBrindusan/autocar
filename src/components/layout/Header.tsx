@@ -19,6 +19,7 @@ export function Header() {
   const { user, signOut } = useAuth()
 
   const navigation = [
+    { name: 'Stoc', href: "/stoc" },
     { name: t('header.nav.calculator'), href: "/calculator" },
   ]
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -100,13 +101,13 @@ export function Header() {
                     {t('header.user.sign_out')}
                   </Button>
                 </div>
-              ) : (
+              ) : pathname !== '/' && !pathname.startsWith('/stoc') ? (
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className="text-blue-100 hover:text-white">
                     {t('header.user.sign_in')}
                   </Button>
                 </Link>
-              )}
+              ) : null}
             </div>
 
             {/* Mobile hamburger menu */}
@@ -205,7 +206,7 @@ export function Header() {
                     </button>
                   </div>
                 </div>
-              ) : (
+              ) : pathname !== '/' && !pathname.startsWith('/stoc') ? (
                 <div className="space-y-2">
                   <Link
                     href="/login"
@@ -216,7 +217,7 @@ export function Header() {
                     {t('header.user.sign_in')}
                   </Link>
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Navigation Links - Moved below user section */}

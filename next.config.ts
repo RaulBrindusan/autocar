@@ -102,6 +102,13 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/storage/v1/object/**',
       },
+      // Firebase storage for car images
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     // Security: Disable external image optimization for unoptimized images
     unoptimized: false,

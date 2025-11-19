@@ -2,7 +2,8 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  deleteObject
+  deleteObject,
+  listAll
 } from 'firebase/storage';
 import { storage } from './firebase';
 import { v4 as uuidv4 } from 'uuid';
@@ -46,5 +47,26 @@ export const deleteCarImage = async (imageUrl: string): Promise<{ error: string 
     return { error: null };
   } catch (error: any) {
     return { error: error.message };
+  }
+};
+
+/**
+ * Fetch all image URLs from a Firebase Storage folder
+ * @param folderPath - The path to the folder (e.g., "selling/car1")
+ * @returns Array of image URLs
+ */
+export const getImagesFromFolder = async (folderPath: string): Promise<string[]> => {
+  try {
+    const folderRef = ref(storage, folderPath);
+    const result = await listAll(folderRef);
+
+    // Get download URLs for all items in the folder
+    const urlPromises = result.items.map(itemRef => getDownloadURL(itemRef));
+    const urls = await Promise.all(urlPromises);
+
+    return urls;
+  } catch (error) {
+    console.error('Error fetching images from folder:', error);
+    return [];
   }
 };

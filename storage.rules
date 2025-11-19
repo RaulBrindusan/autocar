@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Cars folder - allow authenticated users to upload images
+    match /cars/{imageId} {
+      // Allow read for all users (public access for car listings)
+      allow read: if true;
+
+      // Allow create for authenticated users
+      // Validate file is an image and size is less than 5MB
+      allow create: if isSignedIn()
+                    && request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow update for authenticated users
+      allow update: if isSignedIn()
+                    && request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow delete for authenticated users
+      allow delete: if isSignedIn();
+    }
+
+    // Selling folder - for car gallery images
+    match /selling/{carId}/{imageId} {
+      // Allow read for all users (public access for car galleries)
+      allow read: if true;
+
+      // Allow create for authenticated users
+      // Validate file is an image and size is less than 10MB
+      allow create: if isSignedIn()
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow update for authenticated users
+      allow update: if isSignedIn()
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow delete for authenticated users
+      allow delete: if isSignedIn();
+    }
+
+    // Allow listing folder contents for selling folders
+    match /selling/{carId} {
+      // Allow read/list for all users to enable gallery functionality
+      allow read, list: if true;
+    }
+
+    // Deny all other requests
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

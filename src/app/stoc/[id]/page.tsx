@@ -1,0 +1,184 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import { getCar } from '@/lib/firebase/firestore'
+import { getImagesFromFolder } from '@/lib/firebase/storage'
+import { Car } from '@/lib/types'
+import { ImageGallery } from '@/components/ui/ImageGallery'
+
+export default function CarDetailPage() {
+  const router = useRouter()
+  const params = useParams()
+  const carId = params.id as string
+
+  const [car, setCar] = useState<Car | null>(null)
+  const [images, setImages] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchCarData = async () => {
+      try {
+        // Fetch car details
+        const { car: carData, error: carError } = await getCar(carId)
+        if (carError || !carData) {
+          setError('Mașina nu a fost găsită')
+          setLoading(false)
+          return
+        }
+        setCar(carData)
+
+        // Fetch images from storage folder
+        // Try multiple folder paths: selling/car1, selling/carId, or use imageUrl
+        let folderImages: string[] = []
+
+        // First try selling/car1 (the default gallery folder)
+        folderImages = await getImagesFromFolder('selling/car1')
+
+        // If no images in car1, try using the carId as folder name
+        if (folderImages.length === 0) {
+          folderImages = await getImagesFromFolder(`selling/${carId}`)
+        }
+
+        // If images found in folder, use them; otherwise use imageUrl if available
+        if (folderImages.length > 0) {
+          setImages(folderImages)
+        } else if (carData.imageUrl) {
+          setImages([carData.imageUrl])
+        }
+
+        setLoading(false)
+      } catch (err) {
+        setError('A apărut o eroare la încărcarea datelor')
+        setLoading(false)
+      }
+    }
+
+    fetchCarData()
+  }, [carId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (error || !car) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Mașina nu a fost găsită'}</h2>
+          <button
+            onClick={() => router.push('/stoc')}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Înapoi la Stoc
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Back Button */}
+          <button
+            onClick={() => router.push('/stoc')}
+            className="mb-6 flex items-center text-blue-600 hover:text-blue-700 font-medium"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Înapoi la Stoc
+          </button>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Image Gallery */}
+            <ImageGallery images={images} alt={`${car.make} ${car.model}`} />
+
+            {/* Details Section */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                  {car.make} {car.model}
+                </h1>
+
+                {/* Specifications */}
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center py-3 border-b">
+                    <span className="text-gray-600 font-medium">An:</span>
+                    <span className="text-gray-900">{car.year}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b">
+                    <span className="text-gray-600 font-medium">Kilometri:</span>
+                    <span className="text-gray-900">{car.km} km</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b">
+                    <span className="text-gray-600 font-medium">Combustibil:</span>
+                    <span className="text-gray-900">{car.fuel}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b">
+                    <span className="text-gray-600 font-medium">Motor:</span>
+                    <span className="text-gray-900">{car.engine}</span>
+                  </div>
+                  {car.transmisie && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">Transmisie:</span>
+                      <span className="text-gray-900">{car.transmisie}</span>
+                    </div>
+                  )}
+                  {car.echipare && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">Echipare:</span>
+                      <span className="text-gray-900">{car.echipare}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pricing */}
+                <div className="bg-blue-50 rounded-lg p-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg text-gray-700 font-semibold">Preț:</span>
+                    <span className="text-3xl text-blue-600 font-bold">{parseInt(car.askingprice).toLocaleString()} €</span>
+                  </div>
+                </div>
+
+                {/* Contact Button */}
+                <a
+                  href={`https://wa.me/40770852489?text=Salut!%20Sunt%20interesat%20de%20${encodeURIComponent(car.make + ' ' + car.model)}.%20Pot%20primi%20mai%20multe%20detalii?`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 block w-full bg-blue-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Contactează-ne: 0770852489
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Dotări Section */}
+          {car.dotari && (
+            <div className="mt-8">
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Dotări</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                  {car.dotari.split('-').filter(item => item.trim()).map((item, index) => (
+                    <div key={index} className="flex items-start">
+                      <svg className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-gray-700">{item.trim()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+      </div>
+    </div>
+  )
+}
