@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { CookieConsent } from "@/components/ui/CookieConsent";
-import { PlausibleProvider } from "@/components/analytics/PlausibleProvider";
+import { MixpanelProvider } from "@/components/analytics/MixpanelProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -82,7 +82,7 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <PlausibleProvider />
+              <MixpanelProvider />
               <ConditionalLayout>
                 {children}
               </ConditionalLayout>

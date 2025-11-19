@@ -108,8 +108,8 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
 NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=your_turnstile_site_key
 CLOUDFLARE_TURNSTILE_SECRET=your_turnstile_secret_key
 
-# Analytics (Plausible)
-NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL=https://plausible.io/js/pa-MaQKuj9O1yKejZ1QwX16k.js
+# Analytics (Mixpanel)
+NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 
 # Application Configuration
 NEXT_PUBLIC_SITE_URL=https://automode.ro
@@ -178,13 +178,14 @@ Uses Brevo (formerly SendinBlue) for transactional emails:
 - **Image Processing**: html2canvas for capturing digital signatures
 
 ### Analytics Integration
-- **Plausible Analytics**: Privacy-friendly, cookieless web analytics via custom script
-  - Configured in `PlausibleProvider` component at `src/components/analytics/PlausibleProvider.tsx`
-  - Auto-captures pageviews automatically
-  - Lightweight script loading with Next.js Script component
-  - Custom event tracking available via `window.plausible()`
-  - Example: `window.plausible('signup', { props: { plan: 'premium' } })`
-  - Script URL configured via `NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL` environment variable
+- **Mixpanel Analytics**: Advanced product analytics with autocapture and session replay
+  - Configured in `MixpanelProvider` component at `src/components/analytics/MixpanelProvider.tsx`
+  - Autocapture: Automatically tracks clicks, form submissions, and user interactions
+  - Session Replay: Records 100% of user sessions for debugging and UX analysis
+  - EU Data Residency: Uses EU API endpoint (api-eu.mixpanel.com) for GDPR compliance
+  - Custom event tracking available via `mixpanel` import
+  - Example: `import mixpanel from 'mixpanel-browser'; mixpanel.track('Signup', { plan: 'premium' })`
+  - Token configured via `NEXT_PUBLIC_MIXPANEL_TOKEN` environment variable
 
 ### Next.js Configuration
 - **Image Optimization**: Configured remote patterns for OpenLane, Copart, Unsplash, and Supabase storage
