@@ -65,15 +65,6 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
     // Aggressively preload ALL images when opening lightbox for instant navigation
     const allIndices = Array.from({ length: images.length }, (_, i) => i)
     setLoadedImages(new Set(allIndices))
-
-    // Trigger browser preload for all images
-    images.forEach(img => {
-      const link = document.createElement('link')
-      link.rel = 'preload'
-      link.as = 'image'
-      link.href = img
-      document.head.appendChild(link)
-    })
   }
 
   return (
