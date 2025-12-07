@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AddCarDialog from '@/components/AddCarDialog';
 import { onCarsSnapshot, onCarExpensesSnapshot, calculateTotalExpenses, calculateProfit } from '@/lib/firebase/firestore';
@@ -106,12 +107,13 @@ function DashboardContent() {
         {/* Cars Grid */}
         {!loading && cars.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cars.map((car) => (
+            {cars.map((car, index) => (
               <CarCard
                 key={car.id}
                 car={car}
                 expenses={carExpenses[car.id] || []}
                 onClick={() => handleCarClick(car.id)}
+                index={index}
               />
             ))}
           </div>
@@ -126,7 +128,7 @@ function DashboardContent() {
 }
 
 // Car Card Component
-function CarCard({ car, expenses, onClick }: { car: Car; expenses: Expense[]; onClick: () => void }) {
+function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expense[]; onClick: () => void; index: number }) {
   const totalExpenses = calculateTotalExpenses(expenses);
   const realProfit = calculateProfit(car.askingprice, car.buyingprice, totalExpenses);
   const profitColor = realProfit >= 0 ? 'text-green-600' : 'text-red-600';
@@ -139,10 +141,17 @@ function CarCard({ car, expenses, onClick }: { car: Car; expenses: Expense[]; on
       {/* Car Image */}
       <div className="h-48 bg-gray-200 relative overflow-hidden">
         {car.imageUrl ? (
-          <img
+          <Image
             src={car.imageUrl}
             alt={`${car.make} ${car.model}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={75}
+            loading="eager"
+            priority={index < 6}
+            placeholder="blur"
+            blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">

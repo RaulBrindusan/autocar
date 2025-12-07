@@ -61,6 +61,29 @@ service cloud.firestore {
       allow delete: if isSignedIn();
     }
 
+    // Todos collection rules
+    match /todos/{todoId} {
+      // Allow anyone to read todos (public access for car details on Stoc page)
+      allow read: if true;
+
+      // Allow authenticated users to create new todos
+      // The todo document must have the required fields
+      allow create: if isSignedIn()
+                    && request.resource.data.keys().hasAll(['carId', 'name', 'status', 'userId', 'timestamp'])
+                    && request.resource.data.carId is string
+                    && request.resource.data.name is string
+                    && request.resource.data.status is bool
+                    && request.resource.data.userId is string
+                    && request.resource.data.timestamp is number
+                    && request.resource.data.userId == request.auth.uid;
+
+      // Allow authenticated users to update todos
+      allow update: if isSignedIn();
+
+      // Allow authenticated users to delete todos
+      allow delete: if isSignedIn();
+    }
+
     // Users collection (if you want to store user profiles in the future)
     match /users/{userId} {
       // Allow users to read their own profile

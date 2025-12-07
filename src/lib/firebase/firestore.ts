@@ -15,7 +15,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Car, Expense } from '../types';
+import { Car, Expense, Todo } from '../types';
 
 // Cars Collection
 
@@ -170,4 +170,73 @@ export const calculateProfit = (askingPrice: string, buyingPrice: string, totalE
   const asking = parseFloat(askingPrice) || 0;
   const buying = parseFloat(buyingPrice) || 0;
   return asking - buying - totalExpenses;
+};
+
+// Todos Collection
+
+export const todosCollection = collection(db, 'todos');
+
+// Add a new todo
+export const addCarTodo = async (carId: string, name: string, userId: string) => {
+  try {
+    const docRef = await addDoc(todosCollection, {
+      carId,
+      name,
+      status: false,
+      userId,
+      timestamp: Date.now()
+    });
+    return { id: docRef.id, error: null };
+  } catch (error: any) {
+    return { id: null, error: error.message };
+  }
+};
+
+// Update a todo
+export const updateCarTodo = async (todoId: string, updates: Partial<Todo>) => {
+  try {
+    const todoRef = doc(db, 'todos', todoId);
+    await updateDoc(todoRef, updates);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Delete a todo
+export const deleteCarTodo = async (todoId: string) => {
+  try {
+    const todoRef = doc(db, 'todos', todoId);
+    await deleteDoc(todoRef);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Get todos for a specific car
+export const getCarTodos = async (carId: string) => {
+  try {
+    const q = query(todosCollection, where('carId', '==', carId), orderBy('timestamp', 'asc'));
+    const snapshot = await getDocs(q);
+    const todos = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Todo[];
+    return { todos, error: null };
+  } catch (error: any) {
+    return { todos: [], error: error.message };
+  }
+};
+
+// Real-time listener for car todos
+export const onCarTodosSnapshot = (carId: string, callback: (todos: Todo[]) => void) => {
+  const q = query(todosCollection, where('carId', '==', carId), orderBy('timestamp', 'asc'));
+  return onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+    const todos = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Todo[];
+    callback(todos);
+  });
 };

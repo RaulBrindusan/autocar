@@ -32,3 +32,12 @@ export interface User {
   uid: string;
   email: string | null;
 }
+
+export interface Todo {
+  id: string;
+  carId: string;         // Reference to Car document
+  name: string;          // To-do item description
+  status: boolean;       // true = done, false = not done
+  timestamp: number;     // Unix timestamp
+  userId: string;        // User who created it
+}
