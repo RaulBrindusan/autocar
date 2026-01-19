@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -82,7 +83,9 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <MixpanelProvider />
+              <Suspense fallback={null}>
+                <MixpanelProvider />
+              </Suspense>
               <ConditionalLayout>
                 {children}
               </ConditionalLayout>

@@ -84,6 +84,15 @@ All pages now have optimized metadata:
 - ✅ Breadcrumb navigation
 - **File:** `/src/app/calculator/layout.tsx`
 
+#### **Mașini la Comandă Page** (`/masini-la-comanda`)
+- ✅ Dedicated layout with metadata
+- ✅ SEO-optimized content with H1, H2, H3 hierarchy
+- ✅ Multi-step form for car orders
+- ✅ FAQ section for long-tail keywords
+- ✅ Breadcrumb navigation
+- ✅ High priority in sitemap (0.95)
+- **File:** `/src/app/masini-la-comanda/layout.tsx` & `page.tsx`
+
 #### **Privacy Pages**
 - ✅ `/politica-de-confidentialitate` - With metadata + noindex
 - ✅ `/politica-de-cookies` - With metadata + noindex

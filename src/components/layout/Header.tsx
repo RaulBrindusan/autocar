@@ -19,6 +19,7 @@ export function Header() {
   const { user, signOut } = useAuth()
 
   const navigation = [
+    { name: 'Mașini la Comandă', href: "/masini-la-comanda" },
     { name: 'Stoc', href: "/stoc" },
     { name: t('header.nav.calculator'), href: "/calculator" },
   ]

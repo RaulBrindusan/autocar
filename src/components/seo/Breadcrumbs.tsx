@@ -29,6 +29,7 @@ interface BreadcrumbsProps {
 // Default breadcrumb mappings for routes
 const routeLabels: Record<string, string> = {
   '/': 'Acasă',
+  '/masini-la-comanda': 'Mașini la Comandă',
   '/calculator': 'Calculator Import',
   '/stoc': 'Stoc Mașini',
   '/dashboard': 'Dashboard',
