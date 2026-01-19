@@ -38,29 +38,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-start md:items-center justify-center p-4 pt-12 md:pt-4">
       <div className="w-full max-w-md">
         {/* Logo/Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 md:mb-8">
           <div className="mx-auto mb-4 flex justify-center">
             <Image
               src="/AUTO.svg"
               alt="AutoMode"
               width={840}
               height={336}
-              className="h-84 w-auto"
+              className="h-56 md:h-84 w-auto"
               priority
             />
           </div>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
-          <h2 className="text-2xl font-semibold text-white mb-6 text-center">
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl">
+          <h2 className="text-xl md:text-2xl font-semibold text-white mb-4 md:mb-6 text-center">
             Autentificare
           </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
             {/* Email Field */}
             <div>
               <input
@@ -130,7 +130,7 @@ export default function LoginPage() {
         </div>
 
         {/* Back to Homepage Link */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-4 md:mt-6">
           <Link
             href="/"
             className="text-white/80 hover:text-white text-sm transition-colors inline-flex items-center gap-2"
