@@ -119,7 +119,7 @@ export default function Home() {
                   <Link href="/calculator">{t('hero.cta.primary')}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-base px-6 py-4 h-14 font-semibold border-gray-300 text-black bg-white hover:bg-gray-50 hover:text-black transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/calculator">{t('hero.cta.secondary')}</Link>
+                  <Link href="/masini-la-comanda">{t('hero.cta.secondary')}</Link>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400 transition-colors">
