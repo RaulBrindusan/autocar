@@ -56,7 +56,20 @@ function DashboardContent() {
   };
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16 md:mt-0">
+        {/* Breadcrumbs */}
+        <nav className="mb-4" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2 text-sm">
+            <li className="text-gray-600 font-medium">Home</li>
+          </ol>
+        </nav>
+
+        {/* Page Title */}
+        <div className="mb-6">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-xs md:text-sm text-gray-600 mt-1">Gestionează inventarul de mașini</p>
+        </div>
+
         {/* Add Car Button */}
         <div className="mb-6">
           <button

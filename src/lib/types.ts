@@ -41,3 +41,21 @@ export interface Todo {
   timestamp: number;     // Unix timestamp
   userId: string;        // User who created it
 }
+
+export interface CarRequest {
+  id: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  brand: string;
+  model: string;
+  year: number;
+  max_budget: number;
+  preferred_color?: string | null;
+  fuel_type?: string | null;
+  transmission?: string | null;
+  mileage_max?: number | null;
+  additional_requirements?: string | null;
+  status: string;
+  timestamp: any;  // Firebase Timestamp
+}

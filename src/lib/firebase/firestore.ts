@@ -15,7 +15,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Car, Expense, Todo } from '../types';
+import { Car, Expense, Todo, CarRequest } from '../types';
 
 // Cars Collection
 
@@ -238,5 +238,21 @@ export const onCarTodosSnapshot = (carId: string, callback: (todos: Todo[]) => v
       ...doc.data()
     })) as Todo[];
     callback(todos);
+  });
+};
+
+// Car Requests Collection
+
+export const carRequestsCollection = collection(db, 'car_requests');
+
+// Real-time listener for all car requests
+export const onCarRequestsSnapshot = (callback: (requests: CarRequest[]) => void) => {
+  const q = query(carRequestsCollection, orderBy('timestamp', 'desc'));
+  return onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+    const requests = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as CarRequest[];
+    callback(requests);
   });
 };

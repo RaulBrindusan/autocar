@@ -245,15 +245,28 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16 md:mt-0">
+        {/* Breadcrumbs */}
+        <nav className="mb-4" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2 text-sm">
+            <li>
+              <a href="/dashboard" className="text-blue-600 hover:text-blue-800 font-medium">
+                Home
+              </a>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li className="text-gray-600 font-medium">Analitice</li>
+          </ol>
+        </nav>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-xl md:text-3xl font-bold text-gray-900">
                 Analitice Site
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-xs md:text-base text-gray-600">
                 Statistici detaliate despre vizitatorii site-ului
               </p>
             </div>
