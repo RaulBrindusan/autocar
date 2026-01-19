@@ -96,6 +96,29 @@ service cloud.firestore {
       allow delete: if isOwner(userId);
     }
 
+    // Car requests collection (masini la comanda form submissions)
+    match /car_requests/{requestId} {
+      // Allow anyone to create car requests (public form)
+      allow create: if request.resource.data.keys().hasAll(['contact_name', 'contact_email', 'contact_phone', 'brand', 'model', 'year', 'max_budget', 'status', 'timestamp'])
+                    && request.resource.data.contact_name is string
+                    && request.resource.data.contact_email is string
+                    && request.resource.data.contact_phone is string
+                    && request.resource.data.brand is string
+                    && request.resource.data.model is string
+                    && request.resource.data.year is int
+                    && request.resource.data.max_budget is number
+                    && request.resource.data.status == 'pending';
+
+      // Allow authenticated users to read car requests
+      allow read: if isSignedIn();
+
+      // Allow authenticated users to update car requests
+      allow update: if isSignedIn();
+
+      // Allow authenticated users to delete car requests
+      allow delete: if isSignedIn();
+    }
+
     // Deny all other requests by default
     match /{document=**} {
       allow read, write: if false;

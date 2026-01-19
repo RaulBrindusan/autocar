@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '@/lib/firebase/firebase'
 
 interface FormData {
   // Step 1: Contact Info
@@ -13,6 +15,7 @@ interface FormData {
 
   // Step 2: Car Preferences
   brand: string
+  customBrand: string
   model: string
   yearMin: string
   yearMax: string
@@ -35,6 +38,7 @@ const initialFormData: FormData = {
   email: '',
   phone: '',
   brand: '',
+  customBrand: '',
   model: '',
   yearMin: '',
   yearMax: '',
@@ -84,7 +88,21 @@ export function CarOrderForm() {
   const totalSteps = 4
 
   const updateFormData = (field: keyof FormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    // Ensure string values are never undefined/null
+    const safeValue = typeof value === 'string' ? (value ?? '') : value
+    setFormData(prev => ({ ...prev, [field]: safeValue }))
+  }
+
+  // Format number with thousand separators (10000 -> 10.000)
+  const formatNumber = (value: string): string => {
+    if (!value) return ''
+    const num = value.replace(/\./g, '')
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  }
+
+  // Remove formatting from number (10.000 -> 10000)
+  const unformatNumber = (value: string): string => {
+    return value.replace(/\./g, '')
   }
 
   const nextStep = () => {
@@ -106,11 +124,30 @@ export function CarOrderForm() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Implement API call to submit form data
-      // For now, just simulate submission
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Prepare data for submission
+      const finalBrand = formData.brand === 'Altă marcă' ? formData.customBrand : formData.brand
 
-      console.log('Form submitted:', formData)
+      const requestData = {
+        contact_name: formData.fullName,
+        contact_email: formData.email,
+        contact_phone: formData.phone,
+        brand: finalBrand,
+        model: formData.model,
+        year: parseInt(formData.yearMin),
+        max_budget: parseFloat(formData.budgetMax),
+        preferred_color: formData.color || null,
+        fuel_type: formData.fuelType || null,
+        transmission: formData.transmission || null,
+        mileage_max: formData.mileageMax ? parseInt(formData.mileageMax) : null,
+        additional_requirements: formData.additionalRequirements || null,
+        status: 'pending',
+        timestamp: serverTimestamp(),
+      }
+
+      // Save directly to Firestore
+      const carRequestsRef = collection(db, 'car_requests')
+      await addDoc(carRequestsRef, requestData)
+
       setIsSubmitted(true)
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -125,7 +162,10 @@ export function CarOrderForm() {
       case 1:
         return formData.fullName && formData.email && formData.phone
       case 2:
-        return formData.brand && formData.model && formData.yearMin
+        const brandValid = formData.brand !== 'Altă marcă'
+          ? formData.brand
+          : formData.customBrand
+        return brandValid && formData.model && formData.yearMin
       case 3:
         return formData.budgetMin && formData.budgetMax
       case 4:
@@ -146,16 +186,9 @@ export function CarOrderForm() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Mulțumim pentru comandă!
             </h2>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-gray-900 mb-6">
               Am primit cererea ta și echipa noastră te va contacta în curând cu oferte personalizate.
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <p className="text-sm text-gray-700">
-                <strong>Ce urmează?</strong><br />
-                În maximum 24 de ore vei primi un email cu cele mai bune oferte pentru mașina ta,
-                adaptate exact preferințelor tale.
-              </p>
-            </div>
             <Button onClick={() => window.location.href = '/'} size="lg">
               Înapoi la Pagina Principală
             </Button>
@@ -186,7 +219,7 @@ export function CarOrderForm() {
                     step
                   )}
                 </div>
-                <span className="text-xs mt-2 text-gray-600 text-center hidden sm:block">
+                <span className="text-xs mt-2 text-gray-900 text-center hidden sm:block">
                   {step === 1 && 'Contact'}
                   {step === 2 && 'Preferințe'}
                   {step === 3 && 'Detalii'}
@@ -207,21 +240,12 @@ export function CarOrderForm() {
 
       <form onSubmit={handleSubmit}>
         <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">
-              {currentStep === 1 && 'Informații de Contact'}
-              {currentStep === 2 && 'Preferințele Tale'}
-              {currentStep === 3 && 'Buget și Detalii'}
-              {currentStep === 4 && 'Confirmare Comandă'}
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pt-6">
             {/* Step 1: Contact Information */}
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-2">
                     Nume Complet *
                   </label>
                   <input
@@ -230,13 +254,13 @@ export function CarOrderForm() {
                     required
                     value={formData.fullName}
                     onChange={(e) => updateFormData('fullName', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="Ion Popescu"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                     Email *
                   </label>
                   <input
@@ -245,13 +269,13 @@ export function CarOrderForm() {
                     required
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="ion.popescu@email.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
                     Telefon *
                   </label>
                   <input
@@ -260,7 +284,7 @@ export function CarOrderForm() {
                     required
                     value={formData.phone}
                     onChange={(e) => updateFormData('phone', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="0712345678"
                   />
                 </div>
@@ -271,7 +295,7 @@ export function CarOrderForm() {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="brand" className="block text-sm font-medium text-gray-900 mb-2">
                     Marcă *
                   </label>
                   <select
@@ -279,7 +303,7 @@ export function CarOrderForm() {
                     required
                     value={formData.brand}
                     onChange={(e) => updateFormData('brand', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                   >
                     <option value="">Selectează marca</option>
                     {carBrands.map((brand) => (
@@ -290,8 +314,25 @@ export function CarOrderForm() {
                   </select>
                 </div>
 
+                {formData.brand === 'Altă marcă' && (
+                  <div>
+                    <label htmlFor="customBrand" className="block text-sm font-medium text-gray-900 mb-2">
+                      Specifică Marca *
+                    </label>
+                    <input
+                      id="customBrand"
+                      type="text"
+                      required
+                      value={formData.customBrand}
+                      onChange={(e) => updateFormData('customBrand', e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      placeholder="Ex: Dacia, Subaru, Mitsubishi"
+                    />
+                  </div>
+                )}
+
                 <div>
-                  <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="model" className="block text-sm font-medium text-gray-900 mb-2">
                     Model *
                   </label>
                   <input
@@ -300,14 +341,14 @@ export function CarOrderForm() {
                     required
                     value={formData.model}
                     onChange={(e) => updateFormData('model', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="Ex: Seria 5, E-Class, A6"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="yearMin" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="yearMin" className="block text-sm font-medium text-gray-900 mb-2">
                       An Fabricație (Minim) *
                     </label>
                     <select
@@ -315,7 +356,7 @@ export function CarOrderForm() {
                       required
                       value={formData.yearMin}
                       onChange={(e) => updateFormData('yearMin', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                     >
                       <option value="">Selectează anul</option>
                       {years.map((year) => (
@@ -327,14 +368,14 @@ export function CarOrderForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="yearMax" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="yearMax" className="block text-sm font-medium text-gray-900 mb-2">
                       An Fabricație (Maxim)
                     </label>
                     <select
                       id="yearMax"
                       value={formData.yearMax}
                       onChange={(e) => updateFormData('yearMax', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                     >
                       <option value="">Selectează anul</option>
                       {years.map((year) => (
@@ -348,14 +389,14 @@ export function CarOrderForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="fuelType" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="fuelType" className="block text-sm font-medium text-gray-900 mb-2">
                       Tip Combustibil
                     </label>
                     <select
                       id="fuelType"
                       value={formData.fuelType}
                       onChange={(e) => updateFormData('fuelType', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                     >
                       <option value="">Selectează tipul</option>
                       {fuelTypes.map((fuel) => (
@@ -367,14 +408,14 @@ export function CarOrderForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="transmission" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="transmission" className="block text-sm font-medium text-gray-900 mb-2">
                       Transmisie
                     </label>
                     <select
                       id="transmission"
                       value={formData.transmission}
                       onChange={(e) => updateFormData('transmission', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                     >
                       <option value="">Selectează tipul</option>
                       {transmissionTypes.map((trans) => (
@@ -393,55 +434,67 @@ export function CarOrderForm() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="budgetMin" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="budgetMin" className="block text-sm font-medium text-gray-900 mb-2">
                       Buget Minim (EUR) *
                     </label>
                     <input
                       id="budgetMin"
-                      type="number"
+                      type="text"
                       required
-                      min="0"
-                      value={formData.budgetMin}
-                      onChange={(e) => updateFormData('budgetMin', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="10000"
+                      value={formatNumber(formData.budgetMin)}
+                      onChange={(e) => {
+                        const unformatted = unformatNumber(e.target.value)
+                        if (/^\d*$/.test(unformatted)) {
+                          updateFormData('budgetMin', unformatted)
+                        }
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      placeholder="10.000"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="budgetMax" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="budgetMax" className="block text-sm font-medium text-gray-900 mb-2">
                       Buget Maxim (EUR) *
                     </label>
                     <input
                       id="budgetMax"
-                      type="number"
+                      type="text"
                       required
-                      min="0"
-                      value={formData.budgetMax}
-                      onChange={(e) => updateFormData('budgetMax', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="25000"
+                      value={formatNumber(formData.budgetMax)}
+                      onChange={(e) => {
+                        const unformatted = unformatNumber(e.target.value)
+                        if (/^\d*$/.test(unformatted)) {
+                          updateFormData('budgetMax', unformatted)
+                        }
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      placeholder="25.000"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="mileageMax" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="mileageMax" className="block text-sm font-medium text-gray-900 mb-2">
                     Kilometraj Maxim (km)
                   </label>
                   <input
                     id="mileageMax"
-                    type="number"
-                    min="0"
-                    value={formData.mileageMax}
-                    onChange={(e) => updateFormData('mileageMax', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="150000"
+                    type="text"
+                    value={formatNumber(formData.mileageMax)}
+                    onChange={(e) => {
+                      const unformatted = unformatNumber(e.target.value)
+                      if (/^\d*$/.test(unformatted)) {
+                        updateFormData('mileageMax', unformatted)
+                      }
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    placeholder="150.000"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="color" className="block text-sm font-medium text-gray-900 mb-2">
                     Culoare Preferată
                   </label>
                   <input
@@ -449,13 +502,13 @@ export function CarOrderForm() {
                     type="text"
                     value={formData.color}
                     onChange={(e) => updateFormData('color', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="Ex: Negru, Alb, Gri"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="additionalRequirements" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="additionalRequirements" className="block text-sm font-medium text-gray-900 mb-2">
                     Cerințe Suplimentare
                   </label>
                   <textarea
@@ -463,7 +516,7 @@ export function CarOrderForm() {
                     rows={4}
                     value={formData.additionalRequirements}
                     onChange={(e) => updateFormData('additionalRequirements', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
                     placeholder="Menționează orice alte cerințe sau preferințe (ex: pachet sport, interior piele, sistem audio premium, etc.)"
                   />
                 </div>
@@ -479,73 +532,75 @@ export function CarOrderForm() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600">Nume:</p>
-                        <p className="font-medium">{formData.fullName}</p>
+                        <p className="text-sm text-gray-900">Nume:</p>
+                        <p className="font-medium text-gray-900">{formData.fullName}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Email:</p>
-                        <p className="font-medium">{formData.email}</p>
+                        <p className="text-sm text-gray-900">Email:</p>
+                        <p className="font-medium text-gray-900">{formData.email}</p>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-600">Telefon:</p>
-                      <p className="font-medium">{formData.phone}</p>
+                      <p className="text-sm text-gray-900">Telefon:</p>
+                      <p className="font-medium text-gray-900">{formData.phone}</p>
                     </div>
 
                     <hr className="my-4" />
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600">Marcă:</p>
-                        <p className="font-medium">{formData.brand}</p>
+                        <p className="text-sm text-gray-900">Marcă:</p>
+                        <p className="font-medium text-gray-900">
+                          {formData.brand === 'Altă marcă' ? formData.customBrand : formData.brand}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Model:</p>
-                        <p className="font-medium">{formData.model}</p>
+                        <p className="text-sm text-gray-900">Model:</p>
+                        <p className="font-medium text-gray-900">{formData.model}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600">An:</p>
-                        <p className="font-medium">
+                        <p className="text-sm text-gray-900">An:</p>
+                        <p className="font-medium text-gray-900">
                           {formData.yearMin}{formData.yearMax && ` - ${formData.yearMax}`}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Buget:</p>
-                        <p className="font-medium">
-                          €{formData.budgetMin} - €{formData.budgetMax}
+                        <p className="text-sm text-gray-900">Buget:</p>
+                        <p className="font-medium text-gray-900">
+                          €{formatNumber(formData.budgetMin)} - €{formatNumber(formData.budgetMax)}
                         </p>
                       </div>
                     </div>
 
                     {formData.fuelType && (
                       <div>
-                        <p className="text-sm text-gray-600">Combustibil:</p>
-                        <p className="font-medium">{formData.fuelType}</p>
+                        <p className="text-sm text-gray-900">Combustibil:</p>
+                        <p className="font-medium text-gray-900">{formData.fuelType}</p>
                       </div>
                     )}
 
                     {formData.transmission && (
                       <div>
-                        <p className="text-sm text-gray-600">Transmisie:</p>
-                        <p className="font-medium">{formData.transmission}</p>
+                        <p className="text-sm text-gray-900">Transmisie:</p>
+                        <p className="font-medium text-gray-900">{formData.transmission}</p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3">
+                <div className="flex items-center space-x-3">
                   <input
                     id="agreeToTerms"
                     type="checkbox"
                     checked={formData.agreeToTerms}
                     onChange={(e) => updateFormData('agreeToTerms', e.target.checked)}
-                    className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
                   />
-                  <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+                  <label htmlFor="agreeToTerms" className="text-sm text-gray-900">
                     Accept{' '}
                     <a href="/politica-de-confidentialitate" className="text-blue-600 hover:underline" target="_blank">
                       Politica de Confidențialitate

@@ -143,7 +143,7 @@ const translations = {
     'footer.company_description': 'Partenerul tău de încredere pentru importul de vehicule premium din Europa. Ne ocupăm de tot, de la selecție la livrare, transformând mașina ta de vis în realitate.',
     'footer.services': 'Servicii',
     'footer.order_car': 'Comandă Mașină',
-    'footer.cost_calculator': 'Calculator Costuri',
+    'footer.cost_calculator': 'Calculator Cost',
     'footer.legal': 'Legal',
     'footer.terms_conditions': 'Termeni și Condiții',
     'footer.privacy_policy': 'Politica de Confidențialitate',
@@ -153,7 +153,7 @@ const translations = {
     // Dashboard Sidebar
     'sidebar.dashboard': 'Dashboard',
     'sidebar.car_requests': 'Cereri Mașini',
-    'sidebar.calculator': 'Calculator Costuri',
+    'sidebar.calculator': 'Calculator Cost',
     'sidebar.contracts': 'Contracte',
     'sidebar.logout': 'Ieșire',
 
@@ -180,7 +180,7 @@ const translations = {
     'dashboard.recent_activity.contracts_appear_here': 'Contractele tale vor apărea aici',
 
     // Calculator Page
-    'calculator.title': 'Calculator Costuri Import',
+    'calculator.title': 'Calculator Cost Import',
     'calculator.subtitle': 'Calculează costurile exacte pentru importul mașinii tale din Europa',
 
     // Contracts Page
@@ -198,7 +198,7 @@ const translations = {
     'car_requests.not_specified': 'Nu specificat',
 
     // Calculator Component
-    'calc.title': 'Calculator Costuri Import',
+    'calc.title': 'Calculator Cost Import',
     'calc.tab.without_vat': 'Fără TVA',
     'calc.tab.with_vat': 'Cu TVA',
     'calc.price_label': 'Preț mașină (€)',

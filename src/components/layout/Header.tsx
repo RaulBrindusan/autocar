@@ -81,7 +81,7 @@ export function Header() {
             <div className="hidden md:flex md:items-center md:space-x-2">
               <LanguageToggle />
               {!user && <ThemeToggle />}
-              {user ? (
+              {user && (
                 <div className="flex items-center space-x-2">
                   <Button
                     onClick={handleAccountClick}
@@ -102,13 +102,7 @@ export function Header() {
                     {t('header.user.sign_out')}
                   </Button>
                 </div>
-              ) : pathname !== '/' && !pathname.startsWith('/stoc') ? (
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-blue-100 hover:text-white">
-                    {t('header.user.sign_in')}
-                  </Button>
-                </Link>
-              ) : null}
+              )}
             </div>
 
             {/* Mobile hamburger menu */}
@@ -169,8 +163,8 @@ export function Header() {
           {/* Sidebar Content */}
           <div className="flex flex-col h-full">
             {/* User Section - Moved higher */}
-            <div className="border-b border-gray-200 dark:border-gray-700 p-4">
-              {user ? (
+            {user && (
+              <div className="border-b border-gray-200 dark:border-gray-700 p-4">
                 <div className="space-y-4">
                   {/* User Info */}
                   <div className="flex items-center space-x-3">
@@ -207,19 +201,8 @@ export function Header() {
                     </button>
                   </div>
                 </div>
-              ) : pathname !== '/' && !pathname.startsWith('/stoc') ? (
-                <div className="space-y-2">
-                  <Link
-                    href="/login"
-                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    {t('header.user.sign_in')}
-                  </Link>
-                </div>
-              ) : null}
-            </div>
+              </div>
+            )}
 
             {/* Navigation Links - Moved below user section */}
             <nav className="flex-1 px-4 py-6">
