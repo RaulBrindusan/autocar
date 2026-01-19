@@ -1,0 +1,23 @@
+# AutoMode.ro - Robots.txt
+# Allow all crawlers to index the public site
+
+# Default rule for all robots
+User-agent: *
+Allow: /
+
+# Block admin and dashboard areas
+Disallow: /dashboard/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /api/
+Disallow: /debug/
+
+# Block private user areas
+Disallow: /*?token=*
+Disallow: /*?session=*
+
+# Sitemap location
+Sitemap: https://automode.ro/sitemap.xml
+
+# Crawl delay (optional - prevents server overload)
+# Crawl-delay: 1

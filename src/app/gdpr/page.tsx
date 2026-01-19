@@ -1,3 +1,14 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'GDPR - Protecția Datelor cu Caracter Personal | AutoMode',
+  description: 'Informații despre conformitatea cu Regulamentul General privind Protecția Datelor (GDPR) și drepturile dumneavoastră privind protecția datelor personale.',
+  robots: 'noindex, follow',
+  alternates: {
+    canonical: 'https://automode.ro/gdpr',
+  },
+}
+
 export default function GDPRPage() {
   return (
     <div className="min-h-screen bg-white py-12">

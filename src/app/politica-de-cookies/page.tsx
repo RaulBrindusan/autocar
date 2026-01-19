@@ -1,3 +1,14 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Politica de Cookie-uri | AutoMode',
+  description: 'Informații despre utilizarea cookie-urilor pe site-ul AutoMode pentru import automobile din Europa. Află cum folosim cookie-urile și cum le poți gestiona.',
+  robots: 'noindex, follow',
+  alternates: {
+    canonical: 'https://automode.ro/politica-de-cookies',
+  },
+}
+
 export default function CookiePolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">

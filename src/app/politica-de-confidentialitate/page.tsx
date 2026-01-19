@@ -1,3 +1,14 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Politica de Confidențialitate | AutoMode',
+  description: 'Politica de confidențialitate și protecția datelor personale conform GDPR pentru serviciile AutoMode de import automobile din Europa.',
+  robots: 'noindex, follow',
+  alternates: {
+    canonical: 'https://automode.ro/politica-de-confidentialitate',
+  },
+}
+
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">

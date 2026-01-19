@@ -8,6 +8,8 @@ import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from 'next/navigation'
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema"
+import { FAQSchema } from "@/components/seo/FAQSchema"
 
 // Car Carousel Component
 const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
@@ -60,8 +62,40 @@ export default function Home() {
     )
   }
   
+  // FAQ data for structured data
+  const faqData = [
+    {
+      question: t('faq.q1.question'),
+      answer: t('faq.q1.answer')
+    },
+    {
+      question: t('faq.q2.question'),
+      answer: t('faq.q2.answer')
+    },
+    {
+      question: t('faq.q3.question'),
+      answer: t('faq.q3.answer')
+    },
+    {
+      question: t('faq.q4.question'),
+      answer: t('faq.q4.answer')
+    },
+    {
+      question: t('faq.q5.question'),
+      answer: t('faq.q5.answer')
+    },
+    {
+      question: t('faq.q6.question'),
+      answer: t('faq.q6.answer')
+    }
+  ]
+
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      {/* Structured Data for SEO */}
+      <LocalBusinessSchema />
+      <FAQSchema faqs={faqData} />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden transition-colors" style={{ backgroundColor: 'var(--hero-bg)', color: 'var(--hero-text)' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -109,8 +143,9 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-3xl transition-colors"></div>
               <Image
                 src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                alt="Premium European Car"
+                alt="Mașină europeană premium importată de AutoMode - BMW, Mercedes, Audi"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 className="object-cover rounded-3xl shadow-2xl"
                 priority
               />
@@ -214,9 +249,10 @@ export default function Home() {
               <div className="rounded-2xl overflow-hidden shadow-xl border transition-colors" style={{ borderColor: 'var(--card-border)' }}>
                 <Image
                   src="/image11.jpg"
-                  alt="Echipa AutoMode - Specialiști în consultanță auto"
+                  alt="Echipa AutoMode - Specialiști în consultanță auto și import automobile din Europa"
                   width={500}
                   height={300}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
                   className="w-full h-[300px] object-cover"
                 />
               </div>

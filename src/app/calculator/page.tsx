@@ -6,6 +6,7 @@ import { usePageTitle } from "@/hooks/usePageTitle"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { useTheme } from "@/contexts/ThemeContext"
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs"
 
 export default function CalculatorPage() {
   usePageTitle("Calculator Import Auto | Calculează Costurile de Import")
@@ -45,6 +46,9 @@ export default function CalculatorPage() {
   return (
     <div className={`min-h-screen py-8 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumbs */}
+        <Breadcrumbs className="mb-6" />
+
         <div className="text-center mb-8">
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Calculator Cost</h1>
           <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Calculează costurile pentru importul mașinii tale</p>
@@ -275,7 +279,7 @@ export default function CalculatorPage() {
             </div>
 
             <div className="flex justify-center">
-              <Button asChild size="lg" className={`font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg ${theme === 'dark' ? 'bg-gray-100 text-blue-800 hover:bg-white hover:text-blue-900' : 'bg-gray-50 text-blue-700 hover:bg-gray-100 hover:text-blue-800'}`}>
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <Link href="/login">
                   Creează Cont Gratuit
                 </Link>
