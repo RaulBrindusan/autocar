@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from 'next/navigation'
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema"
 import { FAQSchema } from "@/components/seo/FAQSchema"
+import { CarOrderForm } from "@/components/forms/CarOrderForm"
 
 // Car Carousel Component
 const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
@@ -83,10 +84,6 @@ export default function Home() {
     {
       question: t('faq.q5.question'),
       answer: t('faq.q5.answer')
-    },
-    {
-      question: t('faq.q6.question'),
-      answer: t('faq.q6.answer')
     }
   ]
 
@@ -116,10 +113,10 @@ export default function Home() {
               </p>
               <div className="flex flex-row gap-4 mb-8 items-center justify-center sm:justify-start">
                 <Button asChild size="lg" className="text-base px-6 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/calculator">{t('hero.cta.primary')}</Link>
+                  <Link href="/masini-la-comanda">{t('hero.cta.primary')}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-base px-6 py-4 h-14 font-semibold border-gray-300 text-black bg-white hover:bg-gray-50 hover:text-black transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
-                  <Link href="/masini-la-comanda">{t('hero.cta.secondary')}</Link>
+                  <Link href="/calculator">{t('hero.cta.secondary')}</Link>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400 transition-colors">
@@ -222,6 +219,22 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Car Order Form Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
+              {t('hero.cta.primary')}
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto text-gray-600">
+              Completează formularul în 4 pași simpli și primește ofertele tale personalizate
+            </p>
+          </div>
+
+          <CarOrderForm />
         </div>
       </section>
 
@@ -559,7 +572,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button asChild size="lg" variant="secondary" className="bg-white text-blue-600 py-4 px-8 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl w-60 shadow-lg hover:bg-white hover:text-blue-600">
-                <Link href="/calculator" className="text-blue-600 hover:text-blue-600 whitespace-nowrap">
+                <Link href="/masini-la-comanda" className="text-blue-600 hover:text-blue-600 whitespace-nowrap">
                   <Shield className="mr-2 h-5 w-5" />
                   {t('warranty.cta.primary')}
                 </Link>
@@ -631,15 +644,6 @@ export default function Home() {
               </h3>
               <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
                 {t('faq.q5.answer')}
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: 'var(--card-text)' }}>
-                {t('faq.q6.question')}
-              </h3>
-              <p className="leading-relaxed transition-colors" style={{ color: 'var(--card-subtext)' }}>
-                {t('faq.q6.answer')}
               </p>
             </div>
           </div>

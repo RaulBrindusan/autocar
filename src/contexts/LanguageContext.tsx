@@ -13,7 +13,7 @@ interface LanguageContextType {
 const translations = {
   ro: {
     // Hero Section
-    'hero.badge': 'Parc Auto la Comandă din Europa',
+    'hero.badge': 'Import Auto Personalizat din Europa',
     'hero.title': 'Mașina Ta Ideală',
     'hero.title.highlight': 'La Comandă',
     'hero.subtitle': 'Configurezi exact ce vrei și noi îți aducem mașina din licitațiile internaționale la cel mai bun preț.',
@@ -103,19 +103,17 @@ const translations = {
 
     // FAQ Section
     'faq.title': 'Întrebări Frecvente',
-    'faq.subtitle': 'Răspunsuri la cele mai comune întrebări despre parcul nostru auto la comandă',
-    'faq.q1.question': 'Cum funcționează parcul auto la comandă?',
-    'faq.q1.answer': 'Configurezi exact mașina dorită (marca, model, culoare, dotări) prin platforma noastră. Noi o căutăm și achiziționăm din licitațiile internaționale (OpenLane, IAAI), apoi ți-o aducem în România cu toate formalitățile făcute.',
+    'faq.subtitle': 'Răspunsuri la cele mai comune întrebări despre serviciul nostru de import auto personalizat',
+    'faq.q1.question': 'Cum funcționează importul auto personalizat?',
+    'faq.q1.answer': 'Configurezi exact mașina dorită (marca, model, culoare, dotări) prin platforma noastră. Noi o căutăm și achiziționăm din licitațiile internaționale (OpenLane, Auto1), apoi ți-o aducem în România cu toate formalitățile făcute.',
     'faq.q2.question': 'Ce platforme de licitații utilizați?',
-    'faq.q2.answer': 'Colaborăm cu OpenLane.eu pentru piața europeană și IAAI.com pentru piața americană. Acestea ne oferă acces la peste 100,000 de vehicule din licitații live.',
+    'faq.q2.answer': 'Colaborăm cu OpenLane.eu pentru licitații auto și Auto1.com pentru piața europeană. Acestea ne oferă acces la peste 100,000 de vehicule din licitații live.',
     'faq.q3.question': 'Cât costă să îmi import o mașină la comandă?',
-    'faq.q3.answer': 'Folosește calculatorul nostru pentru o estimare exactă. Includem toate costurile: prețul mașinii, transport, taxe vamale, înmatriculare RAR, plus garanția noastră de 12 luni. Fără surprize!',
+    'faq.q3.answer': 'Folosește calculatorul nostru pentru o estimare exactă. Includem toate costurile: prețul mașinii, transport, înmatriculare RAR, plus garanția noastră de 12 luni. Fără surprize!',
     'faq.q4.question': 'Ce garanție oferiti și ce include?',
     'faq.q4.answer': 'Oferim garanție de 12 luni, cea mai extinsă din România pentru mașini importate. Acoperă componente mecanice, sisteme electrice, elemente de siguranță, plus suport tehnic și consultanță.',
-    'faq.q5.question': 'Pot urmări progresul importului mașinii mele?',
-    'faq.q5.answer': 'Da! Prin dashboard-ul tău poți urmări în timp real progresul: cerere trimisă → căutare activă → mașină găsită → licitație → transport → livrare. Primești notificări la fiecare etapă.',
-    'faq.q6.question': 'Vă ocupați și de înmatricularea la RAR?',
-    'faq.q6.answer': 'Absolut! Serviciul nostru all-inclusive include toate formalitățile RAR. Îți livrăm mașina cu numerele puse și gata de condus, plus ITP-ul făcut.',
+    'faq.q5.question': 'Vă ocupați și de înmatricularea la RAR?',
+    'faq.q5.answer': 'Absolut! Serviciul nostru all-inclusive include toate formalitățile RAR. Îți livrăm mașina cu numerele puse și gata de condus, plus ITP-ul făcut.',
 
     // Testimonials Section
     'testimonials.title': 'Ce Spun Clienții Noștri',
@@ -415,11 +413,11 @@ const translations = {
   },
   en: {
     // Hero Section
-    'hero.badge': 'Made-to-Order Auto Park from Europe',
+    'hero.badge': 'Custom Car Sourcing from Europe',
     'hero.title': 'Your Ideal Car',
-    'hero.title.highlight': 'Made to Order',
-    'hero.subtitle': 'Configure exactly what you want and we bring you the car from international auctions at the best price.',
-    'hero.cta.primary': 'I Want Car',
+    'hero.title.highlight': 'Sourced to Order',
+    'hero.subtitle': 'Configure exactly what you want and we source your car from international auctions at the best price.',
+    'hero.cta.primary': 'Find My Car',
     'hero.cta.secondary': 'Cost Calculator',
     'hero.cta.tertiary': 'View Live Auctions',
     'hero.features.no_hidden_costs': 'No hidden costs',
@@ -499,24 +497,22 @@ const translations = {
     'warranty.months_description': 'The most extensive warranty in the industry for imported cars',
     'warranty.questions.title': 'Questions About Warranty?',
     'warranty.questions.subtitle': 'Our team of specialists explains in detail all the benefits of the extended warranty and how it protects your investment.',
-    'warranty.cta.primary': 'I Want Car',
+    'warranty.cta.primary': 'Find My Car',
     'warranty.cta.secondary': 'Ask Us',
 
     // FAQ Section
     'faq.title': 'Frequently Asked Questions',
-    'faq.subtitle': 'Answers to the most common questions about our made-to-order auto park',
-    'faq.q1.question': 'How does the made-to-order auto park work?',
-    'faq.q1.answer': 'You configure exactly the car you want (brand, model, color, features) through our platform. We search and purchase it from international auctions (OpenLane, IAAI), then bring it to Romania with all formalities handled.',
+    'faq.subtitle': 'Answers to the most common questions about our custom car sourcing service',
+    'faq.q1.question': 'How does the custom car sourcing work?',
+    'faq.q1.answer': 'You specify exactly the car you want (brand, model, color, features) through our platform. We search and purchase it from international auctions (OpenLane, Auto1), then bring it to Romania with all formalities handled.',
     'faq.q2.question': 'What auction platforms do you use?',
-    'faq.q2.answer': 'We work with OpenLane.eu for the European market and IAAI.com for the American market. These give us access to over 100,000 vehicles from live auctions.',
-    'faq.q3.question': 'How much does it cost to import a made-to-order car?',
-    'faq.q3.answer': 'Use our calculator for an exact estimate. We include all costs: car price, transport, customs taxes, RAR registration, plus our 12-month warranty. No surprises!',
+    'faq.q2.answer': 'We work with OpenLane.eu for car auctions and Auto1.com for the European market. These give us access to over 100,000 vehicles from live auctions.',
+    'faq.q3.question': 'How much does it cost to import a custom-sourced car?',
+    'faq.q3.answer': 'Use our calculator for an exact estimate. We include all costs: car price, transport, RAR registration, plus our 12-month warranty. No surprises!',
     'faq.q4.question': 'What warranty do you offer and what does it include?',
     'faq.q4.answer': 'We offer a 12-month warranty, the most extensive in Romania for imported cars. It covers mechanical components, electrical systems, safety elements, plus technical support and consultation.',
-    'faq.q5.question': 'Can I track the progress of my car import?',
-    'faq.q5.answer': 'Yes! Through your dashboard you can track progress in real time: request sent → active search → car found → auction → transport → delivery. You receive notifications at each stage.',
-    'faq.q6.question': 'Do you handle RAR registration too?',
-    'faq.q6.answer': 'Absolutely! Our all-inclusive service includes all RAR formalities. We deliver your car with plates mounted and ready to drive, plus ITP completed.',
+    'faq.q5.question': 'Do you handle RAR registration too?',
+    'faq.q5.answer': 'Absolutely! Our all-inclusive service includes all RAR formalities. We deliver your car with plates mounted and ready to drive, plus ITP completed.',
 
     // Testimonials Section
     'testimonials.title': 'What Our Clients Say',

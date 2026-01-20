@@ -254,7 +254,7 @@ export function CarOrderForm() {
                     required
                     value={formData.fullName}
                     onChange={(e) => updateFormData('fullName', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="Ion Popescu"
                   />
                 </div>
@@ -269,7 +269,7 @@ export function CarOrderForm() {
                     required
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="ion.popescu@email.com"
                   />
                 </div>
@@ -284,7 +284,7 @@ export function CarOrderForm() {
                     required
                     value={formData.phone}
                     onChange={(e) => updateFormData('phone', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="0712345678"
                   />
                 </div>
@@ -325,7 +325,7 @@ export function CarOrderForm() {
                       required
                       value={formData.customBrand}
                       onChange={(e) => updateFormData('customBrand', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                       placeholder="Ex: Dacia, Subaru, Mitsubishi"
                     />
                   </div>
@@ -341,7 +341,7 @@ export function CarOrderForm() {
                     required
                     value={formData.model}
                     onChange={(e) => updateFormData('model', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="Ex: Seria 5, E-Class, A6"
                   />
                 </div>
@@ -448,7 +448,7 @@ export function CarOrderForm() {
                           updateFormData('budgetMin', unformatted)
                         }
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                       placeholder="10.000"
                     />
                   </div>
@@ -468,7 +468,7 @@ export function CarOrderForm() {
                           updateFormData('budgetMax', unformatted)
                         }
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                       placeholder="25.000"
                     />
                   </div>
@@ -488,7 +488,7 @@ export function CarOrderForm() {
                         updateFormData('mileageMax', unformatted)
                       }
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="150.000"
                   />
                 </div>
@@ -502,7 +502,7 @@ export function CarOrderForm() {
                     type="text"
                     value={formData.color}
                     onChange={(e) => updateFormData('color', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="Ex: Negru, Alb, Gri"
                   />
                 </div>
@@ -516,7 +516,7 @@ export function CarOrderForm() {
                     rows={4}
                     value={formData.additionalRequirements}
                     onChange={(e) => updateFormData('additionalRequirements', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-600 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
                     placeholder="Menționează orice alte cerințe sau preferințe (ex: pachet sport, interior piele, sistem audio premium, etc.)"
                   />
                 </div>

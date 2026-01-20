@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Car, Mail, Phone, MapPin, Heart } from "lucide-react"
+import { Car, Mail, Phone, MapPin, Heart, Facebook, Instagram, Youtube } from "lucide-react"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Footer() {
@@ -113,6 +113,39 @@ export function Footer() {
               </Link>
             </div>
           </div>
+
+          {/* Social Media Icons */}
+          <div className="mt-6 flex justify-center items-center">
+            <div className="flex items-center gap-4">
+              <Link
+                href="https://www.facebook.com/profile.php?id=61579385231064"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5 text-white" />
+              </Link>
+              <Link
+                href="https://www.instagram.com/automodero/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-5 w-5 text-white" />
+              </Link>
+              <Link
+                href="https://www.youtube.com/@AutomodeRo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="YouTube"
+              >
+                <Youtube className="h-5 w-5 text-white" />
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Mobile/Tablet Layout */}
@@ -213,6 +246,39 @@ export function Footer() {
                   </Link>
                 </li>
               </ul>
+            </div>
+          </div>
+
+          {/* Social Media Icons - Mobile/Tablet */}
+          <div className="mt-6 flex justify-center items-center">
+            <div className="flex items-center gap-4">
+              <Link
+                href="https://www.facebook.com/profile.php?id=61579385231064"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5 text-white" />
+              </Link>
+              <Link
+                href="https://www.instagram.com/automodero/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-5 w-5 text-white" />
+              </Link>
+              <Link
+                href="https://www.youtube.com/@AutomodeRo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="YouTube"
+              >
+                <Youtube className="h-5 w-5 text-white" />
+              </Link>
             </div>
           </div>
         </div>

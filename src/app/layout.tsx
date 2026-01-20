@@ -24,8 +24,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://automode.ro'),
   title: "Automode - Mașini la Comandă",
-  description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de sursare, import și livrare autovehicule din Germania, Italia, Franța și alte țări europene.",
-  keywords: "import auto, import masini europa, import auto germania, import auto italia, import auto franta, masini second hand europa, calculator import auto, servicii import autovehicule romania",
+  description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de import și livrare autovehicule din Germania, Italia, Franța și alte țări europene.",
+  keywords: "masini la comanda, import auto, import masini europa, import auto germania, import auto italia, import auto franta, masini second hand europa, calculator import auto, servicii import autovehicule romania",
   authors: [{ name: "Automode Team" }],
   robots: "index, follow",
   icons: {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Automode - Specialiști în Importul de Automobile Europene",
-    description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de sursare, import și livrare.",
+    description: "Importați mașina visurilor voastre din Europa cu Automode. Servicii profesionale de import și livrare.",
     type: "website",
     locale: "ro_RO",
     url: "https://automode.ro",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Automode - Import Auto Europa",
+    title: "Automode - Mașini la Comandă",
     description: "Importați mașina visurilor voastre din Europa cu servicii profesionale complete.",
     images: ["/logo.png"],
   },
