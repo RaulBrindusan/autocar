@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { onCarRequestsSnapshot } from '@/lib/firebase/firestore';
+import { onCarRequestsSnapshot, deleteCarRequest } from '@/lib/firebase/firestore';
 import { CarRequest } from '@/lib/types';
+import { MoreVertical, Trash2 } from 'lucide-react';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 export default function CereriPage() {
   return (
@@ -17,6 +19,9 @@ function CereriContent() {
   const [requests, setRequests] = useState<CarRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<CarRequest | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     // Set up real-time listener for car requests
@@ -40,20 +45,29 @@ function CereriContent() {
     }).format(date);
   };
 
+  const handleDelete = async () => {
+    if (!deleteConfirmId) return;
+
+    setIsDeleting(true);
+    try {
+      const result = await deleteCarRequest(deleteConfirmId);
+      if (result.error) {
+        alert('Eroare la ștergerea cererii: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      alert('A apărut o eroare la ștergerea cererii.');
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmId(null);
+      setOpenMenuId(null);
+    }
+  };
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16 md:mt-0">
       {/* Breadcrumbs */}
-      <nav className="mb-4" aria-label="Breadcrumb">
-        <ol className="flex items-center space-x-2 text-sm">
-          <li>
-            <a href="/dashboard" className="text-blue-600 hover:text-blue-800 font-medium">
-              Home
-            </a>
-          </li>
-          <li className="text-gray-400">/</li>
-          <li className="text-gray-600 font-medium">Cereri</li>
-        </ol>
-      </nav>
+      <Breadcrumbs className="mb-6" />
 
       {/* Page Title */}
       <div className="mb-6">
@@ -93,7 +107,7 @@ function CereriContent() {
 
       {/* Requests Table */}
       {!loading && requests.length > 0 && (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
           <div className="overflow-x-auto scrollbar-thin">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-blue-600">
@@ -113,33 +127,63 @@ function CereriContent() {
                   <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
                     Data
                   </th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-white uppercase tracking-wider">
+                    Acțiuni
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {requests.map((request, index) => (
                   <tr
                     key={request.id}
-                    onClick={() => setSelectedRequest(request)}
-                    className="hover:bg-blue-50 cursor-pointer transition-all hover:shadow-sm"
+                    className="hover:bg-blue-50 transition-all hover:shadow-sm"
                   >
-                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                    <td
+                      onClick={() => setSelectedRequest(request)}
+                      className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
+                    >
                       <div className="text-xs md:text-sm font-semibold text-gray-900">{index + 1}</div>
                     </td>
-                    <td className="px-3 md:px-6 py-3 md:py-4">
+                    <td
+                      onClick={() => setSelectedRequest(request)}
+                      className="px-3 md:px-6 py-3 md:py-4 cursor-pointer"
+                    >
                       <div className="text-xs md:text-sm font-medium text-gray-900 truncate max-w-[120px] md:max-w-none">{request.contact_name}</div>
                       <div className="text-xs md:text-sm text-gray-500 truncate max-w-[120px] md:max-w-none">{request.contact_email}</div>
                     </td>
-                    <td className="px-3 md:px-6 py-3 md:py-4">
+                    <td
+                      onClick={() => setSelectedRequest(request)}
+                      className="px-3 md:px-6 py-3 md:py-4 cursor-pointer"
+                    >
                       <div className="text-xs md:text-sm font-medium text-gray-900">{request.brand} {request.model}</div>
                       <div className="text-xs md:text-sm text-gray-500">An: {request.year}</div>
                     </td>
-                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                    <td
+                      onClick={() => setSelectedRequest(request)}
+                      className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
+                    >
                       <div className="text-xs md:text-sm font-semibold text-gray-900">
                         €{request.max_budget.toLocaleString('ro-RO')}
                       </div>
                     </td>
-                    <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td
+                      onClick={() => setSelectedRequest(request)}
+                      className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500 cursor-pointer"
+                    >
                       {formatDate(request.timestamp)}
+                    </td>
+                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-right relative">
+                      <button
+                        id={`menu-btn-${request.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === request.id ? null : request.id);
+                        }}
+                        className="inline-flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                      >
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+
                     </td>
                   </tr>
                 ))}
@@ -274,6 +318,91 @@ function CereriContent() {
             </div>
           </div>
         </div>
+        </>
+      )}
+
+      {/* Dropdown Menu Portal */}
+      {openMenuId && (
+        <>
+          <div
+            className="fixed inset-0 z-30"
+            onClick={() => setOpenMenuId(null)}
+          />
+          <div
+            className="fixed w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-40"
+            style={{
+              top: `${(document.getElementById(`menu-btn-${openMenuId}`) as HTMLElement)?.getBoundingClientRect().bottom + 4}px`,
+              left: `${(document.getElementById(`menu-btn-${openMenuId}`) as HTMLElement)?.getBoundingClientRect().right - 192}px`
+            }}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteConfirmId(openMenuId);
+                setOpenMenuId(null);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-lg transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              Șterge Cererea
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <>
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" onClick={() => setDeleteConfirmId(null)} />
+
+          {/* Modal */}
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md pointer-events-auto">
+              {/* Modal Header */}
+              <div className="bg-red-600 px-6 py-4 rounded-t-xl">
+                <h2 className="text-xl font-bold text-white">Confirmare Ștergere</h2>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6">
+                <p className="text-gray-900 text-base mb-2">
+                  Ești sigur că vrei să ștergi această cerere?
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Această acțiune nu poate fi anulată. Cererea va fi ștearsă permanent din baza de date.
+                </p>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-xl">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  disabled={isDeleting}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                >
+                  Anulează
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Se șterge...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Șterge
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </main>

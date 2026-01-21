@@ -8,6 +8,7 @@ import AddCarDialog from '@/components/AddCarDialog';
 import { onCarsSnapshot, onCarExpensesSnapshot, calculateTotalExpenses, calculateProfit } from '@/lib/firebase/firestore';
 import { Car, Expense } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 export default function DashboardPage() {
   return (
@@ -58,11 +59,7 @@ function DashboardContent() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16 md:mt-0">
         {/* Breadcrumbs */}
-        <nav className="mb-4" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-2 text-sm">
-            <li className="text-gray-600 font-medium">Home</li>
-          </ol>
-        </nav>
+        <Breadcrumbs className="mb-6" />
 
         {/* Page Title */}
         <div className="mb-6">

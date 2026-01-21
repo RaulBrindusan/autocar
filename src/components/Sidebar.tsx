@@ -55,14 +55,20 @@ export default function Sidebar() {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-blue-600 z-50 shadow-md">
         <div className="flex items-center justify-between px-4 py-3">
-          <Image
-            src="/AUTO.svg"
-            alt="AutoMode"
-            width={180}
-            height={72}
-            className="h-16 w-auto"
-            priority
-          />
+          <button
+            onClick={() => handleNavigation('/')}
+            className="hover:opacity-80 transition-opacity"
+            aria-label="Go to homepage"
+          >
+            <Image
+              src="/AUTO.svg"
+              alt="AutoMode"
+              width={180}
+              height={72}
+              className="h-16 w-auto"
+              priority
+            />
+          </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white p-2 hover:bg-blue-700 rounded-lg transition-colors"
@@ -146,14 +152,20 @@ export default function Sidebar() {
         <div className="flex flex-col flex-grow bg-blue-600 overflow-y-auto">
           {/* Logo */}
           <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
-            <Image
-              src="/AUTO.svg"
-              alt="AutoMode"
-              width={280}
-              height={112}
-              className="h-28 w-auto"
-              priority
-            />
+            <button
+              onClick={() => handleNavigation('/')}
+              className="hover:opacity-80 transition-opacity"
+              aria-label="Go to homepage"
+            >
+              <Image
+                src="/AUTO.svg"
+                alt="AutoMode"
+                width={280}
+                height={112}
+                className="h-28 w-auto"
+                priority
+              />
+            </button>
           </div>
 
           {/* Divider */}

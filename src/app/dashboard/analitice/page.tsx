@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 interface DailyData {
   date: string
@@ -247,17 +248,7 @@ export default function AnalyticsDashboard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16 md:mt-0">
         {/* Breadcrumbs */}
-        <nav className="mb-4" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-2 text-sm">
-            <li>
-              <a href="/dashboard" className="text-blue-600 hover:text-blue-800 font-medium">
-                Home
-              </a>
-            </li>
-            <li className="text-gray-400">/</li>
-            <li className="text-gray-600 font-medium">Analitice</li>
-          </ol>
-        </nav>
+        <Breadcrumbs className="mb-6" />
 
         {/* Header */}
         <div className="mb-8">

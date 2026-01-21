@@ -33,6 +33,8 @@ const routeLabels: Record<string, string> = {
   '/calculator': 'Calculator Import',
   '/stoc': 'Stoc Mașini',
   '/dashboard': 'Dashboard',
+  '/dashboard/cereri': 'Cereri',
+  '/dashboard/analitice': 'Analitice',
   '/politica-de-confidentialitate': 'Politica de Confidențialitate',
   '/politica-de-cookies': 'Politica de Cookies',
   '/gdpr': 'GDPR',
@@ -41,23 +43,41 @@ const routeLabels: Record<string, string> = {
 export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
   const pathname = usePathname()
 
+  // Check if we're in a dashboard page
+  const isDashboardPage = pathname.startsWith('/dashboard')
+  const homeHref = isDashboardPage ? '/dashboard' : '/'
+  const homeLabel = isDashboardPage ? 'Dashboard' : 'Acasă'
+
   // Generate breadcrumbs from pathname if not provided
-  const breadcrumbs = items || generateBreadcrumbs(pathname)
+  let breadcrumbs = items || generateBreadcrumbs(pathname)
+
+  // If on dashboard pages, filter out the "Dashboard" breadcrumb
+  if (isDashboardPage && breadcrumbs.length > 0) {
+    breadcrumbs = breadcrumbs.filter(item => item.href !== '/dashboard')
+  }
 
   // Generate JSON-LD schema
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": breadcrumbs.map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": item.label,
-      "item": `https://automode.ro${item.href}`
-    }))
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": homeLabel,
+        "item": `https://automode.ro${homeHref}`
+      },
+      ...breadcrumbs.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 2,
+        "name": item.label,
+        "item": `https://automode.ro${item.href}`
+      }))
+    ]
   }
 
-  // Don't show breadcrumbs on homepage
-  if (pathname === '/') return null
+  // Don't show breadcrumbs on homepage or main dashboard
+  if (pathname === '/' || pathname === '/dashboard') return null
 
   return (
     <>
@@ -73,11 +93,11 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
         className={`flex items-center space-x-2 text-sm ${className}`}
       >
         <Link
-          href="/"
+          href={homeHref}
           className="flex items-center text-gray-700 hover:text-gray-900 transition-colors"
         >
           <Home className="h-4 w-4" />
-          <span className="sr-only">Acasă</span>
+          <span className="sr-only">{homeLabel}</span>
         </Link>
 
         {breadcrumbs.map((item, index) => {

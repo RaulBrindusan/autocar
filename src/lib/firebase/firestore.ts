@@ -256,3 +256,14 @@ export const onCarRequestsSnapshot = (callback: (requests: CarRequest[]) => void
     callback(requests);
   });
 };
+
+// Delete a car request
+export const deleteCarRequest = async (requestId: string) => {
+  try {
+    const requestRef = doc(db, 'car_requests', requestId);
+    await deleteDoc(requestRef);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
