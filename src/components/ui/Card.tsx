@@ -28,10 +28,16 @@ interface CardDescriptionProps {
 
 export function Card({ children, className }: CardProps) {
   return (
-    <div className={clsx(
-      'rounded-lg border shadow-sm',
-      className
-    )}>
+    <div
+      className={clsx(
+        'rounded-lg border shadow-sm transition-colors',
+        className
+      )}
+      style={{
+        backgroundColor: 'var(--card-bg)',
+        borderColor: 'var(--card-border)'
+      }}
+    >
       {children}
     </div>
   )
@@ -55,7 +61,10 @@ export function CardContent({ children, className }: CardContentProps) {
 
 export function CardTitle({ children, className }: CardTitleProps) {
   return (
-    <h3 className={clsx('font-semibold leading-none tracking-tight text-black', className)}>
+    <h3
+      className={clsx('font-semibold leading-none tracking-tight transition-colors', className)}
+      style={{ color: 'var(--card-text)' }}
+    >
       {children}
     </h3>
   )
@@ -63,7 +72,10 @@ export function CardTitle({ children, className }: CardTitleProps) {
 
 export function CardDescription({ children, className }: CardDescriptionProps) {
   return (
-    <p className={clsx('text-sm text-gray-600 mt-1', className)}>
+    <p
+      className={clsx('text-sm mt-1 transition-colors', className)}
+      style={{ color: 'var(--card-subtext)' }}
+    >
       {children}
     </p>
   )

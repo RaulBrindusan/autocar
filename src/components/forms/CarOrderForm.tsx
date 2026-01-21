@@ -183,10 +183,10 @@ export function CarOrderForm() {
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold mb-4 transition-colors" style={{ color: 'var(--card-text)' }}>
               Mulțumim pentru comandă!
             </h2>
-            <p className="text-lg text-gray-900 mb-6">
+            <p className="text-lg mb-6 transition-colors" style={{ color: 'var(--card-subtext)' }}>
               Am primit cererea ta și echipa noastră te va contacta în curând cu oferte personalizate.
             </p>
             <Button onClick={() => window.location.href = '/'} size="lg">
@@ -207,11 +207,11 @@ export function CarOrderForm() {
             <div key={step} className="flex-1 flex items-center">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
-                    step <= currentStep
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors"
+                  style={{
+                    backgroundColor: step <= currentStep ? '#2563eb' : 'var(--step-inactive-bg)',
+                    color: step <= currentStep ? '#ffffff' : 'var(--step-inactive-text)'
+                  }}
                 >
                   {step < currentStep ? (
                     <CheckCircle className="w-6 h-6" />
@@ -219,7 +219,10 @@ export function CarOrderForm() {
                     step
                   )}
                 </div>
-                <span className="text-xs mt-2 text-gray-900 text-center hidden sm:block">
+                <span
+                  className="text-xs mt-2 text-center hidden sm:block transition-colors"
+                  style={{ color: 'var(--card-text)' }}
+                >
                   {step === 1 && 'Contact'}
                   {step === 2 && 'Preferințe'}
                   {step === 3 && 'Detalii'}
@@ -228,9 +231,10 @@ export function CarOrderForm() {
               </div>
               {step < 4 && (
                 <div
-                  className={`h-1 flex-1 mx-2 transition-colors ${
-                    step < currentStep ? 'bg-blue-600' : 'bg-gray-200'
-                  }`}
+                  className="h-1 flex-1 mx-2 transition-colors"
+                  style={{
+                    backgroundColor: step < currentStep ? '#2563eb' : 'var(--step-inactive-bg)'
+                  }}
                 />
               )}
             </div>
@@ -245,7 +249,7 @@ export function CarOrderForm() {
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="fullName" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Nume Complet *
                   </label>
                   <input
@@ -254,13 +258,18 @@ export function CarOrderForm() {
                     required
                     value={formData.fullName}
                     onChange={(e) => updateFormData('fullName', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="Ion Popescu"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Email *
                   </label>
                   <input
@@ -269,13 +278,18 @@ export function CarOrderForm() {
                     required
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="ion.popescu@email.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Telefon *
                   </label>
                   <input
@@ -284,7 +298,12 @@ export function CarOrderForm() {
                     required
                     value={formData.phone}
                     onChange={(e) => updateFormData('phone', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="0712345678"
                   />
                 </div>
@@ -295,7 +314,7 @@ export function CarOrderForm() {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="brand" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="brand" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Marcă *
                   </label>
                   <select
@@ -303,7 +322,12 @@ export function CarOrderForm() {
                     required
                     value={formData.brand}
                     onChange={(e) => updateFormData('brand', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                   >
                     <option value="">Selectează marca</option>
                     {carBrands.map((brand) => (
@@ -316,7 +340,7 @@ export function CarOrderForm() {
 
                 {formData.brand === 'Altă marcă' && (
                   <div>
-                    <label htmlFor="customBrand" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="customBrand" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       Specifică Marca *
                     </label>
                     <input
@@ -325,14 +349,19 @@ export function CarOrderForm() {
                       required
                       value={formData.customBrand}
                       onChange={(e) => updateFormData('customBrand', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                       placeholder="Ex: Dacia, Subaru, Mitsubishi"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label htmlFor="model" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="model" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Model *
                   </label>
                   <input
@@ -341,14 +370,19 @@ export function CarOrderForm() {
                     required
                     value={formData.model}
                     onChange={(e) => updateFormData('model', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="Ex: Seria 5, E-Class, A6"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="yearMin" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="yearMin" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       An Fabricație (Minim) *
                     </label>
                     <select
@@ -356,7 +390,12 @@ export function CarOrderForm() {
                       required
                       value={formData.yearMin}
                       onChange={(e) => updateFormData('yearMin', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                     >
                       <option value="">Selectează anul</option>
                       {years.map((year) => (
@@ -368,14 +407,19 @@ export function CarOrderForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="yearMax" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="yearMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       An Fabricație (Maxim)
                     </label>
                     <select
                       id="yearMax"
                       value={formData.yearMax}
                       onChange={(e) => updateFormData('yearMax', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                     >
                       <option value="">Selectează anul</option>
                       {years.map((year) => (
@@ -389,14 +433,19 @@ export function CarOrderForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="fuelType" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="fuelType" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       Tip Combustibil
                     </label>
                     <select
                       id="fuelType"
                       value={formData.fuelType}
                       onChange={(e) => updateFormData('fuelType', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                     >
                       <option value="">Selectează tipul</option>
                       {fuelTypes.map((fuel) => (
@@ -408,14 +457,19 @@ export function CarOrderForm() {
                   </div>
 
                   <div>
-                    <label htmlFor="transmission" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="transmission" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       Transmisie
                     </label>
                     <select
                       id="transmission"
                       value={formData.transmission}
                       onChange={(e) => updateFormData('transmission', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                     >
                       <option value="">Selectează tipul</option>
                       {transmissionTypes.map((trans) => (
@@ -434,7 +488,7 @@ export function CarOrderForm() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="budgetMin" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="budgetMin" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       Buget Minim (EUR) *
                     </label>
                     <input
@@ -448,13 +502,18 @@ export function CarOrderForm() {
                           updateFormData('budgetMin', unformatted)
                         }
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                       placeholder="10.000"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="budgetMax" className="block text-sm font-medium text-gray-900 mb-2">
+                    <label htmlFor="budgetMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                       Buget Maxim (EUR) *
                     </label>
                     <input
@@ -468,14 +527,19 @@ export function CarOrderForm() {
                           updateFormData('budgetMax', unformatted)
                         }
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--input-text)'
+                      }}
                       placeholder="25.000"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="mileageMax" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="mileageMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Kilometraj Maxim (km)
                   </label>
                   <input
@@ -488,13 +552,18 @@ export function CarOrderForm() {
                         updateFormData('mileageMax', unformatted)
                       }
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="150.000"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="color" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="color" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Culoare Preferată
                   </label>
                   <input
@@ -502,13 +571,18 @@ export function CarOrderForm() {
                     type="text"
                     value={formData.color}
                     onChange={(e) => updateFormData('color', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="Ex: Negru, Alb, Gri"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="additionalRequirements" className="block text-sm font-medium text-gray-900 mb-2">
+                  <label htmlFor="additionalRequirements" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
                     Cerințe Suplimentare
                   </label>
                   <textarea
@@ -516,7 +590,12 @@ export function CarOrderForm() {
                     rows={4}
                     value={formData.additionalRequirements}
                     onChange={(e) => updateFormData('additionalRequirements', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-gray-900"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    style={{
+                      backgroundColor: 'var(--input-bg)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--input-text)'
+                    }}
                     placeholder="Menționează orice alte cerințe sau preferințe (ex: pachet sport, interior piele, sistem audio premium, etc.)"
                   />
                 </div>
@@ -526,51 +605,51 @@ export function CarOrderForm() {
             {/* Step 4: Confirmation */}
             {currentStep === 4 && (
               <div className="space-y-6">
-                <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                  <h3 className="font-semibold text-lg text-gray-900 mb-4">Verifică Datele Tale:</h3>
+                <div className="rounded-lg p-6 space-y-4 transition-colors" style={{ backgroundColor: 'var(--summary-bg)' }}>
+                  <h3 className="font-semibold text-lg mb-4 transition-colors" style={{ color: 'var(--card-text)' }}>Verifică Datele Tale:</h3>
 
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-900">Nume:</p>
-                        <p className="font-medium text-gray-900">{formData.fullName}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Nume:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.fullName}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-900">Email:</p>
-                        <p className="font-medium text-gray-900">{formData.email}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Email:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.email}</p>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-900">Telefon:</p>
-                      <p className="font-medium text-gray-900">{formData.phone}</p>
+                      <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Telefon:</p>
+                      <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.phone}</p>
                     </div>
 
-                    <hr className="my-4" />
+                    <hr className="my-4 transition-colors" style={{ borderColor: 'var(--card-border)' }} />
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-900">Marcă:</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Marcă:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
                           {formData.brand === 'Altă marcă' ? formData.customBrand : formData.brand}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-900">Model:</p>
-                        <p className="font-medium text-gray-900">{formData.model}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Model:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.model}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-900">An:</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>An:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
                           {formData.yearMin}{formData.yearMax && ` - ${formData.yearMax}`}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-900">Buget:</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Buget:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
                           €{formatNumber(formData.budgetMin)} - €{formatNumber(formData.budgetMax)}
                         </p>
                       </div>
@@ -578,15 +657,15 @@ export function CarOrderForm() {
 
                     {formData.fuelType && (
                       <div>
-                        <p className="text-sm text-gray-900">Combustibil:</p>
-                        <p className="font-medium text-gray-900">{formData.fuelType}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Combustibil:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.fuelType}</p>
                       </div>
                     )}
 
                     {formData.transmission && (
                       <div>
-                        <p className="text-sm text-gray-900">Transmisie:</p>
-                        <p className="font-medium text-gray-900">{formData.transmission}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Transmisie:</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.transmission}</p>
                       </div>
                     )}
                   </div>
@@ -598,9 +677,13 @@ export function CarOrderForm() {
                     type="checkbox"
                     checked={formData.agreeToTerms}
                     onChange={(e) => updateFormData('agreeToTerms', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0 transition-colors"
+                    style={{
+                      borderColor: 'var(--input-border)',
+                      backgroundColor: 'var(--input-bg)'
+                    }}
                   />
-                  <label htmlFor="agreeToTerms" className="text-sm text-gray-900">
+                  <label htmlFor="agreeToTerms" className="text-sm transition-colors" style={{ color: 'var(--card-text)' }}>
                     Accept{' '}
                     <a href="/politica-de-confidentialitate" className="text-blue-600 hover:underline" target="_blank">
                       Politica de Confidențialitate
@@ -612,7 +695,7 @@ export function CarOrderForm() {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between pt-6 border-t">
+            <div className="flex justify-between pt-6 border-t transition-colors" style={{ borderColor: 'var(--card-border)' }}>
               <Button
                 type="button"
                 variant="outline"

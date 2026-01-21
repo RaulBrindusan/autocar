@@ -223,13 +223,13 @@ export default function Home() {
       </section>
 
       {/* Car Order Form Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
               {t('hero.cta.primary')}
             </h2>
-            <p className="text-lg max-w-2xl mx-auto text-gray-600">
+            <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
               Completează formularul în 4 pași simpli și primește ofertele tale personalizate
             </p>
           </div>

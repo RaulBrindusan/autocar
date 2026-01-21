@@ -21,6 +21,14 @@
   --connector-line: #d1d5db;
   --info-tip-bg: #eff6ff;
   --info-tip-text: #2563eb;
+  /* Form input variables */
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-text: #000000;
+  --input-placeholder: #9ca3af;
+  --summary-bg: #f9fafb;
+  --step-inactive-bg: #e5e7eb;
+  --step-inactive-text: #4b5563;
 }
 
 @theme inline {
@@ -51,6 +59,14 @@ html.dark {
   --connector-line: #4b5563;
   --info-tip-bg: #1e3a8a;
   --info-tip-text: #93c5fd;
+  /* Form input variables - dark mode */
+  --input-bg: #374151;
+  --input-border: #4b5563;
+  --input-text: #ffffff;
+  --input-placeholder: #9ca3af;
+  --summary-bg: rgba(55, 65, 81, 0.5);
+  --step-inactive-bg: #374151;
+  --step-inactive-text: #9ca3af;
 }
 
 .dark {
@@ -70,6 +86,14 @@ html.dark {
   --connector-line: #4b5563;
   --info-tip-bg: #1e3a8a;
   --info-tip-text: #93c5fd;
+  /* Form input variables - dark mode */
+  --input-bg: #374151;
+  --input-border: #4b5563;
+  --input-text: #ffffff;
+  --input-placeholder: #9ca3af;
+  --summary-bg: rgba(55, 65, 81, 0.5);
+  --step-inactive-bg: #374151;
+  --step-inactive-text: #9ca3af;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -93,6 +117,8 @@ body {
 :root {
   color-scheme: light;
 }
+
+/* CarOrderForm - Light Mode Only (No dark mode support in form) */
 
 /* React Select Custom Styles */
 .react-select-container .react-select__control {
