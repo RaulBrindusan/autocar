@@ -14,38 +14,6 @@ import { CarOrderForm } from "@/components/forms/CarOrderForm"
 import { onCarsSnapshot } from '@/lib/firebase/firestore'
 import { Car as CarType } from '@/lib/types'
 
-// Car Carousel Component
-const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
-  const [currentImage, setCurrentImage] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % images.length)
-    }, 3500) // Change image every 3.5 seconds
-
-    return () => clearInterval(interval)
-  }, [images.length])
-
-  return (
-    <div className="h-56 relative overflow-hidden">
-      {images.map((image, index) => (
-        <Image
-          key={index}
-          src={image}
-          alt={alt}
-          fill
-          className={`object-cover group-hover:scale-105 transition-all duration-500 ${
-            index === currentImage ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-      ))}
-      <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-900 dark:text-white transition-colors">
-        {badge}
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
   const { t } = useLanguage()
   const router = useRouter()
@@ -225,10 +193,10 @@ export default function Home() {
                 return (
                   <div
                     key={car.id}
-                    className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                    className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
                   >
                     {/* Car Image */}
-                    <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="relative h-48 md:h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                       {car.imageUrl ? (
                         <Image
                           src={car.imageUrl}
@@ -250,64 +218,64 @@ export default function Home() {
                     </div>
 
                     {/* Car Details */}
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    <div className="p-4 md:p-6">
+                      <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-blue-600 transition-colors">
                         {car.make} {car.model}
                       </h3>
 
-                      <div className="space-y-2.5 mb-5">
+                      <div className="space-y-1.5 md:space-y-2.5 mb-4 md:mb-5">
                         <div className="flex items-center text-gray-600">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
+                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
-                          <span className="text-sm">
+                          <span className="text-xs md:text-sm">
                             <span className="font-semibold text-gray-900">An:</span> {car.year}
                           </span>
                         </div>
 
                         <div className="flex items-center text-gray-600">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
+                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                           </div>
-                          <span className="text-sm">
+                          <span className="text-xs md:text-sm">
                             <span className="font-semibold text-gray-900">Kilometraj:</span> {car.km} km
                           </span>
                         </div>
 
                         <div className="flex items-center text-gray-600">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
+                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                           </div>
-                          <span className="text-sm">
+                          <span className="text-xs md:text-sm">
                             <span className="font-semibold text-gray-900">Combustibil:</span> {car.fuel}
                           </span>
                         </div>
 
                         <div className="flex items-center text-gray-600">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
+                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                             </svg>
                           </div>
-                          <span className="text-sm">
+                          <span className="text-xs md:text-sm">
                             <span className="font-semibold text-gray-900">Motor:</span> {car.engine}
                           </span>
                         </div>
 
                         {car.transmisie && (
                           <div className="flex items-center text-gray-600">
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
-                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
+                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                               </svg>
                             </div>
-                            <span className="text-sm">
+                            <span className="text-xs md:text-sm">
                               <span className="font-semibold text-gray-900">Transmisie:</span> {car.transmisie}
                             </span>
                           </div>
@@ -315,19 +283,19 @@ export default function Home() {
                       </div>
 
                       {/* Price Section */}
-                      <div className="border-t border-gray-100 pt-5 mt-5">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm font-medium text-gray-500">Preț:</span>
-                          <span className="text-3xl font-bold text-blue-600">
+                      <div className="border-t border-gray-100 pt-3 md:pt-5 mt-3 md:mt-5">
+                        <div className="flex items-center justify-between mb-2 md:mb-3">
+                          <span className="text-xs md:text-sm font-medium text-gray-500">Preț:</span>
+                          <span className="text-xl md:text-3xl font-bold text-blue-600">
                             {parseInt(car.askingprice).toLocaleString()} €
                           </span>
                         </div>
 
                         {/* View Details Button */}
                         <Link href={`/stoc/${car.id}`}>
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg group-hover:bg-blue-700">
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 hover:shadow-lg group-hover:bg-blue-700">
                             Vezi Detalii
-                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
                           </Button>
                         </Link>
                       </div>
@@ -507,100 +475,6 @@ export default function Home() {
                       {t('why_choose.registration.description')}
                     </p>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Cars Section */}
-      <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              {t('featured_cars.title')}
-            </h2>
-            <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              {t('featured_cars.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* BMW Seria 5 */}
-            <div className="group rounded-2xl overflow-hidden shadow-sm border hover:shadow-xl transition-all duration-300 hover:-translate-y-1" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <CarCarousel 
-                images={[
-                  '/car1/car1.jpeg',
-                  '/car1/car2.jpeg',
-                  '/car1/2.jpeg',
-                  '/car1/4.jpeg',
-                  '/car1/5.jpeg',
-                  '/car1/6.jpeg',
-                  '/car1/7.jpeg',
-                  '/car1/8.jpeg'
-                ]}
-                alt="BMW Seria 5 518d M Sport"
-                badge={t('featured_cars.badge.premium')}
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>BMW Seria 5 518d M Sport</h3>
-                <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Diesel - Automatic - 136 hp - 72.212 km</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€28,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Mercedes-Benz S Long */}
-            <div className="group rounded-2xl overflow-hidden shadow-sm border hover:shadow-xl transition-all duration-300 hover:-translate-y-1" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <CarCarousel 
-                images={[
-                  '/car2/1.jpeg',
-                  '/car2/2.jpeg',
-                  '/car2/3.jpeg',
-                  '/car2/4.jpeg',
-                  '/car2/5.jpeg',
-                  '/car2/6.jpeg',
-                  '/car2/7.jpeg',
-                  '/car2/8.jpeg'
-                ]}
-                alt="Mercedes-Benz S Long 580e AMG Line"
-                badge={t('featured_cars.badge.luxury')}
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Mercedes-Benz S 580e AMG Line</h3>
-                <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Hibrid - Automatic - 367 hp - 8.172 km</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€110,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Audi RS3 */}
-            <div className="group rounded-2xl overflow-hidden shadow-sm border hover:shadow-xl transition-all duration-300 hover:-translate-y-1" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <CarCarousel 
-                images={[
-                  '/car3/1.jpeg',
-                  '/car3/2.jpeg',
-                  '/car3/3.jpeg',
-                  '/car3/4.jpeg',
-                  '/car3/5.jpeg',
-                  '/car3/6.jpeg',
-                  '/car3/7.jpeg',
-                  '/car3/8.jpeg'
-                ]}
-                alt="Audi RS3 2.5 Quattro"
-                badge={t('featured_cars.badge.performance')}
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>Audi RS3 2.5 Quattro</h3>
-                <p className="mb-4 transition-colors" style={{ color: 'var(--card-subtext)' }}>Benzina - Automatic - 400 hp - 25.189 km</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">€54,000</span>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-md">{t('featured_cars.details_button')}</Button>
                 </div>
               </div>
             </div>

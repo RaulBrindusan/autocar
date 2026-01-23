@@ -57,19 +57,37 @@ export default function CarDetailPage() {
           if (carData.images && carData.images.length > 0) {
             // Fast path: Use pre-stored image URLs from Firestore
             galleryImages = carData.images
-            setImages(carData.images)
           } else {
             // Fallback: Fetch from storage folder with session caching
             const folderImages = await getImagesFromFolderCached(`selling/${carId}`)
             if (folderImages.length > 0) {
               galleryImages = folderImages
-              setImages(folderImages)
             }
           }
 
-          // PREFETCH: Preload all gallery images in background for instant lightbox
+          // Ensure primary image is always first, then add other images
           if (galleryImages.length > 0) {
-            galleryImages.forEach(imgUrl => {
+            const finalImages: string[] = []
+
+            // Always put primary image first if it exists
+            if (carData.imageUrl) {
+              finalImages.push(carData.imageUrl)
+
+              // Add other images, avoiding duplicates
+              galleryImages.forEach(img => {
+                if (img !== carData.imageUrl && !finalImages.includes(img)) {
+                  finalImages.push(img)
+                }
+              })
+            } else {
+              // No primary image, just use gallery images
+              finalImages.push(...galleryImages)
+            }
+
+            setImages(finalImages)
+
+            // PREFETCH: Preload all gallery images in background for instant lightbox
+            finalImages.forEach(imgUrl => {
               const link = document.createElement('link')
               link.rel = 'prefetch'
               link.as = 'image'
