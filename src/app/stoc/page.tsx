@@ -56,7 +56,15 @@ export default function StocPage() {
             </div>
           ) : cars.length > 0 ? (
             /* Cars Grid */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              className={`grid gap-8 mx-auto ${
+                cars.length === 1
+                  ? 'grid-cols-1 max-w-md'
+                  : cars.length === 2
+                  ? 'grid-cols-1 md:grid-cols-2 max-w-4xl'
+                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
               {cars.map((car) => (
                 <div
                   key={car.id}
