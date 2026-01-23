@@ -9,35 +9,23 @@ interface ThemeContextType {
   toggleTheme: () => void
 }
 
-// Get time-based default theme for Romanian timezone
-function getTimeBasedTheme(): Theme {
-  const now = new Date()
-  const romanianTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Bucharest"}))
-  const hour = romanianTime.getHours()
-  
-  // Dark mode between 22:00 (10 PM) and 06:00 (6 AM)
-  return (hour >= 22 || hour < 6) ? 'dark' : 'light'
-}
-
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => getTimeBasedTheme())
+  const [theme, setTheme] = useState<Theme>('light')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Always use time-based theme (no localStorage persistence)
-    const timeBasedTheme = getTimeBasedTheme()
-    setTheme(timeBasedTheme)
+    // Get theme from localStorage or default to 'light'
+    const savedTheme = localStorage.getItem('theme') as Theme | null
+    const initialTheme = savedTheme || 'light'
+    setTheme(initialTheme)
 
     // Apply theme to DOM immediately
     const root = window.document.documentElement
     root.classList.remove('light', 'dark')
-    root.classList.add(timeBasedTheme)
-
-    // Clear any old localStorage theme value
-    localStorage.removeItem('theme')
+    root.classList.add(initialTheme)
   }, [])
 
   useEffect(() => {
@@ -46,6 +34,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = window.document.documentElement
     root.classList.remove('light', 'dark')
     root.classList.add(theme)
+
+    // Persist theme to localStorage
+    localStorage.setItem('theme', theme)
   }, [theme, mounted])
 
   const toggleTheme = () => {
