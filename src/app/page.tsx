@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation'
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema"
 import { FAQSchema } from "@/components/seo/FAQSchema"
 import { CarOrderForm } from "@/components/forms/CarOrderForm"
+import { onCarsSnapshot } from '@/lib/firebase/firestore'
+import { Car as CarType } from '@/lib/types'
 
 // Car Carousel Component
 const CarCarousel = ({ images, alt, badge }: { images: string[], alt: string, badge: string }) => {
@@ -48,12 +50,26 @@ export default function Home() {
   const { t } = useLanguage()
   const router = useRouter()
   const { user, loading } = useAuth()
+  const [cars, setCars] = useState<CarType[]>([])
+  const [carsLoading, setCarsLoading] = useState(true)
 
   useEffect(() => {
     if (!loading && user) {
       router.replace('/dashboard')
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    // Subscribe to real-time updates from cars collection
+    const unsubscribe = onCarsSnapshot((carsData) => {
+      // Show all cars (both Stoc and Consignatie) and limit to 3
+      const limitedCars = carsData.slice(0, 3)
+      setCars(limitedCars)
+      setCarsLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   if (loading) {
     return (
@@ -162,6 +178,147 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Available Cars Section */}
+      {!carsLoading && cars.length > 0 && (
+        <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
+                Mașini Disponibile
+              </h2>
+              <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
+                Descoperă mașinile premium din stocul nostru și cele în consignație
+              </p>
+            </div>
+
+            <div
+              className={`grid gap-8 mx-auto ${
+                cars.length === 1
+                  ? 'grid-cols-1 max-w-md'
+                  : cars.length === 2
+                  ? 'grid-cols-1 md:grid-cols-2 max-w-4xl'
+                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
+              {cars.map((car) => {
+                const profit = parseFloat(car.profit || '0')
+                const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600'
+
+                return (
+                  <div
+                    key={car.id}
+                    className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                  >
+                    {/* Car Image */}
+                    <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                      {car.imageUrl ? (
+                        <Image
+                          src={car.imageUrl}
+                          alt={`${car.make} ${car.model}`}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          quality={85}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <Car className="w-20 h-20 text-gray-400" />
+                        </div>
+                      )}
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+
+                    {/* Car Details */}
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                        {car.make} {car.model}
+                      </h3>
+
+                      <div className="space-y-2.5 mb-5">
+                        <div className="flex items-center text-gray-600">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">
+                            <span className="font-semibold text-gray-900">An:</span> {car.year}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-gray-600">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">
+                            <span className="font-semibold text-gray-900">Kilometraj:</span> {car.km} km
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-gray-600">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">
+                            <span className="font-semibold text-gray-900">Combustibil:</span> {car.fuel}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-gray-600">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">
+                            <span className="font-semibold text-gray-900">Motor:</span> {car.engine}
+                          </span>
+                        </div>
+
+                        {car.transmisie && (
+                          <div className="flex items-center text-gray-600">
+                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                            </div>
+                            <span className="text-sm">
+                              <span className="font-semibold text-gray-900">Transmisie:</span> {car.transmisie}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Price Section */}
+                      <div className="border-t border-gray-100 pt-5 mt-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-medium text-gray-500">Preț:</span>
+                          <span className="text-3xl font-bold text-blue-600">
+                            {parseInt(car.askingprice).toLocaleString()} €
+                          </span>
+                        </div>
+
+                        {/* View Details Button */}
+                        <Link href={`/stoc/${car.id}`}>
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg group-hover:bg-blue-700">
+                            Vezi Detalii
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works Section */}
       <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>

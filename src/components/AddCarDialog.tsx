@@ -20,7 +20,9 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
     transmisie: '',
     echipare: '',
     buyingprice: '',
-    askingprice: ''
+    askingprice: '',
+    status: '',
+    manualProfit: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -82,6 +84,11 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
   };
 
   const calculateProfit = () => {
+    // For Consignatie, use manual profit if provided
+    if (formData.status === 'Consignatie') {
+      return parseFloat(formData.manualProfit) || 0;
+    }
+    // For Stoc, calculate from prices
     const buying = parseFloat(formData.buyingprice) || 0;
     const asking = parseFloat(formData.askingprice) || 0;
     return asking - buying;
@@ -95,9 +102,14 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
 
     try {
       // Validate required fields
-      if (!formData.make || !formData.model || !formData.year || !formData.km ||
-          !formData.fuel || !formData.engine || !formData.buyingprice || !formData.askingprice) {
-        setError('Te rog să completezi toate câmpurile');
+      const requiredFieldsValid = formData.make && formData.model && formData.year && formData.km &&
+          formData.fuel && formData.engine && formData.askingprice && formData.status;
+
+      // For Stoc status, buying price is required
+      const buyingPriceValid = formData.status === 'Consignatie' || formData.buyingprice;
+
+      if (!requiredFieldsValid || !buyingPriceValid) {
+        setError('Te rog să completezi toate câmpurile obligatorii');
         setLoading(false);
         return;
       }
@@ -132,10 +144,11 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
         engine: formData.engine,
         transmisie: formData.transmisie || undefined,
         echipare: formData.echipare || undefined,
-        buyingprice: formData.buyingprice,
+        buyingprice: formData.status === 'Consignatie' ? '' : formData.buyingprice,
         askingprice: formData.askingprice,
         profit: profit.toString(),
         imageUrl: imageUrl,
+        status: formData.status || undefined,
         timestamp: Date.now()
       };
 
@@ -396,22 +409,42 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
               </div>
             </div>
 
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status *
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+              >
+                <option value="">Selectează</option>
+                <option value="Stoc">Stoc</option>
+                <option value="Consignatie">Consignatie</option>
+              </select>
+            </div>
+
             {/* Prices */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Preț Cumpărare (€) *
-                </label>
-                <input
-                  type="number"
-                  name="buyingprice"
-                  value={formData.buyingprice}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="ex: 15000"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
-                />
-              </div>
+              {formData.status === 'Stoc' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Preț Cumpărare (€) *
+                  </label>
+                  <input
+                    type="number"
+                    name="buyingprice"
+                    value={formData.buyingprice}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="ex: 15000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Preț Cerut (€) *
@@ -428,11 +461,31 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
               </div>
             </div>
 
+            {/* Manual Profit for Consignatie */}
+            {formData.status === 'Consignatie' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Profit (€) - Opțional
+                </label>
+                <input
+                  type="number"
+                  name="manualProfit"
+                  value={formData.manualProfit}
+                  onChange={handleInputChange}
+                  placeholder="ex: 3000"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
+                />
+              </div>
+            )}
+
             {/* Profit Display */}
-            {formData.buyingprice && formData.askingprice && (
+            {((formData.status === 'Stoc' && formData.buyingprice && formData.askingprice) ||
+              (formData.status === 'Consignatie' && formData.manualProfit)) && (
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-700">Profit Estimat:</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {formData.status === 'Stoc' ? 'Profit Estimat:' : 'Profit:'}
+                  </span>
                   <span className={`text-xl font-bold ${profitColor}`}>
                     {profit >= 0 ? '+' : ''}{profit.toFixed(2)} €
                   </span>

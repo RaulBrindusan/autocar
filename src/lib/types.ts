@@ -17,6 +17,7 @@ export interface Car {
   profit: string;        // Calculated profit
   imageUrl?: string;     // Firebase Storage URL (primary image)
   images?: string[];     // Array of image URLs for gallery
+  status?: string;       // Status: "Stoc" or "Consignatie"
   timestamp: number;     // For sorting
 }
 

@@ -140,7 +140,12 @@ function DashboardContent() {
 // Car Card Component
 function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expense[]; onClick: () => void; index: number }) {
   const totalExpenses = calculateTotalExpenses(expenses);
-  const realProfit = calculateProfit(car.askingprice, car.buyingprice, totalExpenses);
+
+  // For Consignatie, use stored profit; for Stoc, calculate from prices
+  const realProfit = car.status === 'Consignatie'
+    ? parseFloat(car.profit || '0')
+    : calculateProfit(car.askingprice, car.buyingprice, totalExpenses);
+
   const profitColor = realProfit >= 0 ? 'text-green-600' : 'text-red-600';
 
   return (
@@ -187,23 +192,43 @@ function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expens
         </div>
 
         {/* Prices */}
-        <div className="border-t pt-4 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Preț Cumpărare:</span>
-            <span className="font-semibold text-gray-900">{car.buyingprice} €</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Preț Cerut:</span>
-            <span className="font-semibold text-gray-900">{car.askingprice} €</span>
-          </div>
-          {totalExpenses > 0 && (
+        <div className="border-t pt-4 flex flex-col" style={{ minHeight: '140px' }}>
+          <div className="space-y-2 flex-1">
+            {/* Consignatie Status Badge */}
+            {car.status === 'Consignatie' && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Status:</span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Consignatie
+                </span>
+              </div>
+            )}
+
+            {/* Buying Price - only show for Stoc or if it has a value */}
+            {car.buyingprice && car.buyingprice !== '0' && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Preț Cumpărare:</span>
+                <span className="font-semibold text-gray-900">{car.buyingprice} €</span>
+              </div>
+            )}
+
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Cheltuieli:</span>
-              <span className="font-semibold text-red-600">-{totalExpenses.toFixed(2)} €</span>
+              <span className="text-gray-600">Preț Cerut:</span>
+              <span className="font-semibold text-gray-900">{car.askingprice} €</span>
             </div>
-          )}
-          <div className="flex justify-between text-base font-bold pt-2 border-t">
-            <span className="text-gray-900">Profit Real:</span>
+
+            {totalExpenses > 0 && car.status !== 'Consignatie' && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Cheltuieli:</span>
+                <span className="font-semibold text-red-600">-{totalExpenses.toFixed(2)} €</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center text-base font-bold pt-2 border-t mt-auto">
+            <span className="text-gray-900">
+              {car.status === 'Consignatie' ? 'Profit:' : 'Profit Real:'}
+            </span>
             <span className={profitColor}>{realProfit >= 0 ? '+' : ''}{realProfit.toFixed(2)} €</span>
           </div>
         </div>

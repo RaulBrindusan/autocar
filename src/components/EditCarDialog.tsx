@@ -21,7 +21,8 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     transmisie: car.transmisie || '',
     echipare: car.echipare || '',
     buyingprice: car.buyingprice,
-    askingprice: car.askingprice
+    askingprice: car.askingprice,
+    status: car.status || ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(car.imageUrl || '');
@@ -439,6 +440,24 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
                 />
               </div>
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status *
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+              >
+                <option value="">Selectează</option>
+                <option value="Stoc">Stoc</option>
+                <option value="Consignatie">Consignatie</option>
+              </select>
             </div>
 
             {/* Prices */}
