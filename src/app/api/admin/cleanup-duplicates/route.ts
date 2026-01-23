@@ -12,13 +12,13 @@ export async function POST() {
 
     for (const docSnap of snapshot.docs) {
       const carData = docSnap.data();
-      const images = carData.images || [];
-      const imageUrl = carData.imageUrl;
+      const images: string[] = carData.images || [];
+      const imageUrl: string = carData.imageUrl;
 
       if (images.length === 0) continue;
 
       // Remove duplicates using Set and also remove primary image from gallery
-      const uniqueImages = Array.from(new Set(images)).filter((img: string) => img !== imageUrl);
+      const uniqueImages = Array.from(new Set(images)).filter(img => img !== imageUrl);
 
       if (uniqueImages.length !== images.length) {
         const duplicatesRemoved = images.length - uniqueImages.length;
