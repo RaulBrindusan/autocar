@@ -66,6 +66,24 @@ export default function Home() {
       const limitedCars = carsData.slice(0, 3)
       setCars(limitedCars)
       setCarsLoading(false)
+
+      // Preload car images for instant display
+      limitedCars.forEach((car) => {
+        if (car.imageUrl) {
+          const link = document.createElement('link')
+          link.rel = 'preload'
+          link.as = 'image'
+          link.href = car.imageUrl
+          link.fetchPriority = 'high'
+          document.head.appendChild(link)
+
+          // Also create native Image object to trigger browser cache
+          if (typeof window !== 'undefined') {
+            const img = new window.Image()
+            img.src = car.imageUrl
+          }
+        }
+      })
     })
 
     return () => unsubscribe()
@@ -219,6 +237,8 @@ export default function Home() {
                           className="object-cover group-hover:scale-110 transition-transform duration-700"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           quality={85}
+                          priority
+                          loading="eager"
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
