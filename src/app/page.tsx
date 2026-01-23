@@ -191,9 +191,10 @@ export default function Home() {
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600'
 
                 return (
-                  <div
+                  <Link
                     key={car.id}
-                    className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                    href={`/stoc/${car.id}`}
+                    className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 block cursor-pointer"
                   >
                     {/* Car Image */}
                     <div className="relative h-48 md:h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
@@ -292,15 +293,15 @@ export default function Home() {
                         </div>
 
                         {/* View Details Button */}
-                        <Link href={`/stoc/${car.id}`}>
+                        <div className="w-full">
                           <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 hover:shadow-lg group-hover:bg-blue-700">
                             Vezi Detalii
                             <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
                           </Button>
-                        </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

@@ -175,6 +175,43 @@ export default function CarDetailPage() {
                   Vezi Raportul CarVertical
                 </button>
               )}
+
+              {/* Warranty Badge */}
+              <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg p-4 shadow-lg overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-900 rounded-full -translate-y-10 translate-x-10"></div>
+                  <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-900 rounded-full translate-y-8 -translate-x-8"></div>
+                </div>
+
+                {/* Badge Ribbon */}
+                <div className="absolute top-2 right-2">
+                  <div className="bg-yellow-400 text-blue-900 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-md flex items-center space-x-0.5">
+                    <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span>CERTIFICAT</span>
+                  </div>
+                </div>
+
+                <div className="relative flex items-center space-x-3">
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-900/20 backdrop-blur-sm rounded-full flex items-center justify-center ring-2 ring-blue-900/30">
+                    <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-baseline space-x-1.5 mb-0.5">
+                      <h3 className="font-black text-lg text-blue-900">Garanție</h3>
+                      <span className="font-black text-2xl text-blue-900">12</span>
+                      <span className="font-bold text-base text-blue-900">Luni</span>
+                    </div>
+                    <p className="text-xs text-blue-800">
+                      Protecție completă inclusă
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Details Section */}
@@ -212,6 +249,14 @@ export default function CarDetailPage() {
                     <div className="flex justify-between items-center py-3 border-b">
                       <span className="text-gray-600 font-medium">Echipare:</span>
                       <span className="text-gray-900">{car.echipare}</span>
+                    </div>
+                  )}
+                  {car.inmatriculare && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">Înmatriculare:</span>
+                      <span className={`font-semibold ${car.inmatriculare === 'Inmatriculat' ? 'text-green-600' : 'text-orange-600'}`}>
+                        {car.inmatriculare}
+                      </span>
                     </div>
                   )}
                 </div>

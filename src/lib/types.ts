@@ -18,6 +18,7 @@ export interface Car {
   imageUrl?: string;     // Firebase Storage URL (primary image)
   images?: string[];     // Array of image URLs for gallery
   status?: string;       // Status: "Stoc" or "Consignatie"
+  inmatriculare?: string; // Înmatriculare: "Inmatriculat" or "Neinmatriculat"
   timestamp: number;     // For sorting
 }
 
