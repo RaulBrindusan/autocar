@@ -7,6 +7,7 @@ import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, 
 import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useAuth } from "@/contexts/AuthContext"
+import { useTheme } from "@/contexts/ThemeContext"
 import { useRouter } from 'next/navigation'
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema"
 import { FAQSchema } from "@/components/seo/FAQSchema"
@@ -18,6 +19,7 @@ export default function Home() {
   const { t } = useLanguage()
   const router = useRouter()
   const { user, loading } = useAuth()
+  const { theme } = useTheme()
   const [cars, setCars] = useState<CarType[]>([])
   const [carsLoading, setCarsLoading] = useState(true)
 
@@ -194,10 +196,21 @@ export default function Home() {
                   <Link
                     key={car.id}
                     href={`/stoc/${car.id}`}
-                    className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 block cursor-pointer"
+                    className="group rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border block cursor-pointer"
+                    style={{
+                      backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+                      borderColor: theme === 'dark' ? '#334155' : '#e5e7eb'
+                    }}
                   >
                     {/* Car Image */}
-                    <div className="relative h-48 md:h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div
+                      className="relative h-48 md:h-64 overflow-hidden"
+                      style={{
+                        background: theme === 'dark'
+                          ? 'linear-gradient(to bottom right, #334155, #475569)'
+                          : 'linear-gradient(to bottom right, #f3f4f6, #e5e7eb)'
+                      }}
+                    >
                       {car.imageUrl ? (
                         <Image
                           src={car.imageUrl}
@@ -211,7 +224,10 @@ export default function Home() {
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
-                          <Car className="w-20 h-20 text-gray-400" />
+                          <Car
+                            className="w-20 h-20"
+                            style={{ color: theme === 'dark' ? '#64748b' : '#9ca3af' }}
+                          />
                         </div>
                       )}
                       {/* Overlay gradient */}
@@ -219,82 +235,143 @@ export default function Home() {
                     </div>
 
                     {/* Car Details */}
-                    <div className="p-4 md:p-6">
-                      <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-blue-600 transition-colors min-h-[3.5rem] md:min-h-[4rem] line-clamp-2 flex items-start">
+                    <div
+                      className="p-4 md:p-6"
+                      style={{
+                        backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff'
+                      }}
+                    >
+                      <h3
+                        className="text-lg md:text-2xl font-bold mb-2 md:mb-3 transition-colors min-h-[3.5rem] md:min-h-[4rem] line-clamp-2 flex items-start"
+                        style={{ color: theme === 'dark' ? '#ffffff' : '#000000' }}
+                      >
                         {car.make} {car.model}
                       </h3>
 
                       <div className="space-y-1.5 md:space-y-2.5 mb-4 md:mb-5">
-                        <div className="flex items-center text-gray-600">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
-                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center">
+                          <div
+                            className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center mr-2 md:mr-3"
+                            style={{ backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }}
+                          >
+                            <svg
+                              className="w-3.5 h-3.5 md:w-4 md:h-4"
+                              style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
-                          <span className="text-xs md:text-sm">
-                            <span className="font-semibold text-gray-900">An:</span> {car.year}
+                          <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
+                            <span className="font-semibold">An:</span> {car.year}
                           </span>
                         </div>
 
-                        <div className="flex items-center text-gray-600">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
-                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center">
+                          <div
+                            className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center mr-2 md:mr-3"
+                            style={{ backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }}
+                          >
+                            <svg
+                              className="w-3.5 h-3.5 md:w-4 md:h-4"
+                              style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                           </div>
-                          <span className="text-xs md:text-sm">
-                            <span className="font-semibold text-gray-900">Kilometraj:</span> {car.km} km
+                          <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
+                            <span className="font-semibold">Kilometraj:</span> {car.km} km
                           </span>
                         </div>
 
-                        <div className="flex items-center text-gray-600">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
-                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center">
+                          <div
+                            className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center mr-2 md:mr-3"
+                            style={{ backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }}
+                          >
+                            <svg
+                              className="w-3.5 h-3.5 md:w-4 md:h-4"
+                              style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                           </div>
-                          <span className="text-xs md:text-sm">
-                            <span className="font-semibold text-gray-900">Combustibil:</span> {car.fuel}
+                          <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
+                            <span className="font-semibold">Combustibil:</span> {car.fuel}
                           </span>
                         </div>
 
-                        <div className="flex items-center text-gray-600">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
-                            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center">
+                          <div
+                            className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center mr-2 md:mr-3"
+                            style={{ backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }}
+                          >
+                            <svg
+                              className="w-3.5 h-3.5 md:w-4 md:h-4"
+                              style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                             </svg>
                           </div>
-                          <span className="text-xs md:text-sm">
-                            <span className="font-semibold text-gray-900">Motor:</span> {car.engine}
+                          <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
+                            <span className="font-semibold">Motor:</span> {car.engine}
                           </span>
                         </div>
 
                         {car.transmisie && (
-                          <div className="flex items-center text-gray-600">
-                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2 md:mr-3">
-                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex items-center">
+                            <div
+                              className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center mr-2 md:mr-3"
+                              style={{ backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }}
+                            >
+                              <svg
+                                className="w-3.5 h-3.5 md:w-4 md:h-4"
+                                style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                               </svg>
                             </div>
-                            <span className="text-xs md:text-sm">
-                              <span className="font-semibold text-gray-900">Transmisie:</span> {car.transmisie}
+                            <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
+                              <span className="font-semibold">Transmisie:</span> {car.transmisie}
                             </span>
                           </div>
                         )}
                       </div>
 
                       {/* Price Section */}
-                      <div className="border-t border-gray-100 pt-3 md:pt-5 mt-3 md:mt-5">
+                      <div className="border-t pt-3 md:pt-5 mt-3 md:mt-5" style={{ borderColor: theme === 'dark' ? '#334155' : '#e5e7eb' }}>
                         <div className="flex items-center justify-between mb-2 md:mb-3">
-                          <span className="text-xs md:text-sm font-medium text-gray-500">Preț:</span>
-                          <span className="text-xl md:text-3xl font-bold text-blue-600">
+                          <span className="text-xs md:text-sm font-medium" style={{ color: theme === 'dark' ? '#9ca3af' : '#000000' }}>Preț:</span>
+                          <span
+                            className="text-xl md:text-3xl font-bold"
+                            style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
+                          >
                             {parseInt(car.askingprice).toLocaleString()} €
                           </span>
                         </div>
 
                         {/* View Details Button */}
                         <div className="w-full">
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 hover:shadow-lg group-hover:bg-blue-700">
+                          <Button
+                            className="w-full text-white font-semibold py-2 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 hover:shadow-lg"
+                            style={{
+                              backgroundColor: theme === 'dark' ? '#3b82f6' : '#2563eb'
+                            }}
+                          >
                             Vezi Detalii
                             <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
                           </Button>
