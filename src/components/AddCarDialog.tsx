@@ -23,7 +23,10 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
     askingprice: '',
     status: '',
     manualProfit: '',
-    inmatriculare: 'Neinmatriculat'
+    inmatriculare: 'Neinmatriculat',
+    cp: '',
+    co2: '',
+    vin: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -151,6 +154,9 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
         imageUrl: imageUrl,
         status: formData.status || undefined,
         inmatriculare: formData.inmatriculare || undefined,
+        cp: formData.cp || undefined,
+        co2: formData.co2 || undefined,
+        vin: formData.vin || undefined,
         timestamp: Date.now()
       };
 
@@ -406,6 +412,49 @@ export default function AddCarDialog({ onClose }: AddCarDialogProps) {
                   value={formData.echipare}
                   onChange={handleInputChange}
                   placeholder="ex: Bose Edition, Premium"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
+                />
+              </div>
+            </div>
+
+            {/* CP, CO2, and VIN */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CP (Cai Putere)
+                </label>
+                <input
+                  type="text"
+                  name="cp"
+                  value={formData.cp}
+                  onChange={handleInputChange}
+                  placeholder="ex: 150"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CO2 (g/km)
+                </label>
+                <input
+                  type="text"
+                  name="co2"
+                  value={formData.co2}
+                  onChange={handleInputChange}
+                  placeholder="ex: 120"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  VIN
+                </label>
+                <input
+                  type="text"
+                  name="vin"
+                  value={formData.vin}
+                  onChange={handleInputChange}
+                  placeholder="ex: WBADT43452G..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-900"
                 />
               </div>

@@ -20,6 +20,11 @@ export default function CarDetailPage() {
   const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
   // Detect mobile device
   useEffect(() => {
     const checkMobile = () => {
@@ -239,16 +244,34 @@ export default function CarDetailPage() {
                     <span className="text-gray-600 font-medium">Motor:</span>
                     <span className="text-gray-900">{car.engine}</span>
                   </div>
+                  {car.cp && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">Putere:</span>
+                      <span className="text-gray-900">{car.cp} CP</span>
+                    </div>
+                  )}
                   {car.transmisie && (
                     <div className="flex justify-between items-center py-3 border-b">
                       <span className="text-gray-600 font-medium">Transmisie:</span>
                       <span className="text-gray-900">{car.transmisie}</span>
                     </div>
                   )}
+                  {car.co2 && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">Emisii CO2:</span>
+                      <span className="text-gray-900">{car.co2} g/km</span>
+                    </div>
+                  )}
                   {car.echipare && (
                     <div className="flex justify-between items-center py-3 border-b">
                       <span className="text-gray-600 font-medium">Echipare:</span>
                       <span className="text-gray-900">{car.echipare}</span>
+                    </div>
+                  )}
+                  {car.vin && (
+                    <div className="flex justify-between items-center py-3 border-b">
+                      <span className="text-gray-600 font-medium">VIN:</span>
+                      <span className="text-gray-900 text-sm break-all">{car.vin}</span>
                     </div>
                   )}
                   {car.inmatriculare && (

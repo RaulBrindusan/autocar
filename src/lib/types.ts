@@ -19,6 +19,9 @@ export interface Car {
   images?: string[];     // Array of image URLs for gallery
   status?: string;       // Status: "Stoc" or "Consignatie"
   inmatriculare?: string; // Înmatriculare: "Inmatriculat" or "Neinmatriculat"
+  cp?: string;           // CP (Cai Putere / Horsepower)
+  co2?: string;          // CO2 Emissions
+  vin?: string;          // VIN (Vehicle Identification Number)
   timestamp: number;     // For sorting
 }
 
