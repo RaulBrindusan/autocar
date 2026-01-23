@@ -22,17 +22,21 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     echipare: car.echipare || '',
     buyingprice: car.buyingprice,
     askingprice: car.askingprice,
-    status: car.status || ''
+    status: car.status || '',
+    manualProfit: car.profit || ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(car.imageUrl || '');
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>(car.images || []);
+  // Map preview URLs to File objects for new uploads
+  const [previewToFileMap, setPreviewToFileMap] = useState<Map<string, File>>(new Map());
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [reportFileName, setReportFileName] = useState<string>(car.reportCV ? 'Raport existent' : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -67,8 +71,19 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    // Validate all files
-    for (const file of files) {
+    // Get existing file names from current gallery files
+    const existingFileNames = galleryFiles.map(f => f.name);
+
+    // Filter out duplicate files
+    const uniqueFiles = files.filter(file => !existingFileNames.includes(file.name));
+
+    if (uniqueFiles.length === 0) {
+      setError('Toate imaginile selectate sunt deja adăugate');
+      return;
+    }
+
+    // Validate all unique files
+    for (const file of uniqueFiles) {
       if (!file.type.startsWith('image/')) {
         setError('Toate fișierele trebuie să fie imagini');
         return;
@@ -79,11 +94,13 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
       }
     }
 
-    setGalleryFiles(files);
+    // Combine existing files with new unique files
+    const allFiles = [...galleryFiles, ...uniqueFiles];
+    setGalleryFiles(allFiles);
     setError('');
 
-    // Create previews
-    const previewPromises = files.map(file => {
+    // Create previews for new files only
+    const previewPromises = uniqueFiles.map(file => {
       return new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -91,9 +108,73 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
       });
     });
 
-    Promise.all(previewPromises).then(previews => {
-      setGalleryPreviews(previews);
+    Promise.all(previewPromises).then(newPreviews => {
+      // Keep existing previews and add new ones
+      setGalleryPreviews([...galleryPreviews, ...newPreviews]);
+
+      // Build map of preview -> file for proper ordering during upload
+      const newMap = new Map(previewToFileMap);
+      uniqueFiles.forEach((file, index) => {
+        newMap.set(newPreviews[index], file);
+      });
+      setPreviewToFileMap(newMap);
     });
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    const previewToRemove = galleryPreviews[index];
+    const newPreviews = galleryPreviews.filter((_, i) => i !== index);
+    setGalleryPreviews(newPreviews);
+
+    // Remove from map if it's a new file
+    if (previewToFileMap.has(previewToRemove)) {
+      const newMap = new Map(previewToFileMap);
+      newMap.delete(previewToRemove);
+      setPreviewToFileMap(newMap);
+
+      // Update galleryFiles array
+      const newFiles = Array.from(newMap.values());
+      setGalleryFiles(newFiles);
+    }
+  };
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    e.preventDefault();
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
+
+    if (dragIndex === dropIndex) {
+      setDraggedIndex(null);
+      return;
+    }
+
+    // Reorder previews - this automatically reorders both existing URLs and new files
+    const newPreviews = [...galleryPreviews];
+    const [draggedPreview] = newPreviews.splice(dragIndex, 1);
+    newPreviews.splice(dropIndex, 0, draggedPreview);
+    setGalleryPreviews(newPreviews);
+
+    // Update galleryFiles to match the new order (extract files from map in order)
+    const newFiles = newPreviews
+      .filter(preview => previewToFileMap.has(preview))
+      .map(preview => previewToFileMap.get(preview)!);
+    setGalleryFiles(newFiles);
+
+    setDraggedIndex(null);
   };
 
   const handleReportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,6 +197,9 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
   };
 
   const calculateProfit = () => {
+    if (formData.status === 'Consignatie') {
+      return parseFloat(formData.manualProfit) || 0;
+    }
     const buying = parseFloat(formData.buyingprice) || 0;
     const asking = parseFloat(formData.askingprice) || 0;
     return asking - buying;
@@ -147,11 +231,28 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
         setUploadProgress(30);
       }
 
-      // Upload gallery images if selected
-      if (galleryFiles.length > 0) {
+      // Build final gallery URLs preserving the order from galleryPreviews
+      const finalGalleryUrls: string[] = [];
+
+      // Separate new files to upload and existing URLs, preserving order
+      const filesToUpload: File[] = [];
+      const previewToUploadIndexMap = new Map<string, number>();
+
+      galleryPreviews.forEach((preview) => {
+        if (previewToFileMap.has(preview)) {
+          // This is a new file that needs uploading
+          const file = previewToFileMap.get(preview)!;
+          previewToUploadIndexMap.set(preview, filesToUpload.length);
+          filesToUpload.push(file);
+        }
+      });
+
+      // Upload new files if any
+      let uploadedUrls: string[] = [];
+      if (filesToUpload.length > 0) {
         setUploadProgress(35);
         const { urls, error: galleryError } = await uploadCarGalleryImages(
-          galleryFiles,
+          filesToUpload,
           car.id,
           (progress) => setUploadProgress(35 + progress * 0.3) // 35-65%
         );
@@ -162,9 +263,31 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
           return;
         }
 
-        galleryUrls = urls || [];
+        uploadedUrls = urls || [];
         setUploadProgress(65);
       }
+
+      // Build final array in the order of galleryPreviews
+      for (const preview of galleryPreviews) {
+        if (preview.startsWith('http')) {
+          // Existing URL - keep it if it's not the primary image
+          if (preview !== imageUrl) {
+            finalGalleryUrls.push(preview);
+          }
+        } else if (previewToUploadIndexMap.has(preview)) {
+          // New file - use the uploaded URL at the correct index
+          const uploadIndex = previewToUploadIndexMap.get(preview)!;
+          if (uploadIndex < uploadedUrls.length) {
+            const uploadedUrl = uploadedUrls[uploadIndex];
+            if (uploadedUrl !== imageUrl) {
+              finalGalleryUrls.push(uploadedUrl);
+            }
+          }
+        }
+      }
+
+      // Remove any duplicates (safety check)
+      galleryUrls = Array.from(new Set(finalGalleryUrls));
 
       // Upload new report if selected
       if (reportFile) {
@@ -183,13 +306,21 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
 
       const profit = calculateProfit();
 
+      // Build update data without undefined values
       const updateData: Partial<Car> = {
         ...formData,
+        buyingprice: formData.status === 'Consignatie' ? '' : formData.buyingprice,
         profit: profit.toString(),
-        imageUrl: imageUrl,
-        images: galleryUrls.length > 0 ? galleryUrls : undefined,
-        reportCV: reportPath
+        imageUrl: imageUrl
       };
+
+      // Only include optional fields if they have values
+      if (galleryUrls.length > 0) {
+        updateData.images = galleryUrls;
+      }
+      if (reportPath) {
+        updateData.reportCV = reportPath;
+      }
 
       setUploadProgress(95);
       const { error: updateError } = await updateCar(car.id, updateData);
@@ -266,15 +397,50 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
               </label>
               <div className="space-y-3">
                 {galleryPreviews.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2">
-                    {galleryPreviews.map((preview, idx) => (
-                      <div key={idx} className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-gray-300">
-                        <img src={preview} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
-                        <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
-                          {idx + 1}
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Trage imaginile pentru a le reordona</p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {galleryPreviews.map((preview, idx) => (
+                        <div
+                          key={idx}
+                          draggable={!loading}
+                          onDragStart={(e) => handleDragStart(e, idx)}
+                          onDragOver={handleDragOver}
+                          onDragEnd={handleDragEnd}
+                          onDrop={(e) => handleDrop(e, idx)}
+                          className={`relative w-full aspect-square rounded-lg overflow-hidden border-2 group cursor-move transition-all ${
+                            draggedIndex === idx
+                              ? 'opacity-50 border-blue-500 scale-95'
+                              : 'border-gray-300 hover:border-blue-400'
+                          }`}
+                          title="Trage pentru a reordona"
+                        >
+                          <img src={preview} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover pointer-events-none" />
+                          <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                            {idx + 1}
+                          </div>
+                          <div className="absolute top-1 left-1 bg-blue-600/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                            </svg>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveGalleryImage(idx);
+                            }}
+                            disabled={loading}
+                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 z-10"
+                            title="Șterge imaginea"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
                 <label className="cursor-pointer bg-green-50 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors border border-green-200 inline-flex items-center">
@@ -282,7 +448,7 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span className="text-sm font-medium">
-                    {galleryPreviews.length > 0 ? 'Schimbă Galeria' : 'Adaugă Imagini Galerie'}
+                    {galleryPreviews.length > 0 ? 'Adaugă Mai Multe Imagini' : 'Adaugă Imagini Galerie'}
                   </span>
                   <input
                     type="file"
@@ -293,7 +459,7 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                     disabled={loading}
                   />
                 </label>
-                <p className="text-xs text-gray-500">Poți selecta multiple imagini (max 5MB fiecare)</p>
+                <p className="text-xs text-gray-500">Max 5MB per imagine. Duplicate detectate automat.</p>
               </div>
             </div>
 
@@ -462,17 +628,19 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
 
             {/* Prices */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Preț Cumpărare (€) *</label>
-                <input
-                  type="number"
-                  name="buyingprice"
-                  value={formData.buyingprice}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
-                />
-              </div>
+              {formData.status === 'Stoc' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Preț Cumpărare (€) *</label>
+                  <input
+                    type="number"
+                    name="buyingprice"
+                    value={formData.buyingprice}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Preț Cerut (€) *</label>
                 <input
@@ -486,11 +654,31 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
               </div>
             </div>
 
+            {/* Manual Profit for Consignatie */}
+            {formData.status === 'Consignatie' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Profit (€) - Opțional
+                </label>
+                <input
+                  type="number"
+                  name="manualProfit"
+                  value={formData.manualProfit}
+                  onChange={handleInputChange}
+                  placeholder="ex: 3000"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+                />
+              </div>
+            )}
+
             {/* Profit Display */}
-            {formData.buyingprice && formData.askingprice && (
+            {((formData.status === 'Stoc' && formData.buyingprice && formData.askingprice) ||
+              (formData.status === 'Consignatie' && formData.manualProfit)) && (
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-700">Profit Estimat:</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {formData.status === 'Stoc' ? 'Profit Estimat:' : 'Profit:'}
+                  </span>
                   <span className={`text-xl font-bold ${profitColor}`}>
                     {profit >= 0 ? '+' : ''}{profit.toFixed(2)} €
                   </span>

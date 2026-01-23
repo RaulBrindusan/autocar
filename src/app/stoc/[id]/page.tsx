@@ -65,25 +65,28 @@ export default function CarDetailPage() {
             }
           }
 
-          // Ensure primary image is always first, then add other images
+          // Build final images array with strict duplicate prevention
+          const finalImages: string[] = []
+          const seenUrls = new Set<string>()
+
+          // Always put primary image first if it exists
+          if (carData.imageUrl) {
+            finalImages.push(carData.imageUrl)
+            seenUrls.add(carData.imageUrl)
+          }
+
+          // Add gallery images, avoiding any duplicates
           if (galleryImages.length > 0) {
-            const finalImages: string[] = []
+            galleryImages.forEach(img => {
+              if (!seenUrls.has(img)) {
+                finalImages.push(img)
+                seenUrls.add(img)
+              }
+            })
+          }
 
-            // Always put primary image first if it exists
-            if (carData.imageUrl) {
-              finalImages.push(carData.imageUrl)
-
-              // Add other images, avoiding duplicates
-              galleryImages.forEach(img => {
-                if (img !== carData.imageUrl && !finalImages.includes(img)) {
-                  finalImages.push(img)
-                }
-              })
-            } else {
-              // No primary image, just use gallery images
-              finalImages.push(...galleryImages)
-            }
-
+          // Only update if we have images
+          if (finalImages.length > 0) {
             setImages(finalImages)
 
             // PREFETCH: Preload all gallery images in background for instant lightbox

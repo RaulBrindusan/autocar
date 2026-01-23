@@ -219,7 +219,7 @@ export default function Home() {
 
                     {/* Car Details */}
                     <div className="p-4 md:p-6">
-                      <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-blue-600 transition-colors">
+                      <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-blue-600 transition-colors min-h-[3.5rem] md:min-h-[4rem] line-clamp-2 flex items-start">
                         {car.make} {car.model}
                       </h3>
 
