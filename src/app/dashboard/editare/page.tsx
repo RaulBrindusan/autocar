@@ -21,6 +21,8 @@ export default function EditarePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageAspectRatio, setImageAspectRatio] = useState<string>('aspect-square');
   const [conversationHistory, setConversationHistory] = useState<any[]>([]);
+  const [showHistoryMobile, setShowHistoryMobile] = useState(false);
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,6 +60,7 @@ export default function EditarePage() {
         setOriginalImage(reader.result as string);
         setEditedImage(null); // Reset edited image when new original is uploaded
         setConversationHistory([]); // Reset conversation history for new image
+        setReferenceImage(null); // Reset reference image for new upload
       };
       reader.readAsDataURL(file);
     }
@@ -95,6 +98,7 @@ export default function EditarePage() {
           prompt: editPrompt,
           conversationHistory: conversationHistory,
           aspectRatio: getGeminiAspectRatio(imageAspectRatio),
+          referenceImage: referenceImage,
         }),
       });
 
@@ -154,26 +158,62 @@ export default function EditarePage() {
     setConversationHistory([]); // Reset conversation when loading from history
   };
 
+  const handleReferenceImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Vă rugăm să încărcați doar fișiere imagine');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReferenceImage(reader.result as string);
+        toast.success('Imagine de referință adăugată');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900">Editare Imagini AI</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          Încărcați o imagine și folosiți inteligența artificială pentru a o edita
-        </p>
+      <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900">Editare Imagini AI</h1>
+            <p className="text-xs md:text-sm text-gray-600 mt-1 hidden sm:block">
+              Încărcați o imagine și folosiți inteligența artificială pentru a o edita
+            </p>
+          </div>
+          {/* Mobile History Button */}
+          <button
+            onClick={() => setShowHistoryMobile(true)}
+            className="lg:hidden relative p-2 md:p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+            title="Istoric Editări"
+          >
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {editHistory.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 px-1 flex items-center justify-center">
+                {editHistory.length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left & Center: Image Editor */}
-        <div className="flex-1 flex flex-col p-6 overflow-y-auto">
+        <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto">
           {/* Upload Section */}
           {!originalImage && (
             <div className="mb-6 flex justify-center">
               <label
                 htmlFor="image-upload"
-                className="flex flex-col items-center justify-center w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+                className="flex flex-col items-center justify-center w-full max-w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
@@ -207,9 +247,9 @@ export default function EditarePage() {
 
           {/* Images Display */}
           {originalImage && (
-            <div className={`flex items-start gap-4 mb-6 ${(isLoading || editedImage) ? '' : 'justify-center'}`}>
+            <div className={`flex flex-col md:flex-row items-start gap-4 mb-6 ${(isLoading || editedImage) ? '' : 'justify-center'}`}>
               {/* Original Image */}
-              <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col ${(isLoading || editedImage) ? 'flex-1' : 'w-[768px]'}`}>
+              <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col w-full ${(isLoading || editedImage) ? 'md:flex-1' : 'md:w-[768px]'}`}>
                 <div className="flex items-center justify-between mb-3 h-8">
                   <h3 className="font-semibold text-gray-900">Imaginea Originală</h3>
                   <button
@@ -219,6 +259,7 @@ export default function EditarePage() {
                       setSelectedFile(null);
                       setEditPrompt('');
                       setConversationHistory([]);
+                      setReferenceImage(null);
                     }}
                     className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                     title="Șterge"
@@ -249,7 +290,7 @@ export default function EditarePage() {
 
               {/* Edited Image - Only show when loading or edited */}
               {(isLoading || editedImage) && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex-1 flex flex-col">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full md:flex-1 flex flex-col">
                   <div className="flex items-center justify-between mb-3 h-8">
                     <h3 className="font-semibold text-gray-900">Imaginea Editată</h3>
                     <div className="w-9"></div>
@@ -307,15 +348,62 @@ export default function EditarePage() {
           {/* Edit Controls */}
           {originalImage && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-gray-900">Instrucțiuni de Editare</h3>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-gray-900">Instrucțiuni de Editare</h3>
+                  {/* Reference Image Upload Button */}
+                  <label
+                    htmlFor="reference-image-upload"
+                    className="cursor-pointer p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Adaugă imagine de referință"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <input
+                      id="reference-image-upload"
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleReferenceImageUpload}
+                    />
+                  </label>
+                </div>
                 {editedImage && (
                   <span className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
                     Mod conversațional
                   </span>
                 )}
               </div>
-              <div className="flex gap-3">
+
+              {/* Reference Image Preview */}
+              {referenceImage && (
+                <div className="mb-3 flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="relative w-12 h-12 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                    <Image
+                      src={referenceImage}
+                      alt="Reference"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-700">Imagine de referință</p>
+                    <p className="text-xs text-gray-500">Utilizată pentru editare</p>
+                  </div>
+                  <button
+                    onClick={() => setReferenceImage(null)}
+                    className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    title="Șterge"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   value={editPrompt}
@@ -334,7 +422,7 @@ export default function EditarePage() {
                 <button
                   onClick={handleEditImage}
                   disabled={isLoading || !editPrompt.trim()}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                   {isLoading ? (
                     <>
@@ -355,8 +443,8 @@ export default function EditarePage() {
           )}
         </div>
 
-        {/* Right Sidebar: Edit History */}
-        <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+        {/* Right Sidebar: Edit History - Desktop */}
+        <div className="hidden lg:flex w-80 bg-white border-l border-gray-200 flex-col">
           <div className="px-4 py-4 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">Istoric Editări</h2>
             <p className="text-xs text-gray-500 mt-1">
@@ -418,6 +506,94 @@ export default function EditarePage() {
             )}
           </div>
         </div>
+
+        {/* Mobile History Overlay */}
+        {showHistoryMobile && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
+              onClick={() => setShowHistoryMobile(false)}
+            />
+            {/* Slide-in Panel */}
+            <div className="lg:hidden fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white z-50 shadow-xl flex flex-col transform transition-transform duration-300 ease-in-out">
+              <div className="px-4 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h2 className="font-semibold text-gray-900">Istoric Editări</h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {editHistory.length} {editHistory.length === 1 ? 'editare' : 'editări'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowHistoryMobile(false)}
+                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Închide"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {editHistory.length === 0 ? (
+                  <div className="text-center py-12">
+                    <svg
+                      className="w-12 h-12 mx-auto text-gray-300 mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <p className="text-sm text-gray-500">Nicio editare încă</p>
+                  </div>
+                ) : (
+                  editHistory.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-gray-50 rounded-lg p-3 border border-gray-200 hover:border-blue-300 cursor-pointer transition-colors"
+                      onClick={() => {
+                        handleLoadHistoryItem(item);
+                        setShowHistoryMobile(false);
+                      }}
+                    >
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div className="relative aspect-square bg-gray-200 rounded overflow-hidden">
+                          <Image
+                            src={item.originalImage}
+                            alt="Original"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="relative aspect-square bg-gray-200 rounded overflow-hidden">
+                          <Image
+                            src={item.editedImage}
+                            alt="Edited"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-700 font-medium mb-1 line-clamp-2">
+                        {item.prompt}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(item.timestamp).toLocaleString('ro-RO')}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

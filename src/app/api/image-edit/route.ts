@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { image, prompt, conversationHistory, aspectRatio } = await request.json();
+    const { image, prompt, conversationHistory, aspectRatio, referenceImage } = await request.json();
 
     if (!image || !prompt) {
       return NextResponse.json(
@@ -34,20 +34,34 @@ export async function POST(request: NextRequest) {
       contents.push(...conversationHistory);
     }
 
+    // Build parts array for current user request
+    const currentParts: any[] = [
+      {
+        text: prompt
+      },
+      {
+        inline_data: {
+          mime_type: 'image/png',
+          data: base64Data
+        }
+      }
+    ];
+
+    // Add reference image if provided
+    if (referenceImage) {
+      const refBase64Data = referenceImage.split(',')[1];
+      currentParts.push({
+        inline_data: {
+          mime_type: 'image/png',
+          data: refBase64Data
+        }
+      });
+    }
+
     // Add current user request
     contents.push({
       role: 'user',
-      parts: [
-        {
-          text: prompt
-        },
-        {
-          inline_data: {
-            mime_type: 'image/png',
-            data: base64Data
-          }
-        }
-      ]
+      parts: currentParts
     });
 
     // Prepare the request to Gemini API
