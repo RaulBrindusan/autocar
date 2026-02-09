@@ -102,6 +102,14 @@ export interface BlogPost {
   dateModified?: number;          // Last modified timestamp
 }
 
+export interface PriceHistory {
+  date: any;                 // Timestamp of the price check
+  totalMinimum?: number;     // Minimum price at this time
+  totalInchidereLicitatie?: number;  // Auction closing price at this time
+  pretRomania?: number;      // Romania price at this time
+  tag?: string;              // Tag/label for this price entry
+}
+
 export interface PriceCheck {
   id: string;
   contact_name: string;
@@ -120,6 +128,7 @@ export interface PriceCheck {
   profit?: number;           // Calculated profit
   vin?: string;              // Vehicle Identification Number
   url?: string;              // URL link to the listing
+  priceHistory?: PriceHistory[];  // Historical price data
   additional_info?: string;  // Any additional details
   status?: string;           // Status of the price check (e.g., "pending", "completed")
   timestamp: any;            // Firebase Timestamp

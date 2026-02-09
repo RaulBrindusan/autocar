@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { onPriceCheckSnapshot } from '@/lib/firebase/firestore';
 import { PriceCheck } from '@/lib/types';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function PriceCheckPage() {
   return (
@@ -18,6 +20,19 @@ function PriceCheckContent() {
   const [priceChecks, setPriceChecks] = useState<PriceCheck[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPriceCheck, setSelectedPriceCheck] = useState<PriceCheck | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const toggleRowExpansion = (priceCheckId: string) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(priceCheckId)) {
+        newSet.delete(priceCheckId);
+      } else {
+        newSet.add(priceCheckId);
+      }
+      return newSet;
+    });
+  };
 
   useEffect(() => {
     // Set up real-time listener for price check requests
@@ -116,25 +131,27 @@ function PriceCheckContent() {
                   <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
                     Link
                   </th>
+                  <th className="px-2 py-3 md:py-4 text-center text-xs font-semibold text-white uppercase tracking-wider w-10">
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {priceChecks.map((priceCheck, index) => {
-                  // Calculate which price to display
+                  // Calculate which price to display - prioritize totalInchidereLicitatie
                   const displayPrice = priceCheck.totalInchidereLicitatie || priceCheck.totalMinimum || priceCheck.price;
-                  const hasBothPrices = priceCheck.totalInchidereLicitatie && priceCheck.totalMinimum;
+                  const isExpanded = expandedRows.has(priceCheck.id);
 
                   return (
-                    <tr
-                      key={priceCheck.id}
-                      className="hover:bg-blue-50 transition-all hover:shadow-sm"
-                    >
-                      <td
-                        onClick={() => setSelectedPriceCheck(priceCheck)}
-                        className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
+                    <Fragment key={priceCheck.id}>
+                      <tr
+                        className="hover:bg-blue-50 transition-all hover:shadow-sm"
                       >
-                        <div className="text-xs md:text-sm font-semibold text-gray-900">{index + 1}</div>
-                      </td>
+                        <td
+                          onClick={() => setSelectedPriceCheck(priceCheck)}
+                          className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
+                        >
+                          <div className="text-xs md:text-sm font-semibold text-gray-900">{index + 1}</div>
+                        </td>
                       <td
                         onClick={() => setSelectedPriceCheck(priceCheck)}
                         className="px-3 md:px-6 py-3 md:py-4 cursor-pointer"
@@ -176,21 +193,8 @@ function PriceCheckContent() {
                         className="hidden md:table-cell px-6 py-4 whitespace-nowrap cursor-pointer"
                       >
                         {displayPrice !== undefined && displayPrice !== null ? (
-                          <div className="text-xs md:text-sm">
-                            {hasBothPrices ? (
-                              <>
-                                <div className="font-semibold text-blue-600">
-                                  €{priceCheck.totalInchidereLicitatie?.toLocaleString('ro-RO')}
-                                </div>
-                                <div className="text-gray-500 text-xs">
-                                  Min: €{priceCheck.totalMinimum?.toLocaleString('ro-RO')}
-                                </div>
-                              </>
-                            ) : (
-                              <div className="font-semibold text-blue-600">
-                                €{displayPrice.toLocaleString('ro-RO')}
-                              </div>
-                            )}
+                          <div className="text-xs md:text-sm font-semibold text-blue-600">
+                            €{displayPrice.toLocaleString('ro-RO')}
                           </div>
                         ) : (
                           <span className="text-gray-400">-</span>
@@ -235,7 +239,146 @@ function PriceCheckContent() {
                           <span className="text-gray-400">-</span>
                         )}
                       </td>
+                      <td className="px-2 py-3 md:py-4 whitespace-nowrap text-center">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleRowExpansion(priceCheck.id);
+                          }}
+                          className="text-gray-600 hover:text-gray-900 transition-colors p-1 hover:bg-gray-200 rounded"
+                        >
+                          {isExpanded ? (
+                            <ChevronDown className="w-5 h-5" />
+                          ) : (
+                            <ChevronRight className="w-5 h-5" />
+                          )}
+                        </button>
+                      </td>
                     </tr>
+                    {isExpanded && (
+                      <tr key={`${priceCheck.id}-expanded`}>
+                        <td colSpan={12} className="px-6 py-6 bg-gradient-to-br from-gray-50 to-blue-50">
+                          <div className="max-w-6xl mx-auto">
+                            <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                              <span className="w-1 h-6 bg-blue-600 rounded-full"></span>
+                              Istoric Prețuri
+                            </h4>
+                            {priceCheck.priceHistory && priceCheck.priceHistory.length > 0 ? (
+                              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+                                {/* Chart */}
+                                <div className="mb-6">
+                                  <ResponsiveContainer width="100%" height={300}>
+                                    <LineChart
+                                      data={[
+                                        ...priceCheck.priceHistory.map((h) => ({
+                                          date: formatDate(h.date),
+                                          'Total Închidere': h.totalInchidereLicitatie || null,
+                                          'Total Minim': h.totalMinimum || null,
+                                          tag: h.tag || '',
+                                        })),
+                                        {
+                                          date: formatDate(priceCheck.timestamp),
+                                          'Total Închidere': priceCheck.totalInchidereLicitatie || null,
+                                          'Total Minim': priceCheck.totalMinimum || null,
+                                          tag: 'Curent',
+                                        }
+                                      ]}
+                                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                      <XAxis
+                                        dataKey="date"
+                                        tick={{ fontSize: 12 }}
+                                        stroke="#6b7280"
+                                      />
+                                      <YAxis
+                                        tick={{ fontSize: 12 }}
+                                        stroke="#6b7280"
+                                        tickFormatter={(value) => `€${value.toLocaleString('ro-RO')}`}
+                                      />
+                                      <Tooltip
+                                        contentStyle={{
+                                          backgroundColor: '#fff',
+                                          border: '1px solid #e5e7eb',
+                                          borderRadius: '8px',
+                                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                                        }}
+                                        formatter={(value: any) => `€${value?.toLocaleString('ro-RO')}`}
+                                      />
+                                      <Legend
+                                        wrapperStyle={{ paddingTop: '20px' }}
+                                        iconType="line"
+                                      />
+                                      <Line
+                                        type="monotone"
+                                        dataKey="Total Închidere"
+                                        stroke="#2563eb"
+                                        strokeWidth={2}
+                                        dot={{ fill: '#2563eb', r: 4 }}
+                                        activeDot={{ r: 6 }}
+                                      />
+                                      <Line
+                                        type="monotone"
+                                        dataKey="Total Minim"
+                                        stroke="#10b981"
+                                        strokeWidth={2}
+                                        dot={{ fill: '#10b981', r: 4 }}
+                                        activeDot={{ r: 6 }}
+                                      />
+                                    </LineChart>
+                                  </ResponsiveContainer>
+                                </div>
+
+                                {/* Current Price Badge */}
+                                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 border-blue-600">
+                                  <div className="flex items-center justify-between flex-wrap gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-600 text-white shadow-md">
+                                        Preț Curent
+                                      </span>
+                                      <span className="text-sm text-gray-600 font-medium">
+                                        {formatDate(priceCheck.timestamp)}
+                                      </span>
+                                    </div>
+                                    <div className="flex gap-6 text-sm">
+                                      {priceCheck.totalInchidereLicitatie && (
+                                        <div className="flex items-center gap-1">
+                                          <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                                          <span className="text-gray-600">Total Închidere:</span>
+                                          <span className="font-bold text-gray-900">
+                                            €{priceCheck.totalInchidereLicitatie.toLocaleString('ro-RO')}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {priceCheck.totalMinimum && (
+                                        <div className="flex items-center gap-1">
+                                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                          <span className="text-gray-600">Total Minim:</span>
+                                          <span className="font-bold text-gray-900">
+                                            €{priceCheck.totalMinimum.toLocaleString('ro-RO')}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="bg-white rounded-xl shadow-lg p-8 text-center border border-gray-200">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                  </svg>
+                                </div>
+                                <h5 className="text-lg font-semibold text-gray-900 mb-1">Nu există istoric de prețuri</h5>
+                                <p className="text-sm text-gray-500">Datele istorice vor apărea aici când vor fi disponibile</p>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </Fragment>
                   );
                 })}
               </tbody>
