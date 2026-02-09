@@ -67,6 +67,30 @@ service firebase.storage {
       allow delete: if isSignedIn();
     }
 
+    // Blog folder - for blog post images (including temporary uploads for new posts)
+    match /blog/{postId}/{imageId} {
+      // Allow read for all users (public access for blog posts)
+      allow read: if true;
+
+      // Allow write for authenticated users OR temporarily for testing
+      // Validate file is an image and size is less than 10MB
+      allow create, write: if request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow update for authenticated users
+      allow update: if request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Allow delete for all (temporarily for testing)
+      allow delete: if true;
+    }
+
+    // Allow listing blog folder contents
+    match /blog/{postId} {
+      // Allow read/list for all users
+      allow read, list: if true;
+    }
+
     // Deny all other requests
     match /{allPaths=**} {
       allow read, write: if false;

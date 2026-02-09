@@ -199,3 +199,49 @@ export const uploadCarGalleryImages = async (
     return { urls: null, error: error.message };
   }
 };
+
+/**
+ * Upload blog post image to Firebase Storage
+ * Images are stored in blog/{postId}/{filename}
+ * @param file - Image file to upload
+ * @param postId - Blog post ID for folder organization
+ * @returns Object with download URL and error
+ */
+export const uploadBlogImage = async (
+  file: File,
+  postId: string
+): Promise<{ url: string | null; error: string | null }> => {
+  try {
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      return { url: null, error: 'Only JPEG, PNG, GIF, and WebP images are allowed' };
+    }
+
+    // Validate file size (10MB max for blog images)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return { url: null, error: 'Image size must be less than 10MB' };
+    }
+
+    // Generate unique filename
+    const timestamp = Date.now();
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${timestamp}-${sanitizedFileName}`;
+
+    // Create storage path: blog/{postId}/{filename}
+    const storagePath = `blog/${postId}/${fileName}`;
+    const storageRef = ref(storage, storagePath);
+
+    // Upload file
+    await uploadBytes(storageRef, file);
+
+    // Get download URL
+    const downloadURL = await getDownloadURL(storageRef);
+
+    return { url: downloadURL, error: null };
+  } catch (error: any) {
+    console.error('Error uploading blog image:', error);
+    return { url: null, error: error.message || 'Failed to upload image' };
+  }
+};

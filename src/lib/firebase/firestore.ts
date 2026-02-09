@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDocs,
@@ -15,7 +16,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Car, Expense, Todo, CarRequest } from '../types';
+import { Car, Expense, Todo, CarRequest, BlogPost, PriceCheck } from '../types';
 
 // Cars Collection
 
@@ -262,6 +263,100 @@ export const deleteCarRequest = async (requestId: string) => {
   try {
     const requestRef = doc(db, 'car_requests', requestId);
     await deleteDoc(requestRef);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Blog Posts Collection
+
+export const blogPostsCollection = collection(db, 'blog_posts');
+
+// Add a new blog post
+export const addBlogPost = async (blogPostData: Omit<BlogPost, 'id'>, customId?: string) => {
+  try {
+    if (customId) {
+      // Use custom ID (for posts with pre-uploaded images)
+      const docRef = doc(db, 'blog_posts', customId);
+      await setDoc(docRef, blogPostData);
+      return { id: customId, error: null };
+    } else {
+      // Auto-generate ID
+      const docRef = await addDoc(blogPostsCollection, blogPostData);
+      return { id: docRef.id, error: null };
+    }
+  } catch (error: any) {
+    return { id: null, error: error.message };
+  }
+};
+
+// Update a blog post
+export const updateBlogPost = async (postId: string, postData: Partial<BlogPost>) => {
+  try {
+    const postRef = doc(db, 'blog_posts', postId);
+    await updateDoc(postRef, postData);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Delete a blog post
+export const deleteBlogPost = async (postId: string) => {
+  try {
+    const postRef = doc(db, 'blog_posts', postId);
+    await deleteDoc(postRef);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Real-time listener for all blog posts
+export const onBlogPostsSnapshot = (callback: (posts: BlogPost[]) => void) => {
+  const q = query(blogPostsCollection, orderBy('timestamp', 'desc'));
+  return onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+    const posts = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as BlogPost[];
+    callback(posts);
+  });
+};
+
+// Price Check Collection
+
+export const priceCheckCollection = collection(db, 'pricecheck');
+
+// Real-time listener for all price check requests
+export const onPriceCheckSnapshot = (callback: (priceChecks: PriceCheck[]) => void) => {
+  const q = query(priceCheckCollection, orderBy('timestamp', 'desc'));
+  return onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+    const priceChecks = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as PriceCheck[];
+    callback(priceChecks);
+  });
+};
+
+// Delete a price check request
+export const deletePriceCheck = async (priceCheckId: string) => {
+  try {
+    const priceCheckRef = doc(db, 'pricecheck', priceCheckId);
+    await deleteDoc(priceCheckRef);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
+// Update a price check request
+export const updatePriceCheck = async (priceCheckId: string, priceCheckData: Partial<PriceCheck>) => {
+  try {
+    const priceCheckRef = doc(db, 'pricecheck', priceCheckId);
+    await updateDoc(priceCheckRef, priceCheckData);
     return { error: null };
   } catch (error: any) {
     return { error: error.message };

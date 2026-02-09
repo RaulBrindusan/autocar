@@ -119,6 +119,29 @@ service cloud.firestore {
       allow delete: if isSignedIn();
     }
 
+    // Blog posts collection (for blog management)
+    match /blog_posts/{postId} {
+      // Allow anyone to read published blog posts (public access for website)
+      allow read: if true;
+
+      // Allow authenticated users to create new blog posts
+      // The blog post document must have the required fields
+      allow create: if isSignedIn()
+                    && request.resource.data.keys().hasAll(['title', 'content', 'author', 'published', 'timestamp', 'slug'])
+                    && request.resource.data.title is string
+                    && request.resource.data.content is string
+                    && request.resource.data.author is string
+                    && request.resource.data.published is bool
+                    && request.resource.data.timestamp is number
+                    && request.resource.data.slug is string;
+
+      // Allow authenticated users to update blog posts
+      allow update: if isSignedIn();
+
+      // Allow authenticated users to delete blog posts
+      allow delete: if isSignedIn();
+    }
+
     // Deny all other requests by default
     match /{document=**} {
       allow read, write: if false;

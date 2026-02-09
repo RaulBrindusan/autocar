@@ -64,3 +64,63 @@ export interface CarRequest {
   status: string;
   timestamp: any;  // Firebase Timestamp
 }
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  published: boolean;
+  timestamp: number;
+
+  // SEO Fields
+  slug: string;                    // URL-friendly slug
+  metaTitle?: string;             // SEO meta title
+  metaDescription?: string;       // SEO meta description
+  excerpt?: string;               // Short summary for previews
+  keywords?: string[];            // SEO keywords/tags
+
+  // Featured Image
+  featuredImage?: string;         // Main image URL
+  featuredImageAlt?: string;      // Image alt text for accessibility
+  featuredImageWidth?: number;    // Image width for OG tags
+  featuredImageHeight?: number;   // Image height for OG tags
+
+  // Open Graph (Social Media)
+  ogTitle?: string;               // Open Graph title
+  ogDescription?: string;         // Open Graph description
+  ogImage?: string;               // Open Graph image URL
+
+  // Twitter Cards
+  twitterTitle?: string;          // Twitter card title
+  twitterDescription?: string;    // Twitter card description
+  twitterImage?: string;          // Twitter card image
+
+  // Article Metadata
+  category?: string;              // Blog category
+  tags?: string[];                // Blog tags
+  dateModified?: number;          // Last modified timestamp
+}
+
+export interface PriceCheck {
+  id: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  make: string;              // Car make/brand
+  model: string;             // Car model
+  year?: number;             // Car year
+  mileage?: string;          // Kilometers
+  fuelType?: string;         // Fuel type
+  transmission?: string;     // Transmission
+  price?: number;            // Price to check or estimated value
+  totalMinimum?: number;     // Minimum total price
+  totalInchidereLicitatie?: number;  // Auction closing total price
+  pretRomania?: number;      // Price in Romania
+  profit?: number;           // Calculated profit
+  vin?: string;              // Vehicle Identification Number
+  url?: string;              // URL link to the listing
+  additional_info?: string;  // Any additional details
+  status?: string;           // Status of the price check (e.g., "pending", "completed")
+  timestamp: any;            // Firebase Timestamp
+}
