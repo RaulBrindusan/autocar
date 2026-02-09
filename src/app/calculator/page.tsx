@@ -273,15 +273,15 @@ export default function CalculatorPage() {
             <div className="mb-6">
               <h3 className="text-2xl font-bold mb-3">Gata să Îți Cumperi Mașina de Vis?</h3>
               <p className={`leading-relaxed ${theme === 'dark' ? 'text-blue-200' : 'text-blue-100'}`}>
-                Acum că știi costurile exacte, creează-ți un cont gratuit și începe procesul de comandă.
+                Acum că știi costurile exacte, solicită mașina dorită și începe procesul de comandă.
                 Echipa noastră te va ghida pas cu pas spre mașina perfectă.
               </p>
             </div>
 
             <div className="flex justify-center">
               <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                <Link href="/login">
-                  Creează Cont Gratuit
+                <Link href="/masini-la-comanda">
+                  Solicită o Mașină
                 </Link>
               </Button>
             </div>

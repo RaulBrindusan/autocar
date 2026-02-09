@@ -118,3 +118,255 @@
 [debug] [2026-02-09T16:44:17.476Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
 [debug] [2026-02-09T16:44:17.489Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
 [debug] [2026-02-09T16:44:17.490Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:19.992Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:19.993Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:19.994Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:19.994Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:19.994Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:19.995Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:19.995Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:19.996Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:19.997Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:19.997Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.017Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.017Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.017Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:20.018Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:20.018Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.019Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:20.019Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:20.019Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.019Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.019Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:20.019Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:20.019Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:19.994Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:19.994Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:19.995Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:19.995Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:19.996Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:19.996Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:19.997Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:19.997Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.017Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.017Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.017Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:20.018Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:20.018Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.019Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:20.019Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:20.019Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.019Z] Checked if tokens are valid: false, expires at: 1770658730877
+[debug] [2026-02-09T21:49:20.019Z] > refreshing access token with scopes: []
+[debug] [2026-02-09T21:49:20.019Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-09T21:49:20.019Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.112Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.122Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.112Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.125Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.122Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.132Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.140Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.140Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.148Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.152Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.159Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.152Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.161Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.159Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.168Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.169Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-09T21:49:20.169Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-09T21:49:20.177Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:20.440Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:20.440Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:20.519Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.519Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.519Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.519Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.527Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.527Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.527Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.527Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.527Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.527Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.528Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.528Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.528Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.529Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.530Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:20.530Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.652Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:20.652Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:20.659Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.659Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.659Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.659Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.662Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.662Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.662Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.662Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.662Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.662Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.663Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.663Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.663Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.663Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.664Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:20.664Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.878Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:20.882Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:20.882Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:20.886Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.886Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.886Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.886Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.888Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.888Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.888Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.888Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:20.889Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.889Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.889Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.889Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.890Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.890Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.890Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:20.890Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.878Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:20.967Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.967Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.968Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.968Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.975Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.975Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.975Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.975Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:20.976Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.976Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.976Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.976Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.977Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:20.977Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:20.978Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:20.979Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.071Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:21.071Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:21.078Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.078Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.078Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.078Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.080Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.081Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.081Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.081Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.081Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.081Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.081Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.081Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.082Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.082Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.082Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:21.082Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.107Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:21.107Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:21.112Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.112Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.112Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.112Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.114Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.114Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.114Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.114Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.114Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.114Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.115Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.115Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.115Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-09T21:49:21.115Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.116Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [none]
+[debug] [2026-02-09T21:49:21.116Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com  x-goog-user-project=automode-75122
+[debug] [2026-02-09T21:49:21.441Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.441Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:21.466Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.466Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:21.550Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:21.550Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.556Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:21.556Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.585Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:21.585Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.600Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:21.600Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:21.600Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:21.600Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:21.600Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:21.602Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:21.603Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.603Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:21.603Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.604Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:21.604Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.707Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.707Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:21.761Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.761Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:21.771Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:21.771Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:21.783Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:21.783Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:21.828Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:21.828Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.834Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:21.834Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.844Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:21.844Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.860Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:21.860Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:21.860Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:21.860Z] Checked if tokens are valid: true, expires at: 1770677359169
+[debug] [2026-02-09T21:49:21.860Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:21.874Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:21.874Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.883Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:21.883Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.919Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.920Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:21.944Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:21.944Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.960Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:21.960Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:21.960Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.960Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:21.960Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:21.967Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:21.967Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:21.983Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com 403
+[debug] [2026-02-09T21:49:21.983Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseio.com [omitted]
+[debug] [2026-02-09T21:49:22.014Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:22.014Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:22.024Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-09T21:49:22.024Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:22.045Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:22.046Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:22.054Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:22.054Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:22.065Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:22.066Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:22.079Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-09T21:49:22.079Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:22.154Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-09T21:49:22.154Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/automode-75122/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-09T21:49:22.170Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:22.170Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:22.170Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:22.170Z] Checked if tokens are valid: true, expires at: 1770677359153
+[debug] [2026-02-09T21:49:22.170Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo [none]
+[debug] [2026-02-09T21:49:22.619Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:22.619Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:22.628Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:22.628Z] > authorizing via signed-in user (brindusanraull@gmail.com)
+[debug] [2026-02-09T21:49:22.803Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo 200
+[debug] [2026-02-09T21:49:22.803Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/automode-75122/billingInfo {"name":"projects/automode-75122/billingInfo","projectId":"automode-75122","billingAccountName":"billingAccounts/017C03-EFE856-56A1D7","billingEnabled":true}
+[debug] [2026-02-09T21:49:22.812Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-09T21:49:22.812Z] > authorizing via signed-in user (brindusanraull@gmail.com)
