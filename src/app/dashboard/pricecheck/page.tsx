@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, useRef } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { onPriceCheckSnapshot } from '@/lib/firebase/firestore';
+import { onPriceCheckSnapshot, deletePriceCheck } from '@/lib/firebase/firestore';
 import { PriceCheck } from '@/lib/types';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, MoreVertical, Trash2 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { usePriceNotifications } from '@/contexts/PriceNotificationContext';
+import toast from 'react-hot-toast';
 
 export default function PriceCheckPage() {
   return (
@@ -21,8 +23,17 @@ function PriceCheckContent() {
   const [loading, setLoading] = useState(true);
   const [selectedPriceCheck, setSelectedPriceCheck] = useState<PriceCheck | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const { addNotification, markAsRead, markPageVisited, isUnread } = usePriceNotifications();
+  const previousPricesRef = useRef<Map<string, number>>(new Map());
 
   const toggleRowExpansion = (priceCheckId: string) => {
+    // Mark this notification as read when expanding
+    if (isUnread(priceCheckId)) {
+      markAsRead(priceCheckId);
+    }
+
     setExpandedRows(prev => {
       const newSet = new Set(prev);
       if (newSet.has(priceCheckId)) {
@@ -34,15 +45,80 @@ function PriceCheckContent() {
     });
   };
 
+  const toggleMenu = (priceCheckId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === priceCheckId ? null : priceCheckId);
+  };
+
+  const handleDeleteClick = (priceCheckId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteConfirmId(priceCheckId);
+    setOpenMenuId(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirmId) return;
+
+    const loadingToast = toast.loading('Se șterge intrarea...');
+
+    try {
+      const result = await deletePriceCheck(deleteConfirmId);
+
+      if (result.error) {
+        toast.error('Eroare la ștergere: ' + result.error, { id: loadingToast });
+      } else {
+        toast.success('Intrare ștearsă cu succes!', { id: loadingToast });
+        setDeleteConfirmId(null);
+      }
+    } catch (error) {
+      toast.error('Eroare la ștergere', { id: loadingToast });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmId(null);
+  };
+
   useEffect(() => {
     // Set up real-time listener for price check requests
     const unsubscribe = onPriceCheckSnapshot((updatedPriceChecks) => {
+      updatedPriceChecks.forEach((priceCheck) => {
+        const currentPrice = priceCheck.totalInchidereLicitatie || priceCheck.totalMinimum || priceCheck.price;
+
+        if (currentPrice !== undefined && currentPrice !== null) {
+          const previousPrice = previousPricesRef.current.get(priceCheck.id);
+
+          // If we have a previous price and it's higher than current, it's a price drop
+          if (previousPrice !== undefined && currentPrice < previousPrice) {
+            addNotification(priceCheck.id, previousPrice, currentPrice);
+          }
+
+          // Update the price map
+          previousPricesRef.current.set(priceCheck.id, currentPrice);
+        }
+      });
+
       setPriceChecks(updatedPriceChecks);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [addNotification]);
+
+  // Mark page as visited when the page loads (removes sidebar notification)
+  useEffect(() => {
+    markPageVisited();
+  }, [markPageVisited]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (openMenuId) setOpenMenuId(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [openMenuId]);
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return '-';
@@ -135,6 +211,8 @@ function PriceCheckContent() {
                   </th>
                   <th className="px-0.5 md:px-2 py-2 md:py-4 text-center text-xs font-semibold text-white uppercase tracking-wider w-6 md:w-10">
                   </th>
+                  <th className="px-0.5 md:px-2 py-2 md:py-4 text-center text-xs font-semibold text-white uppercase tracking-wider w-6 md:w-10">
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -142,6 +220,7 @@ function PriceCheckContent() {
                   // Calculate which price to display - prioritize totalInchidereLicitatie
                   const displayPrice = priceCheck.totalInchidereLicitatie || priceCheck.totalMinimum || priceCheck.price;
                   const isExpanded = expandedRows.has(priceCheck.id);
+                  const hasUnreadNotification = isUnread(priceCheck.id);
 
                   return (
                     <Fragment key={priceCheck.id}>
@@ -252,24 +331,53 @@ function PriceCheckContent() {
                         )}
                       </td>
                       <td className="px-0.5 md:px-2 py-1.5 md:py-4 whitespace-nowrap text-center">
+                        <div className="relative inline-block">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleRowExpansion(priceCheck.id);
+                            }}
+                            className="text-gray-600 hover:text-gray-900 transition-colors p-0.5 md:p-1 hover:bg-gray-200 rounded"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-3.5 h-3.5 md:w-5 md:h-5" />
+                            ) : (
+                              <ChevronRight className="w-3.5 h-3.5 md:w-5 md:h-5" />
+                            )}
+                          </button>
+                          {hasUnreadNotification && (
+                            <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-0.5 md:px-2 py-1.5 md:py-4 whitespace-nowrap text-center relative">
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleRowExpansion(priceCheck.id);
-                          }}
+                          onClick={(e) => toggleMenu(priceCheck.id, e)}
                           className="text-gray-600 hover:text-gray-900 transition-colors p-0.5 md:p-1 hover:bg-gray-200 rounded"
                         >
-                          {isExpanded ? (
-                            <ChevronDown className="w-3.5 h-3.5 md:w-5 md:h-5" />
-                          ) : (
-                            <ChevronRight className="w-3.5 h-3.5 md:w-5 md:h-5" />
-                          )}
+                          <MoreVertical className="w-3.5 h-3.5 md:w-5 md:h-5" />
                         </button>
+
+                        {/* Dropdown Menu */}
+                        {openMenuId === priceCheck.id && (
+                          <div className="absolute right-0 mt-1 w-32 md:w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
+                            <button
+                              onClick={(e) => handleDeleteClick(priceCheck.id, e)}
+                              className="w-full flex items-center gap-2 px-3 md:px-4 py-2 text-xs md:text-sm text-red-600 hover:bg-red-50 transition-colors rounded-lg"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                              <span>Șterge</span>
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                     {isExpanded && (
                       <tr key={`${priceCheck.id}-expanded`}>
-                        <td colSpan={12} className="px-2 md:px-6 py-4 md:py-6 bg-gradient-to-br from-gray-50 to-blue-50">
+                        <td colSpan={13} className="px-2 md:px-6 py-4 md:py-6 bg-gradient-to-br from-gray-50 to-blue-50">
                           <div className="max-w-6xl mx-auto">
                             <h4 className="text-sm md:text-lg font-bold text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
                               <span className="w-1 h-4 md:h-6 bg-blue-600 rounded-full"></span>
@@ -403,6 +511,57 @@ function PriceCheckContent() {
             </table>
           </div>
         </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <>
+          {/* Backdrop with blur */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-md z-40 animate-in fade-in duration-200"
+            onClick={handleDeleteCancel}
+          />
+
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none animate-in zoom-in-95 fade-in duration-200">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm pointer-events-auto overflow-hidden border border-gray-100">
+              {/* Icon */}
+              <div className="pt-8 pb-4 flex justify-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl animate-pulse"></div>
+                  <div className="relative w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Trash2 className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="px-6 pb-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Șterge intrarea?
+                </h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Această acțiune este permanentă și nu poate fi anulată.
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 px-6 pb-6">
+                <button
+                  onClick={handleDeleteCancel}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-150"
+                >
+                  Anulează
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-150 shadow-lg shadow-red-500/30"
+                >
+                  Șterge
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Price Check Details Modal */}

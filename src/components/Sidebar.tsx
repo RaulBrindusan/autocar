@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { signOut } from '@/lib/firebase/auth';
+import { usePriceNotifications } from '@/contexts/PriceNotificationContext';
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { hasUnreadForSidebar } = usePriceNotifications();
 
   const handleLogout = async () => {
     await signOut();
@@ -140,11 +142,12 @@ export default function Sidebar() {
               <nav className="flex-1 px-2 py-4 space-y-1">
                 {navItems.map((item) => {
                   const isActive = pathname === item.path;
+                  const showNotification = item.path === '/dashboard/pricecheck' && hasUnreadForSidebar;
                   return (
                     <button
                       key={item.path}
                       onClick={() => handleNavigation(item.path)}
-                      className={`w-full group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                      className={`w-full group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors relative ${
                         isActive
                           ? 'bg-blue-700 text-white'
                           : 'text-blue-100 hover:bg-blue-700 hover:text-white'
@@ -152,6 +155,12 @@ export default function Sidebar() {
                     >
                       {item.icon}
                       <span className="ml-3">{item.name}</span>
+                      {showNotification && (
+                        <span className="absolute top-2 right-2 flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -204,11 +213,12 @@ export default function Sidebar() {
           <nav className="flex-1 px-2 pb-4 space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.path;
+              const showNotification = item.path === '/dashboard/pricecheck' && hasUnreadForSidebar;
               return (
                 <button
                   key={item.path}
                   onClick={() => handleNavigation(item.path)}
-                  className={`w-full group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  className={`w-full group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors relative ${
                     isActive
                       ? 'bg-blue-700 text-white'
                       : 'text-blue-100 hover:bg-blue-700 hover:text-white'
@@ -216,6 +226,12 @@ export default function Sidebar() {
                 >
                   {item.icon}
                   <span className="ml-3">{item.name}</span>
+                  {showNotification && (
+                    <span className="absolute top-2 right-2 flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                  )}
                 </button>
               );
             })}

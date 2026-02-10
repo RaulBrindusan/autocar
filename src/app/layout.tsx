@@ -9,6 +9,7 @@ import { MixpanelProvider } from "@/components/analytics/MixpanelProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { PriceNotificationProvider } from "@/contexts/PriceNotificationContext";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -83,12 +84,14 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <Suspense fallback={null}>
-                <MixpanelProvider />
-              </Suspense>
-              <ConditionalLayout>
-                {children}
-              </ConditionalLayout>
+              <PriceNotificationProvider>
+                <Suspense fallback={null}>
+                  <MixpanelProvider />
+                </Suspense>
+                <ConditionalLayout>
+                  {children}
+                </ConditionalLayout>
+              </PriceNotificationProvider>
             </LanguageProvider>
           </ThemeProvider>
         </AuthProvider>
