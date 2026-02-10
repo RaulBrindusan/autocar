@@ -63,9 +63,7 @@ class MixpanelTracking {
         persistence: 'localStorage',
         ignore_dnt: true, // Ignore Do Not Track
         api_host: 'https://api-eu.mixpanel.com', // EU data residency
-        // Prevent mutex lock timeout errors
         disable_persistence: false,
-        lock_timeout: 0, // Disable lock mechanism to prevent timeout errors
         // Enable autocapture with all features
         autocapture: {
           pageview: 'full-url',
