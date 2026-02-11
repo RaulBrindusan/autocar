@@ -8,6 +8,7 @@ import { BlogPost } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import ImageUploader from '@/components/ImageUploader';
+import RichTextEditor from '@/components/RichTextEditor';
 
 export default function BlogPostFormPage() {
   return (
@@ -258,12 +259,9 @@ function BlogPostFormContent() {
               <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                 Conținut *
               </label>
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[300px] placeholder:text-gray-400"
-                required
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
                 placeholder="Introduceți conținutul complet al postării"
               />
             </div>

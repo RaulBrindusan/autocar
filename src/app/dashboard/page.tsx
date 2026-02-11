@@ -61,19 +61,13 @@ function DashboardContent() {
         {/* Breadcrumbs */}
         <Breadcrumbs className="mb-6" />
 
-        {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-xs md:text-sm text-gray-600 mt-1">Gestionează inventarul de mașini</p>
-        </div>
-
         {/* Add Car Button */}
         <div className="mb-6">
           <button
             onClick={() => setShowAddDialog(true)}
-            className="w-full sm:w-auto bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 shadow-md"
+            className="w-full sm:w-auto bg-blue-600 text-white font-medium px-5 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm hover:shadow-md"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             <span>Adaugă Mașină</span>
@@ -154,7 +148,7 @@ function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expens
       className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
     >
       {/* Car Image */}
-      <div className="h-48 bg-gray-200 relative overflow-hidden">
+      <div className="bg-gray-200 relative overflow-hidden" style={{ height: '155.52px' }}>
         {car.imageUrl ? (
           <Image
             src={car.imageUrl}
@@ -192,7 +186,7 @@ function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expens
         </div>
 
         {/* Prices */}
-        <div className="border-t pt-4 flex flex-col" style={{ minHeight: '140px' }}>
+        <div className="border-t pt-4 flex flex-col" style={{ minHeight: '113.4px' }}>
           <div className="space-y-2 flex-1">
             {/* Consignatie Status Badge */}
             {car.status === 'Consignatie' && (
