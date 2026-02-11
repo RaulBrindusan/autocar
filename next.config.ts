@@ -121,13 +121,19 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: false,
   },
 
-  // Webpack security configuration
+  // Turbopack configuration (default in Next.js 16+)
+  turbopack: {
+    // Turbopack handles source maps automatically based on environment
+    // Production builds don't include source maps by default
+  },
+
+  // Webpack security configuration (for when using --webpack flag)
   webpack: (config, { isServer }) => {
     // Security: Disable source maps in production
     if (process.env.NODE_ENV === 'production') {
       config.devtool = false
     }
-    
+
     return config
   },
 

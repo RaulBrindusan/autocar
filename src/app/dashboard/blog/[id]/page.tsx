@@ -93,11 +93,11 @@ function BlogPostFormContent() {
     }
   }, [isNew, params.id]);
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title (preserves Romanian diacritics)
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
+      .replace(/[^\w\s\-ăâîșțĂÂÎȘȚ]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
@@ -207,9 +207,12 @@ function BlogPostFormContent() {
                 id="featuredImageAlt"
                 value={featuredImageAlt}
                 onChange={(e) => setFeaturedImageAlt(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 placeholder="Descriere imagine pentru accesibilitate"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Descrie conținutul imaginii pentru utilizatorii cu deficiențe de vedere și pentru SEO (ex: "Mașină Volkswagen Golf 8 neagră în showroom")
+              </p>
             </div>
           </div>
         </div>
@@ -229,7 +232,7 @@ function BlogPostFormContent() {
                 id="title"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 required
                 placeholder="Introduceți titlul postării"
               />
@@ -245,7 +248,7 @@ function BlogPostFormContent() {
                 id="slug"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 required
                 placeholder="url-friendly-slug"
               />
@@ -263,6 +266,7 @@ function BlogPostFormContent() {
                 content={content}
                 onChange={setContent}
                 placeholder="Introduceți conținutul complet al postării"
+                postId={actualPostId}
               />
             </div>
 
@@ -275,7 +279,7 @@ function BlogPostFormContent() {
                 id="excerpt"
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400 text-gray-900"
                 placeholder="Scurtă descriere pentru preview (opțional)"
               />
             </div>
@@ -291,7 +295,7 @@ function BlogPostFormContent() {
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                   placeholder="ex: Știri Auto"
                 />
               </div>
@@ -305,7 +309,7 @@ function BlogPostFormContent() {
                   id="tags"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                   placeholder="tag1, tag2, tag3"
                 />
               </div>
@@ -342,7 +346,7 @@ function BlogPostFormContent() {
                 id="metaTitle"
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 placeholder="Titlu optimizat SEO (50-60 caractere)"
                 maxLength={60}
               />
@@ -358,7 +362,7 @@ function BlogPostFormContent() {
                 id="metaDescription"
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400 text-gray-900"
                 placeholder="Descriere optimizată SEO (150-160 caractere)"
                 maxLength={160}
               />
@@ -375,7 +379,7 @@ function BlogPostFormContent() {
                 id="keywords"
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 placeholder="keyword1, keyword2, keyword3"
               />
             </div>
@@ -399,7 +403,7 @@ function BlogPostFormContent() {
                 id="ogTitle"
                 value={ogTitle}
                 onChange={(e) => setOgTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 placeholder="Titlu pentru social media (lasă gol pentru a folosi titlul)"
               />
             </div>
@@ -412,7 +416,7 @@ function BlogPostFormContent() {
                 id="ogDescription"
                 value={ogDescription}
                 onChange={(e) => setOgDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] placeholder:text-gray-400 text-gray-900"
                 placeholder="Descriere pentru social media"
               />
             </div>

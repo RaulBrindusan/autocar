@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { onBlogPostsSnapshot, deleteBlogPost, updateBlogPost } from '@/lib/firebase/firestore';
 import { BlogPost } from '@/lib/types';
@@ -19,6 +20,18 @@ function BlogContent() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // Helper function to strip HTML tags safely using regex
+  const stripHtml = (html: string) => {
+    return html
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
+      .replace(/&amp;/g, '&')  // Replace &amp; with &
+      .replace(/&lt;/g, '<')   // Replace &lt; with <
+      .replace(/&gt;/g, '>')   // Replace &gt; with >
+      .replace(/&quot;/g, '"') // Replace &quot; with "
+      .trim();
+  };
 
   useEffect(() => {
     const unsubscribe = onBlogPostsSnapshot((updatedPosts) => {
@@ -109,34 +122,66 @@ function BlogContent() {
       {!loading && posts.length > 0 && (
         <div className="space-y-4">
           {posts.map((post) => (
-            <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
-                  <p className="text-sm text-gray-600 mb-2">
-                    De: {post.author} | {new Date(post.timestamp).toLocaleDateString('ro-RO')}
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {post.published ? 'Publicat' : 'Draft'}
-                    </span>
+            <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="flex flex-col md:flex-row">
+                {/* Featured Image */}
+                {post.featuredImage && (
+                  <div className="md:w-64 md:flex-shrink-0">
+                    <div className="relative h-48 md:h-full w-full">
+                      <Image
+                        src={post.featuredImage}
+                        alt={post.featuredImageAlt || post.title}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex space-x-2">
+                )}
+
+                {/* Content */}
+                <div className="flex-1 p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
+                      <p className="text-sm text-gray-600 mb-2">
+                        De: {post.author} | {new Date(post.timestamp).toLocaleDateString('ro-RO')}
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {post.published ? 'Publicat' : 'Draft'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 ml-4">
+                  {/* View Post Link */}
+                  {post.published && post.slug && (
+                    <a
+                      href={`/blog/${post.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Vizualizează postarea"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </a>
+                  )}
+
+                  {/* Publish/Unpublish Toggle */}
                   <button
                     onClick={() => handleTogglePublish(post)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className={`px-3 py-1 rounded-lg font-medium text-sm transition-colors ${
+                      post.published
+                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                     title={post.published ? 'Retrage din publicare' : 'Publică'}
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {post.published ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      )}
-                    </svg>
+                    {post.published ? '✓ Publicat' : 'Publică'}
                   </button>
                   <button
                     onClick={() => handleEditPost(post.id)}
@@ -156,9 +201,14 @@ function BlogContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 line-clamp-3">
+                    {stripHtml(post.content).substring(0, 300)}
+                    {stripHtml(post.content).length > 300 ? '...' : ''}
+                  </p>
                 </div>
               </div>
-              <p className="text-gray-700 line-clamp-3">{post.content}</p>
             </div>
           ))}
         </div>

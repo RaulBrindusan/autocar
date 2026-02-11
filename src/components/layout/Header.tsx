@@ -23,6 +23,7 @@ export function Header() {
     { name: 'Mașini la Comandă', href: "/masini-la-comanda" },
     { name: 'Stoc', href: "/stoc" },
     { name: t('header.nav.calculator'), href: "/calculator" },
+    { name: 'Blog', href: "/blog" },
   ]
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
