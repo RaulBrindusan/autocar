@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/Button"
 import { Car, Star, ArrowRight, CheckCircle, Globe, Phone, Mail, Shield, Clock, Award, Users, MessageCircle, Handshake, DollarSign, FileText, TrendingUp } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useAuth } from "@/contexts/AuthContext"
 import { useTheme } from "@/contexts/ThemeContext"
@@ -22,6 +22,8 @@ export default function Home() {
   const { theme } = useTheme()
   const [cars, setCars] = useState<CarType[]>([])
   const [carsLoading, setCarsLoading] = useState(true)
+  const [currentCarIndex, setCurrentCarIndex] = useState(0)
+  const carsLengthRef = useRef(0)
 
   useEffect(() => {
     if (!loading && user) {
@@ -32,13 +34,13 @@ export default function Home() {
   useEffect(() => {
     // Subscribe to real-time updates from cars collection
     const unsubscribe = onCarsSnapshot((carsData) => {
-      // Show all cars (both Stoc and Consignatie) and limit to 3
-      const limitedCars = carsData.slice(0, 3)
-      setCars(limitedCars)
+      // Show all cars (both Stoc and Consignatie)
+      setCars(carsData)
       setCarsLoading(false)
 
-      // Preload car images for instant display
-      limitedCars.forEach((car) => {
+      // Preload car images for instant display (first 6 cars for carousel)
+      const carsToPreload = carsData.slice(0, 6)
+      carsToPreload.forEach((car) => {
         if (car.imageUrl) {
           const link = document.createElement('link')
           link.rel = 'preload'
@@ -58,6 +60,27 @@ export default function Home() {
 
     return () => unsubscribe()
   }, [])
+
+  // Update cars length ref
+  useEffect(() => {
+    carsLengthRef.current = cars.length
+  }, [cars.length])
+
+  // Auto-rotate carousel when there are more than 3 cars
+  useEffect(() => {
+    if (cars.length <= 3) return
+
+    const interval = setInterval(() => {
+      setCurrentCarIndex((prevIndex) => {
+        // Move one car at a time
+        const nextIndex = prevIndex + 1
+        // Loop back to start when we reach the end
+        return nextIndex >= carsLengthRef.current ? 0 : nextIndex
+      })
+    }, 22000) // Rotate every 22 seconds
+
+    return () => clearInterval(interval)
+  }, [cars.length])
 
   if (loading) {
     return (
@@ -167,28 +190,45 @@ export default function Home() {
       </section>
 
       {/* Available Cars Section */}
-      {!carsLoading && cars.length > 0 && (
-        <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-                Mașini Disponibile
-              </h2>
-              <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-                Descoperă mașinile premium din stocul nostru și cele în consignație
-              </p>
-            </div>
+      {!carsLoading && cars.length > 0 && (() => {
+        // Calculate which cars to display
+        const displayCars = cars.length <= 3
+          ? cars
+          : [
+              cars[currentCarIndex % cars.length],
+              cars[(currentCarIndex + 1) % cars.length],
+              cars[(currentCarIndex + 2) % cars.length]
+            ]
 
-            <div
-              className={`grid gap-8 mx-auto ${
-                cars.length === 1
-                  ? 'grid-cols-1 max-w-md'
-                  : cars.length === 2
-                  ? 'grid-cols-1 md:grid-cols-2 max-w-4xl'
-                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-              }`}
-            >
-              {cars.map((car) => {
+        return (
+          <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
+                  Mașini Disponibile
+                </h2>
+                <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
+                  Descoperă mașinile premium din stocul nostru și cele în consignație
+                </p>
+                {cars.length > 3 && (
+                  <p className="text-sm mt-2 text-gray-500 dark:text-gray-400">
+                    {cars.length} mașini disponibile
+                  </p>
+                )}
+              </div>
+
+              <div className="relative">
+                <div
+                  key={currentCarIndex}
+                  className={`grid gap-8 mx-auto animate-slideLeft ${
+                    displayCars.length === 1
+                      ? 'grid-cols-1 max-w-md'
+                      : displayCars.length === 2
+                      ? 'grid-cols-1 md:grid-cols-2 max-w-4xl'
+                      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                  }`}
+                >
+                  {displayCars.map((car) => {
                 const profit = parseFloat(car.profit || '0')
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600'
 
@@ -379,12 +419,54 @@ export default function Home() {
                       </div>
                     </div>
                   </Link>
-                )
-              })}
+                  )
+                })}
+                </div>
+
+                {/* Carousel Indicators */}
+                {cars.length > 3 && (
+                  <div className="flex justify-center mt-8 gap-2">
+                    {Array.from({ length: cars.length }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentCarIndex(index)}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          index === currentCarIndex % cars.length
+                            ? 'w-8 bg-blue-600'
+                            : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
+                        }`}
+                        aria-label={`Go to car ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+
+            <style jsx>{`
+              @keyframes slideLeft {
+                0% {
+                  opacity: 0;
+                  transform: translateX(80px) scale(0.95);
+                  filter: blur(4px);
+                }
+                50% {
+                  filter: blur(2px);
+                }
+                100% {
+                  opacity: 1;
+                  transform: translateX(0) scale(1);
+                  filter: blur(0);
+                }
+              }
+
+              .animate-slideLeft {
+                animation: slideLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+              }
+            `}</style>
+          </section>
+        )
+      })()}
 
       {/* How It Works Section */}
       <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
