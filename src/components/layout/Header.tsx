@@ -88,17 +88,13 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300",
-                    "hover:bg-white/10",
+                    "relative px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300",
                     pathname === item.href
-                      ? "text-white bg-white/15"
-                      : "text-blue-100 hover:text-white"
+                      ? "bg-white text-blue-700 shadow-md shadow-blue-900/20"
+                      : "text-blue-100 hover:text-white hover:bg-white/10"
                   )}
                 >
-                  <span className="relative z-10">{item.name}</span>
-                  {pathname === item.href && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full" />
-                  )}
+                  {item.name}
                 </Link>
               ))}
             </div>
@@ -256,15 +252,15 @@ export function Header() {
                     className={cn(
                       "flex items-center justify-between px-4 py-3.5 text-base font-medium rounded-xl transition-all duration-200",
                       pathname === item.href
-                        ? "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 shadow-sm"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                        ? "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 shadow-sm border-l-4 border-blue-500 pl-3"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border-l-4 border-transparent pl-3"
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span>{item.name}</span>
                     <ChevronRight className={cn(
                       "h-4 w-4 transition-transform duration-200",
-                      pathname === item.href ? "text-blue-500" : "text-gray-400"
+                      pathname === item.href ? "text-blue-500 translate-x-0.5" : "text-gray-400"
                     )} />
                   </Link>
                 ))}
