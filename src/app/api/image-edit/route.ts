@@ -121,19 +121,28 @@ export async function POST(request: NextRequest) {
     // Get the base64 image data
     const editedImageData = imagePart.inline_data?.data || imagePart.inlineData?.data;
 
-    // Build updated conversation history for next iteration
-    const updatedConversationHistory = [...contents];
+    // Build conversation history to return — strip all image data to prevent
+    // payload from growing unbounded across multiple edits.
+    // The current image is always sent fresh in the `image` field, so Gemini
+    // retains full visual context even without images in history.
+    const strippedUserParts = currentParts.filter((part: any) => part.text);
+    const strippedModelParts = candidate.content.parts.filter(
+      (part: any) => !part.inline_data && !part.inlineData
+    );
 
-    // Add the model's response to conversation history
-    updatedConversationHistory.push({
-      role: 'model',
-      parts: candidate.content.parts
-    });
+    const updatedConversationHistory = [
+      ...(conversationHistory || []),
+      ...(strippedUserParts.length > 0 ? [{ role: 'user', parts: strippedUserParts }] : []),
+      ...(strippedModelParts.length > 0 ? [{ role: 'model', parts: strippedModelParts }] : []),
+    ];
+
+    // Cap history at 10 entries (~5 exchanges) to prevent unbounded growth
+    const limitedHistory = updatedConversationHistory.slice(-10);
 
     return NextResponse.json({
       success: true,
       editedImage: editedImageData,
-      conversationHistory: updatedConversationHistory,
+      conversationHistory: limitedHistory,
     });
 
   } catch (error) {
