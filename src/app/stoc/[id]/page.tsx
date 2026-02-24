@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { getCar } from '@/lib/firebase/firestore'
 import { getImagesFromFolderCached, getDownloadUrlFromPath } from '@/lib/firebase/storage'
 import { Car } from '@/lib/types'
@@ -10,10 +10,13 @@ import { ImageGallery } from '@/components/ui/ImageGallery'
 export default function CarDetailPage() {
   const router = useRouter()
   const params = useParams()
+  const searchParams = useSearchParams()
   const carId = params.id as string
 
+  const preloadImg = searchParams.get('img')
+
   const [car, setCar] = useState<Car | null>(null)
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>(preloadImg ? [preloadImg] : [])
   const [reportUrl, setReportUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [initialLoad, setInitialLoad] = useState(true)
@@ -182,7 +185,7 @@ export default function CarDetailPage() {
               )}
 
               {/* Warranty Badge */}
-              <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg p-4 shadow-lg overflow-hidden">
+              {car.status !== 'Consignatie' && <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg p-4 shadow-lg overflow-hidden">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-blue-900 rounded-full -translate-y-10 translate-x-10"></div>
@@ -216,7 +219,7 @@ export default function CarDetailPage() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div>}
             </div>
 
             {/* Details Section */}

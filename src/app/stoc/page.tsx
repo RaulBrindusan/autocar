@@ -21,8 +21,11 @@ export default function StocPage() {
     return () => unsubscribe()
   }, [])
 
-  const handleCarClick = (carId: string) => {
-    router.push(`/stoc/${carId}`)
+  const handleCarClick = (car: Car) => {
+    const url = car.imageUrl
+      ? `/stoc/${car.id}?img=${encodeURIComponent(car.imageUrl)}`
+      : `/stoc/${car.id}`
+    router.push(url)
   }
 
   return (
@@ -68,7 +71,7 @@ export default function StocPage() {
               {cars.map((car) => (
                 <div
                   key={car.id}
-                  onClick={() => handleCarClick(car.id)}
+                  onClick={() => handleCarClick(car)}
                   className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                 >
                   {/* Car Image */}
