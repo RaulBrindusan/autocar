@@ -14,9 +14,9 @@ export default function CalculatorPage() {
   
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
-  const [taxeOpenlane] = useState("450")
+  const [taxeOpenlane] = useState("600")
   const [transport] = useState("800")
-  const [comision] = useState("500")
+  const [comision] = useState("600")
 
   const calculateTotal = () => {
     const priceNum = parseFloat(price) || 0
