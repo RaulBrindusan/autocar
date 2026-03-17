@@ -20,10 +20,10 @@ export default function MasiniLaComandaPage() {
         <div className="mb-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Începe Procesul de Comandă
+              Spune-ne ce mașină vrei. Noi o găsim.
             </h2>
             <p className="text-gray-600">
-              Completează formularul în 4 pași simpli și primește ofertele tale personalizate
+              Completează în 2 minute — echipa noastră te contactează în maxim 24 de ore cu opțiuni concrete.
             </p>
           </div>
 

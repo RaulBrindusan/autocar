@@ -279,10 +279,14 @@ export default function CalculatorPage() {
             </div>
 
             <div className="flex justify-center">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                <Link href="/masini-la-comanda">
-                  Solicită o Mașină
-                </Link>
+              <Button asChild size="lg" className="bg-white hover:bg-gray-100 !text-black font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                <a
+                  href="https://wa.me/40770852489?text=Salut!%20Am%20folosit%20calculatorul%20AutoMode%20și%20sunt%20interesat%20să%20comand%20o%20mașină."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Vreau această mașină.
+                </a>
               </Button>
             </div>
 

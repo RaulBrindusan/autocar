@@ -15,6 +15,77 @@ import { CarOrderForm } from "@/components/forms/CarOrderForm"
 import { onCarsSnapshot } from '@/lib/firebase/firestore'
 import { Car as CarType } from '@/lib/types'
 
+function ExclusivitySection() {
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+
+  const now = new Date()
+  const monthName = now.toLocaleString('ro-RO', { month: 'long' })
+  const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1)
+  const year = now.getFullYear()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+    try {
+      await fetch('/api/resend/reserve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+    } catch (err) {
+      console.error('Reserve email error:', err)
+    }
+    setSubmitted(true)
+  }
+
+  return (
+    <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 text-center">
+        <span className="inline-block px-4 py-1.5 text-sm font-semibold rounded-full bg-blue-100 text-blue-700 mb-6">
+          Locuri limitate — {capitalizedMonth} {year}
+        </span>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6 transition-colors" style={{ color: 'var(--section-text)' }}>
+          Acceptăm doar un număr limitat de comenzi.
+        </h2>
+        <p className="text-lg leading-relaxed mb-10 transition-colors" style={{ color: 'var(--section-subtext)' }}>
+          Lucrăm cu un număr mic de clienți pentru că fiecare comandă primește atenție personală, de la căutare până la livrare.
+        </p>
+
+        {submitted ? (
+          <div className="rounded-2xl border p-8 transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+            <CheckCircle className="h-10 w-10 text-blue-600 mx-auto mb-3" />
+            <p className="text-lg font-semibold transition-colors" style={{ color: 'var(--section-text)' }}>
+              Locul tău a fost rezervat!
+            </p>
+            <p className="text-sm mt-1 transition-colors" style={{ color: 'var(--section-subtext)' }}>
+              Te contactăm în curând la {email}.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Adresa ta de email"
+              className="flex-1 px-4 py-3 rounded-xl border text-base outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', color: 'var(--section-text)' }}
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
+            >
+              Rezervă locul tău gratuit →
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const { t } = useLanguage()
   const router = useRouter()
@@ -166,7 +237,7 @@ export default function Home() {
             <div className="relative lg:h-[600px] h-[400px]">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-3xl transition-colors"></div>
               <Image
-                src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                src="/car2/3.jpeg"
                 alt="Mașină europeană premium importată de AutoMode - BMW, Mercedes, Audi"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
@@ -862,93 +933,8 @@ export default function Home() {
       </section>
 
 
-      {/* Testimonials Section */}
-      <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-              {t('testimonials.title')}
-            </h2>
-            <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              {t('testimonials.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="flex items-center mb-6">
-                <div className="flex text-yellow-400">
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                </div>
-              </div>
-              <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;{t('testimonials.review1')}&rdquo;
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-semibold">AP</span>
-                </div>
-                <div>
-                  <div className="font-semibold transition-colors" style={{ color: 'var(--card-text)' }}>Adrian Popescu</div>
-                  <div className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>BMW X3, 2022</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="flex items-center mb-6">
-                <div className="flex text-yellow-400">
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                </div>
-              </div>
-              <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;{t('testimonials.review2')}&rdquo;
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-semibold">MI</span>
-                </div>
-                <div>
-                  <div className="font-semibold transition-colors" style={{ color: 'var(--card-text)' }}>Maria Ionescu</div>
-                  <div className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Audi A6, 2021</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-2xl border shadow-sm transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-              <div className="flex items-center mb-6">
-                <div className="flex text-yellow-400">
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                  <Star className="h-5 w-5 fill-current" />
-                </div>
-              </div>
-              <p className="mb-6 leading-relaxed transition-colors" style={{ color: 'var(--card-text)' }}>
-                &ldquo;{t('testimonials.review3')}&rdquo;
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-semibold">CG</span>
-                </div>
-                <div>
-                  <div className="font-semibold transition-colors" style={{ color: 'var(--card-text)' }}>Cătălin Gheorghe</div>
-                  <div className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Mercedes E-Class, 2023</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Exclusivity Section */}
+      <ExclusivitySection />
 
 
       {/* Floating WhatsApp Button */}

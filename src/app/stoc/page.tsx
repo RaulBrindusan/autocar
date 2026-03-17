@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import { onCarsSnapshot } from '@/lib/firebase/firestore'
 import { Car } from '@/lib/types'
 
@@ -176,6 +177,23 @@ export default function StocPage() {
               ))}
             </div>
           ) : null}
+
+          {/* Banner */}
+          {!initialLoad && (
+            <div className="mt-16 rounded-2xl bg-blue-600 px-8 py-10 text-center text-white">
+              <p className="text-xl font-semibold mb-4">
+                Nu găsești ce cauți? Comandăm orice mașină din Europa în 2-3 săptămâni.
+              </p>
+              <a
+                href="https://wa.me/40770852489?text=Salut!%20Am%20v%C4%83zut%20stocul%20AutoMode%20și%20sunt%20interesat%20să%20comand%20o%20mașină."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-white text-blue-600 font-semibold px-8 py-3 rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              >
+                Vreau Mașina Mea
+              </a>
+            </div>
+          )}
       </div>
     </div>
   )

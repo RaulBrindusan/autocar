@@ -148,6 +148,17 @@ export function CarOrderForm() {
       const carRequestsRef = collection(db, 'car_requests')
       await addDoc(carRequestsRef, requestData)
 
+      // Send email via Resend
+      try {
+        await fetch('/api/resend/car-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestData),
+        })
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError)
+      }
+
       setIsSubmitted(true)
     } catch (error) {
       console.error('Error submitting form:', error)
