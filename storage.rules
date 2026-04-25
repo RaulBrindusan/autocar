@@ -91,6 +91,18 @@ service firebase.storage {
       allow read, list: if true;
     }
 
+    // Sent offers folder - for offer PDFs linked to car requests
+    match /sent-offers/{requestId}/{fileName} {
+      // Only authenticated users can read and write
+      allow read: if isSignedIn();
+
+      allow create, update: if isSignedIn()
+                            && request.resource.size < 10 * 1024 * 1024
+                            && request.resource.contentType == 'application/pdf';
+
+      allow delete: if isSignedIn();
+    }
+
     // Deny all other requests
     match /{allPaths=**} {
       allow read, write: if false;

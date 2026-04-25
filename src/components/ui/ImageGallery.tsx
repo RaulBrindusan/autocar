@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -12,7 +12,17 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, alt }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0])) // Track loaded images, preload first
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0]))
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isOpen])
 
   if (!images || images.length === 0) {
     return (
@@ -39,14 +49,12 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
   }
 
   const preloadAdjacentImages = (index: number) => {
-    // Preload current, next, and previous images for smooth navigation
     const toPreload = [
       index,
       (index + 1) % images.length,
       (index - 1 + images.length) % images.length,
-      (index + 2) % images.length, // Load 2 ahead for smoother experience
+      (index + 2) % images.length,
     ]
-
     setLoadedImages(prev => {
       const newSet = new Set(prev)
       toPreload.forEach(idx => newSet.add(idx))
@@ -62,7 +70,6 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
 
   const handleOpenLightbox = () => {
     setIsOpen(true)
-    // Aggressively preload ALL images when opening lightbox for instant navigation
     const allIndices = Array.from({ length: images.length }, (_, i) => i)
     setLoadedImages(new Set(allIndices))
   }
@@ -101,22 +108,23 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
       {/* Lightbox */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black/95 z-[9999] flex flex-col items-center justify-center"
           onClick={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
           tabIndex={0}
+          style={{ touchAction: 'none' }}
         >
           {/* Close Button */}
           <button
             onClick={() => setIsOpen(false)}
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
-            aria-label="Close gallery"
+            aria-label="Închide galeria"
           >
             <X className="w-8 h-8" />
           </button>
 
           {/* Image Counter */}
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-lg font-medium">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-lg font-medium z-10">
             {currentIndex + 1} / {images.length}
           </div>
 
@@ -127,18 +135,22 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
                 e.stopPropagation()
                 previousImage()
               }}
-              className="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
-              aria-label="Previous image"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+              aria-label="Imaginea anterioară"
             >
               <ChevronLeft className="w-12 h-12" />
             </button>
           )}
 
           {/* Image */}
-          <div className="relative max-w-7xl max-h-screen w-full h-full flex items-center justify-center p-8" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="relative w-full flex items-center justify-center px-16"
+            style={{ height: images.length > 1 ? 'calc(100% - 112px)' : '100%' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Image
               src={images[currentIndex]}
-              alt={`${alt} - Image ${currentIndex + 1}`}
+              alt={`${alt} - Imaginea ${currentIndex + 1}`}
               width={1200}
               height={900}
               className="object-contain w-full h-full"
@@ -150,14 +162,14 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
             />
           </div>
 
-          {/* Hidden preload images - load all images in background for instant navigation */}
+          {/* Hidden preload images */}
           {images.map((img, idx) => {
             if (idx === currentIndex) return null
             return (
               <div key={idx} className="hidden">
                 <Image
                   src={img}
-                  alt={`Preload ${idx}`}
+                  alt={`Preîncărcare ${idx}`}
                   width={1200}
                   height={900}
                   priority={true}
@@ -174,8 +186,8 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
                 e.stopPropagation()
                 nextImage()
               }}
-              className="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
-              aria-label="Next image"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+              aria-label="Imaginea următoare"
             >
               <ChevronRight className="w-12 h-12" />
             </button>
@@ -183,32 +195,41 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
 
           {/* Thumbnail Navigation */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 max-w-full overflow-x-auto px-4">
-              {images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setCurrentIndex(index)
-                    preloadAdjacentImages(index)
-                  }}
-                  className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentIndex ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'
-                  }`}
-                >
-                  <Image
-                    src={image}
-                    alt={`Thumbnail ${index + 1}`}
-                    width={80}
-                    height={80}
-                    className="object-cover w-full h-full"
-                    quality={50}
-                    loading={index < 6 ? "eager" : "lazy"}
-                    placeholder="blur"
-                    blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-                  />
-                </button>
-              ))}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-28 flex items-center px-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="flex gap-2 overflow-x-auto overflow-y-hidden w-full pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setCurrentIndex(index)
+                      preloadAdjacentImages(index)
+                    }}
+                    className={`relative flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === currentIndex ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}
+                    style={{ width: 72, height: 72 }}
+                  >
+                    <Image
+                      src={image}
+                      alt={`Miniatură ${index + 1}`}
+                      width={72}
+                      height={72}
+                      className="object-cover w-full h-full"
+                      quality={50}
+                      loading={index < 6 ? "eager" : "lazy"}
+                      placeholder="blur"
+                      blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

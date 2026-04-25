@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { onCarRequestsSnapshot, deleteCarRequest } from '@/lib/firebase/firestore';
 import { CarRequest } from '@/lib/types';
@@ -16,9 +17,9 @@ export default function CereriPage() {
 }
 
 function CereriContent() {
+  const router = useRouter();
   const [requests, setRequests] = useState<CarRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRequest, setSelectedRequest] = useState<CarRequest | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -139,27 +140,27 @@ function CereriContent() {
                     className="hover:bg-blue-50 transition-all hover:shadow-sm"
                   >
                     <td
-                      onClick={() => setSelectedRequest(request)}
+                      onClick={() => router.push(`/dashboard/cereri/${request.id}`)}
                       className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
                     >
                       <div className="text-xs md:text-sm font-semibold text-gray-900">{index + 1}</div>
                     </td>
                     <td
-                      onClick={() => setSelectedRequest(request)}
+                      onClick={() => router.push(`/dashboard/cereri/${request.id}`)}
                       className="px-3 md:px-6 py-3 md:py-4 cursor-pointer"
                     >
                       <div className="text-xs md:text-sm font-medium text-gray-900 truncate max-w-[120px] md:max-w-none">{request.contact_name}</div>
                       <div className="text-xs md:text-sm text-gray-500 truncate max-w-[120px] md:max-w-none">{request.contact_email}</div>
                     </td>
                     <td
-                      onClick={() => setSelectedRequest(request)}
+                      onClick={() => router.push(`/dashboard/cereri/${request.id}`)}
                       className="px-3 md:px-6 py-3 md:py-4 cursor-pointer"
                     >
                       <div className="text-xs md:text-sm font-medium text-gray-900">{request.brand} {request.model}</div>
                       <div className="text-xs md:text-sm text-gray-500">An: {request.year}</div>
                     </td>
                     <td
-                      onClick={() => setSelectedRequest(request)}
+                      onClick={() => router.push(`/dashboard/cereri/${request.id}`)}
                       className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap cursor-pointer"
                     >
                       <div className="text-xs md:text-sm font-semibold text-gray-900">
@@ -167,7 +168,7 @@ function CereriContent() {
                       </div>
                     </td>
                     <td
-                      onClick={() => setSelectedRequest(request)}
+                      onClick={() => router.push(`/dashboard/cereri/${request.id}`)}
                       className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500 cursor-pointer"
                     >
                       {formatDate(request.timestamp)}
@@ -191,134 +192,6 @@ function CereriContent() {
             </table>
           </div>
         </div>
-      )}
-
-      {/* Request Details Modal */}
-      {selectedRequest && (
-        <>
-          {/* Backdrop with blur */}
-          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" onClick={() => setSelectedRequest(null)} />
-
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
-            <div className="bg-white rounded-xl shadow-2xl w-[90%] md:w-full md:max-w-3xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto pointer-events-auto">
-            {/* Modal Header */}
-            <div className="bg-blue-600 px-3 md:px-6 py-2 md:py-4 flex justify-between items-center rounded-t-xl">
-              <h2 className="text-base md:text-2xl font-bold text-white">Detalii Cerere</h2>
-              <button
-                onClick={() => setSelectedRequest(null)}
-                className="text-white hover:text-gray-200 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-3 md:p-6 space-y-2 md:space-y-4">
-              {/* Contact Information */}
-              <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-900 mb-1 md:mb-2 border-b border-blue-100 pb-1">
-                  Informații Contact
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Nume</label>
-                    <p className="text-xs md:text-base font-semibold text-gray-900">{selectedRequest.contact_name}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Email</label>
-                    <p className="text-xs md:text-base text-gray-900">{selectedRequest.contact_email}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Telefon</label>
-                    <p className="text-xs md:text-base text-gray-900">{selectedRequest.contact_phone}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Data</label>
-                    <p className="text-xs md:text-base text-gray-900">{formatDate(selectedRequest.timestamp)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Car Details */}
-              <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-900 mb-1 md:mb-2 border-b border-blue-100 pb-1">
-                  Detalii Mașină
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-2 md:gap-4">
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Marcă</label>
-                    <p className="text-xs md:text-base font-semibold text-gray-900">{selectedRequest.brand}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Model</label>
-                    <p className="text-xs md:text-base font-semibold text-gray-900">{selectedRequest.model}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">An</label>
-                    <p className="text-xs md:text-base text-gray-900">{selectedRequest.year}</p>
-                  </div>
-                  <div>
-                    <label className="text-xs md:text-sm font-medium text-gray-500">Buget</label>
-                    <p className="text-xs md:text-base font-semibold text-blue-600">
-                      €{selectedRequest.max_budget.toLocaleString('ro-RO')}
-                    </p>
-                  </div>
-                  {selectedRequest.fuel_type && (
-                    <div>
-                      <label className="text-xs md:text-sm font-medium text-gray-500">Combustibil</label>
-                      <p className="text-xs md:text-base text-gray-900">{selectedRequest.fuel_type}</p>
-                    </div>
-                  )}
-                  {selectedRequest.transmission && (
-                    <div>
-                      <label className="text-xs md:text-sm font-medium text-gray-500">Transmisie</label>
-                      <p className="text-xs md:text-base text-gray-900">{selectedRequest.transmission}</p>
-                    </div>
-                  )}
-                  {selectedRequest.mileage_max && (
-                    <div>
-                      <label className="text-xs md:text-sm font-medium text-gray-500">Max KM</label>
-                      <p className="text-xs md:text-base text-gray-900">
-                        {selectedRequest.mileage_max.toLocaleString('ro-RO')} km
-                      </p>
-                    </div>
-                  )}
-                  {selectedRequest.preferred_color && (
-                    <div>
-                      <label className="text-xs md:text-sm font-medium text-gray-500">Culoare</label>
-                      <p className="text-xs md:text-base text-gray-900">{selectedRequest.preferred_color}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Additional Requirements */}
-              {selectedRequest.additional_requirements && (
-                <div>
-                  <h3 className="text-sm md:text-lg font-semibold text-gray-900 mb-1 md:mb-2 border-b border-blue-100 pb-1">
-                    Cerințe Suplimentare
-                  </h3>
-                  <p className="text-xs md:text-base text-gray-900 bg-gray-50 p-2 md:p-4 rounded-lg">
-                    {selectedRequest.additional_requirements}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="bg-gray-50 px-3 md:px-6 py-2 md:py-4 flex justify-end rounded-b-xl">
-              <button
-                onClick={() => setSelectedRequest(null)}
-                className="px-4 md:px-6 py-1.5 md:py-2 bg-blue-600 text-white text-xs md:text-base font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Închide
-              </button>
-            </div>
-          </div>
-        </div>
-        </>
       )}
 
       {/* Dropdown Menu Portal */}

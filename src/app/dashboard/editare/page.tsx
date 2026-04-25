@@ -12,6 +12,15 @@ interface EditHistoryItem {
   timestamp: Date;
 }
 
+type StartMode = 'upload' | 'generate';
+
+const ASPECT_RATIOS = [
+  { label: '1:1', value: '1:1', class: 'aspect-square' },
+  { label: '16:9', value: '16:9', class: 'aspect-video' },
+  { label: '9:16', value: '9:16', class: 'aspect-[9/16]' },
+  { label: '4:3', value: '4:3', class: 'aspect-[4/3]' },
+];
+
 export default function EditarePage() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [editedImage, setEditedImage] = useState<string | null>(null);
@@ -23,6 +32,9 @@ export default function EditarePage() {
   const [conversationHistory, setConversationHistory] = useState<any[]>([]);
   const [showHistoryMobile, setShowHistoryMobile] = useState(false);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [startMode, setStartMode] = useState<StartMode>('upload');
+  const [generatePrompt, setGeneratePrompt] = useState('');
+  const [generateAspectRatio, setGenerateAspectRatio] = useState<string>('1:1');
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -175,6 +187,47 @@ export default function EditarePage() {
     }
   };
 
+  const handleGenerateImage = async () => {
+    if (!generatePrompt.trim()) {
+      toast.error('Vă rugăm să introduceți un prompt pentru generare');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/image-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: generatePrompt,
+          aspectRatio: generateAspectRatio,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate image');
+      }
+
+      const generatedImageData = `data:image/png;base64,${data.generatedImage}`;
+      const aspectClass = ASPECT_RATIOS.find(r => r.value === generateAspectRatio)?.class ?? 'aspect-square';
+
+      setOriginalImage(generatedImageData);
+      setEditedImage(null);
+      setConversationHistory([]);
+      setReferenceImage(null);
+      setImageAspectRatio(aspectClass);
+      toast.success('Imaginea a fost generată cu succes!');
+    } catch (error) {
+      console.error('Error generating image:', error);
+      toast.error(error instanceof Error ? error.message : 'Eroare la generarea imaginii');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
@@ -208,40 +261,139 @@ export default function EditarePage() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left & Center: Image Editor */}
         <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto">
-          {/* Upload Section */}
+          {/* Start Mode Selector + Upload/Generate Section */}
           {!originalImage && (
-            <div className="mb-6 flex justify-center">
-              <label
-                htmlFor="image-upload"
-                className="flex flex-col items-center justify-center w-full max-w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <svg
-                    className="w-12 h-12 mb-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
+            <div className="mb-6 flex flex-col items-center gap-4">
+              {/* Mode Tabs */}
+              <div className="flex bg-gray-100 rounded-lg p-1 w-full max-w-96">
+                <button
+                  onClick={() => setStartMode('upload')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    startMode === 'upload'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click pentru a încărca</span> sau drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">PNG, JPG, JPEG (MAX. 10MB)</p>
+                  Încarcă Imagine
+                </button>
+                <button
+                  onClick={() => setStartMode('generate')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    startMode === 'generate'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  Generează din Text
+                </button>
+              </div>
+
+              {/* Upload Panel */}
+              {startMode === 'upload' && (
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center justify-center w-full max-w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                      className="w-12 h-12 mb-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+                    <p className="mb-2 text-sm text-gray-500">
+                      <span className="font-semibold">Click pentru a încărca</span> sau drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500">PNG, JPG, JPEG (MAX. 10MB)</p>
+                  </div>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </label>
+              )}
+
+              {/* Generate Panel */}
+              {startMode === 'generate' && (
+                <div className="w-full max-w-96 bg-white rounded-lg border border-gray-200 shadow-sm p-5 flex flex-col gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Prompt
+                    </label>
+                    <textarea
+                      value={generatePrompt}
+                      onChange={(e) => setGeneratePrompt(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.ctrlKey && !isLoading) {
+                          handleGenerateImage();
+                        }
+                      }}
+                      placeholder="Descrieți imaginea pe care doriți să o generați..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 text-black text-sm resize-none"
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Format
+                    </label>
+                    <div className="flex gap-2 flex-wrap">
+                      {ASPECT_RATIOS.map((ratio) => (
+                        <button
+                          key={ratio.value}
+                          onClick={() => setGenerateAspectRatio(ratio.value)}
+                          className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+                            generateAspectRatio === ratio.value
+                              ? 'bg-blue-600 text-white border-blue-600'
+                              : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400 hover:text-blue-600'
+                          }`}
+                        >
+                          {ratio.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleGenerateImage}
+                    disabled={isLoading || !generatePrompt.trim()}
+                    className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Se generează...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Generează Imagine
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-gray-400 text-center">Ctrl+Enter pentru a genera</p>
                 </div>
-                <input
-                  id="image-upload"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </label>
+              )}
             </div>
           )}
 

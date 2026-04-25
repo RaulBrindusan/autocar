@@ -18,9 +18,11 @@ import { Car as CarType } from '@/lib/types'
 function ExclusivitySection() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const { t, language } = useLanguage()
 
   const now = new Date()
-  const monthName = now.toLocaleString('ro-RO', { month: 'long' })
+  const locale = language === 'ro' ? 'ro-RO' : 'en-GB'
+  const monthName = now.toLocaleString(locale, { month: 'long' })
   const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1)
   const year = now.getFullYear()
 
@@ -43,23 +45,23 @@ function ExclusivitySection() {
     <section className="py-24 transition-colors" style={{ backgroundColor: 'var(--section-bg-alt)' }}>
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 text-center">
         <span className="inline-block px-4 py-1.5 text-sm font-semibold rounded-full bg-blue-100 text-blue-700 mb-6">
-          Locuri limitate — {capitalizedMonth} {year}
+          {t('exclusivity.badge')} {capitalizedMonth} {year}
         </span>
         <h2 className="text-3xl sm:text-4xl font-bold mb-6 transition-colors" style={{ color: 'var(--section-text)' }}>
-          Acceptăm doar un număr limitat de comenzi.
+          {t('exclusivity.title')}
         </h2>
         <p className="text-lg leading-relaxed mb-10 transition-colors" style={{ color: 'var(--section-subtext)' }}>
-          Lucrăm cu un număr mic de clienți pentru că fiecare comandă primește atenție personală, de la căutare până la livrare.
+          {t('exclusivity.subtitle')}
         </p>
 
         {submitted ? (
           <div className="rounded-2xl border p-8 transition-colors" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
             <CheckCircle className="h-10 w-10 text-blue-600 mx-auto mb-3" />
             <p className="text-lg font-semibold transition-colors" style={{ color: 'var(--section-text)' }}>
-              Locul tău a fost rezervat!
+              {t('exclusivity.reserved')}
             </p>
             <p className="text-sm mt-1 transition-colors" style={{ color: 'var(--section-subtext)' }}>
-              Te contactăm în curând la {email}.
+              {t('exclusivity.contact_soon')} {email}.
             </p>
           </div>
         ) : (
@@ -69,7 +71,7 @@ function ExclusivitySection() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Adresa ta de email"
+              placeholder={t('exclusivity.email_placeholder')}
               className="flex-1 px-4 py-3 rounded-xl border text-base outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', color: 'var(--section-text)' }}
             />
@@ -77,7 +79,7 @@ function ExclusivitySection() {
               type="submit"
               className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
             >
-              Rezervă locul tău gratuit →
+              {t('exclusivity.cta')}
             </button>
           </form>
         )}
@@ -276,14 +278,14 @@ export default function Home() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-16">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-4 transition-colors" style={{ color: 'var(--section-text)' }}>
-                  Mașini Disponibile
+                  {t('cars.title')}
                 </h2>
                 <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: 'var(--section-subtext)' }}>
-                  Descoperă mașinile premium din stocul nostru și cele în consignație
+                  {t('cars.subtitle')}
                 </p>
                 {cars.length > 3 && (
                   <p className="text-sm mt-2 text-gray-500 dark:text-gray-400">
-                    {cars.length} mașini disponibile
+                    {cars.length} {t('cars.count')}
                   </p>
                 )}
               </div>
@@ -376,7 +378,7 @@ export default function Home() {
                             </svg>
                           </div>
                           <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
-                            <span className="font-semibold">An:</span> {car.year}
+                            <span className="font-semibold">{t('cars.year')}:</span> {car.year}
                           </span>
                         </div>
 
@@ -396,7 +398,7 @@ export default function Home() {
                             </svg>
                           </div>
                           <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
-                            <span className="font-semibold">Kilometraj:</span> {car.km} km
+                            <span className="font-semibold">{t('cars.mileage')}:</span> {car.km} km
                           </span>
                         </div>
 
@@ -416,7 +418,7 @@ export default function Home() {
                             </svg>
                           </div>
                           <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
-                            <span className="font-semibold">Combustibil:</span> {car.fuel}
+                            <span className="font-semibold">{t('cars.fuel')}:</span> {car.fuel}
                           </span>
                         </div>
 
@@ -436,7 +438,7 @@ export default function Home() {
                             </svg>
                           </div>
                           <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
-                            <span className="font-semibold">Motor:</span> {car.engine}
+                            <span className="font-semibold">{t('cars.engine')}:</span> {car.engine}
                           </span>
                         </div>
 
@@ -457,7 +459,7 @@ export default function Home() {
                               </svg>
                             </div>
                             <span className="text-xs md:text-sm" style={{ color: theme === 'dark' ? '#d1d5db' : '#000000' }}>
-                              <span className="font-semibold">Transmisie:</span> {car.transmisie}
+                              <span className="font-semibold">{t('cars.transmission')}:</span> {car.transmisie}
                             </span>
                           </div>
                         )}
@@ -466,7 +468,7 @@ export default function Home() {
                       {/* Price Section */}
                       <div className="border-t pt-3 md:pt-5 mt-3 md:mt-5" style={{ borderColor: theme === 'dark' ? '#334155' : '#e5e7eb' }}>
                         <div className="flex items-center justify-between mb-2 md:mb-3">
-                          <span className="text-xs md:text-sm font-medium" style={{ color: theme === 'dark' ? '#9ca3af' : '#000000' }}>Preț:</span>
+                          <span className="text-xs md:text-sm font-medium" style={{ color: theme === 'dark' ? '#9ca3af' : '#000000' }}>{t('cars.price')}:</span>
                           <span
                             className="text-xl md:text-3xl font-bold"
                             style={{ color: theme === 'dark' ? '#60a5fa' : '#2563eb' }}
@@ -483,7 +485,7 @@ export default function Home() {
                               backgroundColor: theme === 'dark' ? '#3b82f6' : '#2563eb'
                             }}
                           >
-                            Vezi Detalii
+                            {t('cars.details')}
                             <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
                           </Button>
                         </div>

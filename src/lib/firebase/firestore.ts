@@ -16,7 +16,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Car, Expense, Todo, CarRequest, BlogPost, PriceCheck } from '../types';
+import { Car, Expense, Todo, CarRequest, SentRequest, BlogPost, PriceCheck } from '../types';
 
 // Cars Collection
 
@@ -258,6 +258,29 @@ export const onCarRequestsSnapshot = (callback: (requests: CarRequest[]) => void
   });
 };
 
+// Get a single car request by ID
+export const getCarRequest = async (requestId: string) => {
+  try {
+    const requestRef = doc(db, 'car_requests', requestId);
+    const snapshot = await getDoc(requestRef);
+    if (!snapshot.exists()) return { data: null, error: 'Not found' };
+    return { data: { id: snapshot.id, ...snapshot.data() } as CarRequest, error: null };
+  } catch (error: any) {
+    return { data: null, error: error.message };
+  }
+};
+
+// Update a car request
+export const updateCarRequest = async (requestId: string, data: Partial<Record<string, any>>) => {
+  try {
+    const requestRef = doc(db, 'car_requests', requestId);
+    await updateDoc(requestRef, data);
+    return { error: null };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+};
+
 // Delete a car request
 export const deleteCarRequest = async (requestId: string) => {
   try {
@@ -266,6 +289,35 @@ export const deleteCarRequest = async (requestId: string) => {
     return { error: null };
   } catch (error: any) {
     return { error: error.message };
+  }
+};
+
+// Sent Requests Collection
+
+export const sentRequestsCollection = collection(db, 'sent_requests');
+
+export const createSentRequest = async (data: Omit<SentRequest, 'id'>) => {
+  try {
+    const docRef = await addDoc(sentRequestsCollection, {
+      ...data,
+      timestamp: Timestamp.now(),
+    });
+    return { id: docRef.id, error: null };
+  } catch (error: any) {
+    return { id: null, error: error.message };
+  }
+};
+
+export const getSentRequestsByRequestId = async (requestId: string) => {
+  try {
+    const q = query(sentRequestsCollection, where('request_id', '==', requestId));
+    const snapshot = await getDocs(q);
+    const items = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() })) as SentRequest[];
+    items.sort((a, b) => (b.timestamp?.seconds ?? 0) - (a.timestamp?.seconds ?? 0));
+    return { data: items, error: null };
+  } catch (error: any) {
+    return { data: [], error: error.message };
   }
 };
 

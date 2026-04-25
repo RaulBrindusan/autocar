@@ -65,6 +65,15 @@ export interface CarRequest {
   timestamp: any;  // Firebase Timestamp
 }
 
+export interface SentRequest {
+  id: string;
+  request_id: string;       // Reference to car_requests document
+  price: number;            // Offered price in €
+  pdf_url: string;          // Firebase Storage download URL
+  pdf_path: string;         // Firebase Storage path
+  timestamp: any;           // Firebase Timestamp
+}
+
 export interface BlogPost {
   id: string;
   title: string;

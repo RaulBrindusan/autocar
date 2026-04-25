@@ -13,14 +13,20 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    // Check if authenticated user has admin role in user_roles collection
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/user_roles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Cars collection rules
     match /cars/{carId} {
       // Allow anyone to read cars (public access for Stoc page)
       allow read: if true;
 
-      // Allow authenticated users to create new cars
-      // The car document must have the required fields
-      allow create: if isSignedIn()
+      // Allow admins to create new cars with required fields
+      allow create: if isAdmin()
                     && request.resource.data.keys().hasAll(['make', 'model', 'year', 'km', 'fuel', 'engine', 'buyingprice', 'askingprice', 'profit', 'timestamp'])
                     && request.resource.data.make is string
                     && request.resource.data.model is string
@@ -33,11 +39,8 @@ service cloud.firestore {
                     && request.resource.data.profit is string
                     && request.resource.data.timestamp is number;
 
-      // Allow authenticated users to update cars
-      allow update: if isSignedIn();
-
-      // Allow authenticated users to delete cars
-      allow delete: if isSignedIn();
+      // Allow admins to update and delete cars
+      allow update, delete: if isAdmin();
     }
 
     // Expenses collection rules
@@ -45,20 +48,16 @@ service cloud.firestore {
       // Allow anyone to read expenses (public access for car details on Stoc page)
       allow read: if true;
 
-      // Allow authenticated users to create new expenses
-      // The expense document must have the required fields
-      allow create: if isSignedIn()
+      // Allow admins to create new expenses with required fields
+      allow create: if isAdmin()
                     && request.resource.data.keys().hasAll(['carId', 'type', 'price', 'timestamp'])
                     && request.resource.data.carId is string
                     && request.resource.data.type is string
                     && request.resource.data.price is string
                     && request.resource.data.timestamp is number;
 
-      // Allow authenticated users to update expenses
-      allow update: if isSignedIn();
-
-      // Allow authenticated users to delete expenses
-      allow delete: if isSignedIn();
+      // Allow admins to update and delete expenses
+      allow update, delete: if isAdmin();
     }
 
     // Todos collection rules
@@ -66,9 +65,8 @@ service cloud.firestore {
       // Allow anyone to read todos (public access for car details on Stoc page)
       allow read: if true;
 
-      // Allow authenticated users to create new todos
-      // The todo document must have the required fields
-      allow create: if isSignedIn()
+      // Allow admins to create todos with required fields
+      allow create: if isAdmin()
                     && request.resource.data.keys().hasAll(['carId', 'name', 'status', 'userId', 'timestamp'])
                     && request.resource.data.carId is string
                     && request.resource.data.name is string
@@ -77,23 +75,21 @@ service cloud.firestore {
                     && request.resource.data.timestamp is number
                     && request.resource.data.userId == request.auth.uid;
 
-      // Allow authenticated users to update todos
-      allow update: if isSignedIn();
-
-      // Allow authenticated users to delete todos
-      allow delete: if isSignedIn();
+      // Allow admins to update and delete todos
+      allow update, delete: if isAdmin();
     }
 
-    // Users collection (if you want to store user profiles in the future)
+    // Users collection
     match /users/{userId} {
-      // Allow users to read their own profile
+      // Users can only read their own profile
       allow read: if isOwner(userId);
 
-      // Allow users to create/update their own profile
-      allow create, update: if isOwner(userId);
+      // Users can create/update their own profile
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
 
-      // Allow users to delete their own profile
-      allow delete: if isOwner(userId);
+      // Only admins can delete user profiles
+      allow delete: if isAdmin();
     }
 
     // Car requests collection (masini la comanda form submissions)
@@ -119,13 +115,17 @@ service cloud.firestore {
       allow delete: if isSignedIn();
     }
 
+    // Sent requests collection (offer PDFs sent to clients)
+    match /sent_requests/{sentId} {
+      allow read, write: if isSignedIn();
+    }
+
     // Blog posts collection (for blog management)
     match /blog_posts/{postId} {
       // Allow anyone to read published blog posts (public access for website)
       allow read: if true;
 
       // Allow authenticated users to create new blog posts
-      // The blog post document must have the required fields
       allow create: if isSignedIn()
                     && request.resource.data.keys().hasAll(['title', 'content', 'author', 'published', 'timestamp', 'slug'])
                     && request.resource.data.title is string
@@ -140,6 +140,68 @@ service cloud.firestore {
 
       // Allow authenticated users to delete blog posts
       allow delete: if isSignedIn();
+    }
+
+    // Pricecheck collection (Chrome extension auto-saved data with price history)
+    match /pricecheck/{stockNumber} {
+      // Allow anyone to read and write
+      // Price history is tracked in priceHistory array (10 days retention)
+      allow read, write: if true;
+    }
+
+    // Interest requests from potential customers (Sunt Interesat form)
+    match /cereri_interes/{cerereId} {
+      // Anyone can submit an interest request (customers don't have accounts)
+      allow create: if request.resource.data.keys().hasAll(['carId', 'carName', 'nume', 'telefon', 'timestamp'])
+                    && request.resource.data.carId is string
+                    && request.resource.data.carName is string
+                    && request.resource.data.nume is string
+                    && request.resource.data.telefon is string;
+
+      // Only authenticated users (dealer) can read or delete requests
+      allow read, delete: if isSignedIn();
+
+      // No updates allowed — submissions are immutable
+      allow update: if false;
+    }
+
+    // user_roles: each user can only read their own role, no client writes
+    match /user_roles/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // Chats — real-time messaging between users and admin
+    match /chats/{requestId} {
+      // Only signed-in users can read chat metadata (last message, unread counts)
+      allow read: if isSignedIn();
+
+      // Only signed-in users or admins can create/update chat metadata
+      allow create, update: if isSignedIn();
+
+      // Only admins can delete chat threads
+      allow delete: if isAdmin();
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        // Only signed-in users can read messages
+        allow read: if isSignedIn();
+
+        // Only signed-in users can send messages
+        // Enforce that sender fields match the authenticated user
+        allow create: if isSignedIn()
+                      && request.resource.data.keys().hasAll(['text', 'senderId', 'senderName', 'isAdmin', 'timestamp'])
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 2000
+                      && request.resource.data.isAdmin is bool
+                      && request.resource.data.timestamp is int;
+
+        // Messages are immutable once sent — no edits or deletes by users
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
+      }
     }
 
     // Deny all other requests by default

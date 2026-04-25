@@ -101,7 +101,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="taxe-openlane" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Taxe OpenLane (EUR)
+                    Taxe Licitații (EUR)
                   </label>
                   <input
                     id="taxe-openlane"
@@ -200,7 +200,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="taxe-openlane-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Taxe OpenLane (EUR)
+                    Taxe Licitații (EUR)
                   </label>
                   <input
                     id="taxe-openlane-cu-tva"

@@ -201,6 +201,42 @@ export const uploadCarGalleryImages = async (
 };
 
 /**
+ * Upload offer PDF to Firebase Storage
+ * PDFs are stored in sent-offers/{requestId}/{filename}
+ * @param file - PDF file to upload
+ * @param requestId - Car request ID for folder organization
+ * @returns Object with download URL, storage path and error
+ */
+export const uploadOfferPdf = async (
+  file: File,
+  requestId: string
+): Promise<{ url: string | null; path: string | null; error: string | null }> => {
+  try {
+    if (file.type !== 'application/pdf') {
+      return { url: null, path: null, error: 'Doar fișierele PDF sunt acceptate' };
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      return { url: null, path: null, error: 'Fișierul PDF trebuie să fie mai mic de 10MB' };
+    }
+
+    const timestamp = Date.now();
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${timestamp}-${sanitizedFileName}`;
+    const storagePath = `sent-offers/${requestId}/${fileName}`;
+    const storageRef = ref(storage, storagePath);
+
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    return { url: downloadURL, path: storagePath, error: null };
+  } catch (error: any) {
+    return { url: null, path: null, error: error.message || 'Eroare la încărcarea fișierului' };
+  }
+};
+
+/**
  * Upload blog post image to Firebase Storage
  * Images are stored in blog/{postId}/{filename}
  * @param file - Image file to upload

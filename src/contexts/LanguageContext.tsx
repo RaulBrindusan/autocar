@@ -98,8 +98,29 @@ const translations = {
     'warranty.months_description': 'Cea mai extinsă garanție din industrie pentru mașini importate',
     'warranty.questions.title': 'Ai Întrebări Despre Garanție?',
     'warranty.questions.subtitle': 'Echipa noastră de specialiști îți explică în detaliu toate beneficiile garanției extended și cum te protejează investiția ta.',
-    'warranty.cta.primary': 'Vreau Masina',
-    'warranty.cta.secondary': 'Intreaba-ne',
+    'warranty.cta.primary': 'Vreau Mașina',
+    'warranty.cta.secondary': 'Întreabă-ne',
+
+    // Available Cars Section
+    'cars.title': 'Mașini Disponibile',
+    'cars.subtitle': 'Descoperă mașinile premium din stocul nostru și cele în consignație',
+    'cars.count': 'mașini disponibile',
+    'cars.year': 'An',
+    'cars.mileage': 'Kilometraj',
+    'cars.fuel': 'Combustibil',
+    'cars.engine': 'Motor',
+    'cars.transmission': 'Transmisie',
+    'cars.price': 'Preț',
+    'cars.details': 'Vezi Detalii',
+
+    // Exclusivity Section
+    'exclusivity.badge': 'Locuri limitate —',
+    'exclusivity.title': 'Acceptăm doar un număr limitat de comenzi.',
+    'exclusivity.subtitle': 'Lucrăm cu un număr mic de clienți pentru că fiecare comandă primește atenție personală, de la căutare până la livrare.',
+    'exclusivity.reserved': 'Locul tău a fost rezervat!',
+    'exclusivity.contact_soon': 'Te contactăm în curând la',
+    'exclusivity.email_placeholder': 'Adresa ta de email',
+    'exclusivity.cta': 'Rezervă locul tău gratuit →',
 
     // FAQ Section
     'faq.title': 'Întrebări Frecvente',
@@ -346,8 +367,8 @@ const translations = {
 
     // Consignatie Section
     'consignatie.title': 'Consignație Auto',
-    'consignatie.subtitle': 'Îți vândem mașina în siguranță și la cel mai bun preț',
-    'consignatie.description': 'Pune-ți mașina în consignația noastră și lasă-ne să o vândem pentru tine. Ne ocupăm de tot procesul de vânzare, de la promovare până la finalizarea tranzacției.',
+    'consignatie.subtitle': 'Îți vindem mașina în siguranță și la cel mai bun preț',
+    'consignatie.description': 'Pune-ți mașina în consignația noastră și lasă-ne să o vindem pentru tine. Ne ocupăm de tot procesul de vânzare, de la promovare până la finalizarea tranzacției.',
     'consignatie.benefit1.title': 'Evaluare Profesională',
     'consignatie.benefit1.description': 'Evaluăm corect mașina ta și stabilim cel mai bun preț de vânzare pe piață',
     'consignatie.benefit2.title': 'Marketing Complet',
@@ -499,6 +520,27 @@ const translations = {
     'warranty.questions.subtitle': 'Our team of specialists explains in detail all the benefits of the extended warranty and how it protects your investment.',
     'warranty.cta.primary': 'Find My Car',
     'warranty.cta.secondary': 'Ask Us',
+
+    // Available Cars Section
+    'cars.title': 'Available Cars',
+    'cars.subtitle': 'Discover the premium cars from our stock and consignment listings',
+    'cars.count': 'cars available',
+    'cars.year': 'Year',
+    'cars.mileage': 'Mileage',
+    'cars.fuel': 'Fuel',
+    'cars.engine': 'Engine',
+    'cars.transmission': 'Transmission',
+    'cars.price': 'Price',
+    'cars.details': 'View Details',
+
+    // Exclusivity Section
+    'exclusivity.badge': 'Limited spots —',
+    'exclusivity.title': 'We only accept a limited number of orders.',
+    'exclusivity.subtitle': 'We work with a small number of clients because every order receives personal attention, from sourcing to delivery.',
+    'exclusivity.reserved': 'Your spot has been reserved!',
+    'exclusivity.contact_soon': 'We will contact you soon at',
+    'exclusivity.email_placeholder': 'Your email address',
+    'exclusivity.cta': 'Reserve your spot for free →',
 
     // FAQ Section
     'faq.title': 'Frequently Asked Questions',
