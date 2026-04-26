@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { ChevronRight, Home } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { useTheme } from '@/contexts/ThemeContext'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 /**
  * Breadcrumb Navigation Component with Structured Data
@@ -26,27 +28,50 @@ interface BreadcrumbsProps {
   className?: string
 }
 
-// Default breadcrumb mappings for routes
-const routeLabels: Record<string, string> = {
-  '/': 'Acasă',
-  '/masini-la-comanda': 'Mașini la Comandă',
-  '/calculator': 'Calculator Import',
-  '/stoc': 'Stoc Mașini',
-  '/dashboard': 'Dashboard',
-  '/dashboard/cereri': 'Cereri',
-  '/dashboard/analitice': 'Analitice',
-  '/politica-de-confidentialitate': 'Politica de Confidențialitate',
-  '/politica-de-cookies': 'Politica de Cookies',
-  '/gdpr': 'GDPR',
-}
 
 export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
   const pathname = usePathname()
+  const { theme } = useTheme()
+  const { t } = useLanguage()
+  const isDark = theme === 'dark'
+
+  const linkColor = isDark ? '#d1d5db' : '#374151'
+  const linkHoverColor = isDark ? '#ffffff' : '#111827'
+  const chevronColor = isDark ? '#6b7280' : '#9ca3af'
+  const activeColor = isDark ? '#ffffff' : '#111827'
+
+  const routeLabels: Record<string, string> = {
+    '/': t('breadcrumbs.home'),
+    '/masini-la-comanda': t('breadcrumbs.masini_la_comanda'),
+    '/calculator': t('breadcrumbs.calculator'),
+    '/stoc': t('breadcrumbs.stoc'),
+    '/dashboard': t('breadcrumbs.dashboard'),
+    '/dashboard/cereri': t('breadcrumbs.cereri'),
+    '/dashboard/analitice': t('breadcrumbs.analitice'),
+    '/politica-de-confidentialitate': t('breadcrumbs.confidentialitate'),
+    '/politica-de-cookies': t('breadcrumbs.cookies'),
+    '/gdpr': t('breadcrumbs.gdpr'),
+  }
+
+  const generateBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
+    if (pathname === '/') return []
+    const segments = pathname.split('/').filter(Boolean)
+    const breadcrumbs: BreadcrumbItem[] = []
+    segments.forEach((segment, index) => {
+      const path = '/' + segments.slice(0, index + 1).join('/')
+      const label = routeLabels[path] || segment
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+      breadcrumbs.push({ label, href: path })
+    })
+    return breadcrumbs
+  }
 
   // Check if we're in a dashboard page
   const isDashboardPage = pathname.startsWith('/dashboard')
   const homeHref = isDashboardPage ? '/dashboard' : '/'
-  const homeLabel = isDashboardPage ? 'Dashboard' : 'Acasă'
+  const homeLabel = isDashboardPage ? t('breadcrumbs.dashboard') : t('breadcrumbs.home')
 
   // Generate breadcrumbs from pathname if not provided
   let breadcrumbs = items || generateBreadcrumbs(pathname)
@@ -94,7 +119,10 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
       >
         <Link
           href={homeHref}
-          className="flex items-center text-gray-700 hover:text-gray-900 transition-colors"
+          className="flex items-center transition-colors"
+          style={{ color: linkColor }}
+          onMouseEnter={e => (e.currentTarget.style.color = linkHoverColor)}
+          onMouseLeave={e => (e.currentTarget.style.color = linkColor)}
         >
           <Home className="h-4 w-4" />
           <span className="sr-only">{homeLabel}</span>
@@ -105,15 +133,18 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
 
           return (
             <div key={item.href} className="flex items-center space-x-2">
-              <ChevronRight className="h-4 w-4 text-gray-600" />
+              <ChevronRight className="h-4 w-4" style={{ color: chevronColor }} />
               {isLast ? (
-                <span className="text-gray-900 font-medium">
+                <span className="font-medium" style={{ color: activeColor }}>
                   {item.label}
                 </span>
               ) : (
                 <Link
                   href={item.href}
-                  className="text-gray-700 hover:text-gray-900 transition-colors"
+                  className="transition-colors"
+                  style={{ color: linkColor }}
+                  onMouseEnter={e => (e.currentTarget.style.color = linkHoverColor)}
+                  onMouseLeave={e => (e.currentTarget.style.color = linkColor)}
                 >
                   {item.label}
                 </Link>
@@ -126,28 +157,3 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
   )
 }
 
-/**
- * Generate breadcrumbs from pathname
- */
-function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
-  // Skip homepage
-  if (pathname === '/') return []
-
-  const segments = pathname.split('/').filter(Boolean)
-  const breadcrumbs: BreadcrumbItem[] = []
-
-  segments.forEach((segment, index) => {
-    const path = '/' + segments.slice(0, index + 1).join('/')
-    const label = routeLabels[path] || segment
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-
-    breadcrumbs.push({
-      label,
-      href: path
-    })
-  })
-
-  return breadcrumbs
-}

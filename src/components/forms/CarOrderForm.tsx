@@ -6,14 +6,12 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase/firebase'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface FormData {
-  // Step 1: Contact Info
   fullName: string
   email: string
   phone: string
-
-  // Step 2: Car Preferences
   brand: string
   customBrand: string
   model: string
@@ -21,15 +19,11 @@ interface FormData {
   yearMax: string
   fuelType: string
   transmission: string
-
-  // Step 3: Budget & Details
   budgetMin: string
   budgetMax: string
   mileageMax: string
   color: string
   additionalRequirements: string
-
-  // Step 4: Confirmation
   agreeToTerms: boolean
 }
 
@@ -58,28 +52,16 @@ const carBrands = [
   'Toyota', 'Honda', 'Mazda', 'Nissan', 'Ford',
   'Peugeot', 'Renault', 'Citroen', 'Skoda', 'Seat',
   'Alfa Romeo', 'Fiat', 'Mini', 'Hyundai', 'Kia',
-  'Altă marcă'
 ]
 
-const fuelTypes = [
-  'Benzină',
-  'Diesel',
-  'Hibrid',
-  'Electric',
-  'Hibrid Plug-in',
-  'Indiferent'
-]
-
-const transmissionTypes = [
-  'Automată',
-  'Manuală',
-  'Indiferent'
-]
+// Internal value used for validation — kept in Romanian for Firestore consistency
+const OTHER_BRAND = 'Altă marcă'
 
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: 30 }, (_, i) => currentYear - i)
 
 export function CarOrderForm() {
+  const { t } = useLanguage()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -87,23 +69,34 @@ export function CarOrderForm() {
 
   const totalSteps = 4
 
+  // Fuel & transmission options — value stored in Firestore stays Romanian, label is translated
+  const fuelOptions = [
+    { value: 'Benzină',       label: t('car_order_form.fuel.benzina') },
+    { value: 'Diesel',        label: t('car_order_form.fuel.diesel') },
+    { value: 'Hibrid',        label: t('car_order_form.fuel.hibrid') },
+    { value: 'Electric',      label: t('car_order_form.fuel.electric') },
+    { value: 'Hibrid Plug-in',label: t('car_order_form.fuel.hibrid_plugin') },
+    { value: 'Indiferent',    label: t('car_order_form.fuel.any') },
+  ]
+
+  const transmissionOptions = [
+    { value: 'Automată',   label: t('car_order_form.transmission.automatic') },
+    { value: 'Manuală',    label: t('car_order_form.transmission.manual') },
+    { value: 'Indiferent', label: t('car_order_form.transmission.any') },
+  ]
+
   const updateFormData = (field: keyof FormData, value: string | boolean) => {
-    // Ensure string values are never undefined/null
     const safeValue = typeof value === 'string' ? (value ?? '') : value
     setFormData(prev => ({ ...prev, [field]: safeValue }))
   }
 
-  // Format number with thousand separators (10000 -> 10.000)
   const formatNumber = (value: string): string => {
     if (!value) return ''
     const num = value.replace(/\./g, '')
     return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   }
 
-  // Remove formatting from number (10.000 -> 10000)
-  const unformatNumber = (value: string): string => {
-    return value.replace(/\./g, '')
-  }
+  const unformatNumber = (value: string): string => value.replace(/\./g, '')
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -124,8 +117,7 @@ export function CarOrderForm() {
     setIsSubmitting(true)
 
     try {
-      // Prepare data for submission
-      const finalBrand = formData.brand === 'Altă marcă' ? formData.customBrand : formData.brand
+      const finalBrand = formData.brand === OTHER_BRAND ? formData.customBrand : formData.brand
 
       const requestData = {
         contact_name: formData.fullName,
@@ -144,11 +136,9 @@ export function CarOrderForm() {
         timestamp: serverTimestamp(),
       }
 
-      // Save directly to Firestore
       const carRequestsRef = collection(db, 'car_requests')
       await addDoc(carRequestsRef, requestData)
 
-      // Send email via Resend
       try {
         await fetch('/api/resend/car-order', {
           method: 'POST',
@@ -162,7 +152,7 @@ export function CarOrderForm() {
       setIsSubmitted(true)
     } catch (error) {
       console.error('Error submitting form:', error)
-      alert('A apărut o eroare. Vă rugăm să încercați din nou.')
+      alert(t('car_order_form.error'))
     } finally {
       setIsSubmitting(false)
     }
@@ -173,9 +163,7 @@ export function CarOrderForm() {
       case 1:
         return formData.fullName && formData.email && formData.phone
       case 2:
-        const brandValid = formData.brand !== 'Altă marcă'
-          ? formData.brand
-          : formData.customBrand
+        const brandValid = formData.brand !== OTHER_BRAND ? formData.brand : formData.customBrand
         return brandValid && formData.model && formData.yearMin
       case 3:
         return formData.budgetMin && formData.budgetMax
@@ -186,6 +174,13 @@ export function CarOrderForm() {
     }
   }
 
+  const stepLabels = [
+    t('car_order_form.step1.label'),
+    t('car_order_form.step2.label'),
+    t('car_order_form.step3.label'),
+    t('car_order_form.step4.label'),
+  ]
+
   if (isSubmitted) {
     return (
       <Card className="max-w-2xl mx-auto">
@@ -195,19 +190,27 @@ export function CarOrderForm() {
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
             <h2 className="text-3xl font-bold mb-4 transition-colors" style={{ color: 'var(--card-text)' }}>
-              Mulțumim pentru comandă!
+              {t('car_order_form.success.title')}
             </h2>
             <p className="text-lg mb-6 transition-colors" style={{ color: 'var(--card-subtext)' }}>
-              Am primit cererea ta și echipa noastră te va contacta în curând cu oferte personalizate.
+              {t('car_order_form.success.message')}
             </p>
             <Button onClick={() => window.location.href = '/'} size="lg">
-              Înapoi la Pagina Principală
+              {t('car_order_form.success.back_home')}
             </Button>
           </div>
         </CardContent>
       </Card>
     )
   }
+
+  const inputStyle = {
+    backgroundColor: 'var(--input-bg)',
+    borderColor: 'var(--input-border)',
+    color: 'var(--input-text)',
+  }
+
+  const labelStyle = { color: 'var(--card-text)' }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -221,31 +224,22 @@ export function CarOrderForm() {
                   className="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors"
                   style={{
                     backgroundColor: step <= currentStep ? '#2563eb' : 'var(--step-inactive-bg)',
-                    color: step <= currentStep ? '#ffffff' : 'var(--step-inactive-text)'
+                    color: step <= currentStep ? '#ffffff' : 'var(--step-inactive-text)',
                   }}
                 >
-                  {step < currentStep ? (
-                    <CheckCircle className="w-6 h-6" />
-                  ) : (
-                    step
-                  )}
+                  {step < currentStep ? <CheckCircle className="w-6 h-6" /> : step}
                 </div>
                 <span
                   className="text-xs mt-2 text-center hidden sm:block transition-colors"
-                  style={{ color: 'var(--card-text)' }}
+                  style={labelStyle}
                 >
-                  {step === 1 && 'Contact'}
-                  {step === 2 && 'Preferințe'}
-                  {step === 3 && 'Detalii'}
-                  {step === 4 && 'Confirmare'}
+                  {stepLabels[step - 1]}
                 </span>
               </div>
               {step < 4 && (
                 <div
                   className="h-1 flex-1 mx-2 transition-colors"
-                  style={{
-                    backgroundColor: step < currentStep ? '#2563eb' : 'var(--step-inactive-bg)'
-                  }}
+                  style={{ backgroundColor: step < currentStep ? '#2563eb' : 'var(--step-inactive-bg)' }}
                 />
               )}
             </div>
@@ -256,12 +250,13 @@ export function CarOrderForm() {
       <form onSubmit={handleSubmit}>
         <Card>
           <CardContent className="space-y-6 pt-6">
+
             {/* Step 1: Contact Information */}
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Nume Complet *
+                  <label htmlFor="fullName" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.full_name_label')}
                   </label>
                   <input
                     id="fullName"
@@ -270,17 +265,13 @@ export function CarOrderForm() {
                     value={formData.fullName}
                     onChange={(e) => updateFormData('fullName', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
+                    style={inputStyle}
                     placeholder="Ion Popescu"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
+                  <label htmlFor="email" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
                     Email *
                   </label>
                   <input
@@ -290,18 +281,14 @@ export function CarOrderForm() {
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
+                    style={inputStyle}
                     placeholder="ion.popescu@email.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Telefon *
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.phone_label')}
                   </label>
                   <input
                     id="phone"
@@ -310,11 +297,7 @@ export function CarOrderForm() {
                     value={formData.phone}
                     onChange={(e) => updateFormData('phone', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
+                    style={inputStyle}
                     placeholder="0712345678"
                   />
                 </div>
@@ -325,8 +308,8 @@ export function CarOrderForm() {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="brand" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Marcă *
+                  <label htmlFor="brand" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.brand_label')}
                   </label>
                   <select
                     id="brand"
@@ -334,25 +317,20 @@ export function CarOrderForm() {
                     value={formData.brand}
                     onChange={(e) => updateFormData('brand', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
+                    style={inputStyle}
                   >
-                    <option value="">Selectează marca</option>
+                    <option value="">{t('car_order_form.brand_placeholder')}</option>
                     {carBrands.map((brand) => (
-                      <option key={brand} value={brand}>
-                        {brand}
-                      </option>
+                      <option key={brand} value={brand}>{brand}</option>
                     ))}
+                    <option value={OTHER_BRAND}>{t('car_order_form.other_brand')}</option>
                   </select>
                 </div>
 
-                {formData.brand === 'Altă marcă' && (
+                {formData.brand === OTHER_BRAND && (
                   <div>
-                    <label htmlFor="customBrand" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      Specifică Marca *
+                    <label htmlFor="customBrand" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.custom_brand_label')}
                     </label>
                     <input
                       id="customBrand"
@@ -361,19 +339,15 @@ export function CarOrderForm() {
                       value={formData.customBrand}
                       onChange={(e) => updateFormData('customBrand', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
-                      placeholder="Ex: Dacia, Subaru, Mitsubishi"
+                      style={inputStyle}
+                      placeholder={t('car_order_form.custom_brand_placeholder')}
                     />
                   </div>
                 )}
 
                 <div>
-                  <label htmlFor="model" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Model *
+                  <label htmlFor="model" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.model_label')}
                   </label>
                   <input
                     id="model"
@@ -382,19 +356,15 @@ export function CarOrderForm() {
                     value={formData.model}
                     onChange={(e) => updateFormData('model', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
-                    placeholder="Ex: Seria 5, E-Class, A6"
+                    style={inputStyle}
+                    placeholder={t('car_order_form.model_placeholder')}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="yearMin" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      An Fabricație (Minim) *
+                    <label htmlFor="yearMin" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.year_min_label')}
                     </label>
                     <select
                       id="yearMin"
@@ -402,41 +372,29 @@ export function CarOrderForm() {
                       value={formData.yearMin}
                       onChange={(e) => updateFormData('yearMin', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                     >
-                      <option value="">Selectează anul</option>
+                      <option value="">{t('car_order_form.year_placeholder')}</option>
                       {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
+                        <option key={year} value={year}>{year}</option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="yearMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      An Fabricație (Maxim)
+                    <label htmlFor="yearMax" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.year_max_label')}
                     </label>
                     <select
                       id="yearMax"
                       value={formData.yearMax}
                       onChange={(e) => updateFormData('yearMax', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                     >
-                      <option value="">Selectează anul</option>
+                      <option value="">{t('car_order_form.year_placeholder')}</option>
                       {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
+                        <option key={year} value={year}>{year}</option>
                       ))}
                     </select>
                   </div>
@@ -444,49 +402,37 @@ export function CarOrderForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="fuelType" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      Tip Combustibil
+                    <label htmlFor="fuelType" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.fuel_label')}
                     </label>
                     <select
                       id="fuelType"
                       value={formData.fuelType}
                       onChange={(e) => updateFormData('fuelType', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                     >
-                      <option value="">Selectează tipul</option>
-                      {fuelTypes.map((fuel) => (
-                        <option key={fuel} value={fuel}>
-                          {fuel}
-                        </option>
+                      <option value="">{t('car_order_form.fuel_placeholder')}</option>
+                      {fuelOptions.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="transmission" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      Transmisie
+                    <label htmlFor="transmission" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.transmission_label')}
                     </label>
                     <select
                       id="transmission"
                       value={formData.transmission}
                       onChange={(e) => updateFormData('transmission', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                     >
-                      <option value="">Selectează tipul</option>
-                      {transmissionTypes.map((trans) => (
-                        <option key={trans} value={trans}>
-                          {trans}
-                        </option>
+                      <option value="">{t('car_order_form.transmission_placeholder')}</option>
+                      {transmissionOptions.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
                       ))}
                     </select>
                   </div>
@@ -499,8 +445,8 @@ export function CarOrderForm() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="budgetMin" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      Buget Minim (EUR) *
+                    <label htmlFor="budgetMin" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.budget_min_label')}
                     </label>
                     <input
                       id="budgetMin"
@@ -509,23 +455,17 @@ export function CarOrderForm() {
                       value={formatNumber(formData.budgetMin)}
                       onChange={(e) => {
                         const unformatted = unformatNumber(e.target.value)
-                        if (/^\d*$/.test(unformatted)) {
-                          updateFormData('budgetMin', unformatted)
-                        }
+                        if (/^\d*$/.test(unformatted)) updateFormData('budgetMin', unformatted)
                       }}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                       placeholder="10.000"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="budgetMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                      Buget Maxim (EUR) *
+                    <label htmlFor="budgetMax" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                      {t('car_order_form.budget_max_label')}
                     </label>
                     <input
                       id="budgetMax"
@@ -534,24 +474,18 @@ export function CarOrderForm() {
                       value={formatNumber(formData.budgetMax)}
                       onChange={(e) => {
                         const unformatted = unformatNumber(e.target.value)
-                        if (/^\d*$/.test(unformatted)) {
-                          updateFormData('budgetMax', unformatted)
-                        }
+                        if (/^\d*$/.test(unformatted)) updateFormData('budgetMax', unformatted)
                       }}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      style={{
-                        backgroundColor: 'var(--input-bg)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--input-text)'
-                      }}
+                      style={inputStyle}
                       placeholder="25.000"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="mileageMax" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Kilometraj Maxim (km)
+                  <label htmlFor="mileageMax" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.mileage_label')}
                   </label>
                   <input
                     id="mileageMax"
@@ -559,23 +493,17 @@ export function CarOrderForm() {
                     value={formatNumber(formData.mileageMax)}
                     onChange={(e) => {
                       const unformatted = unformatNumber(e.target.value)
-                      if (/^\d*$/.test(unformatted)) {
-                        updateFormData('mileageMax', unformatted)
-                      }
+                      if (/^\d*$/.test(unformatted)) updateFormData('mileageMax', unformatted)
                     }}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
+                    style={inputStyle}
                     placeholder="150.000"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="color" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Culoare Preferată
+                  <label htmlFor="color" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.color_label')}
                   </label>
                   <input
                     id="color"
@@ -583,18 +511,14 @@ export function CarOrderForm() {
                     value={formData.color}
                     onChange={(e) => updateFormData('color', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
-                    placeholder="Ex: Negru, Alb, Gri"
+                    style={inputStyle}
+                    placeholder={t('car_order_form.color_placeholder')}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="additionalRequirements" className="block text-sm font-medium mb-2 transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Cerințe Suplimentare
+                  <label htmlFor="additionalRequirements" className="block text-sm font-medium mb-2 transition-colors" style={labelStyle}>
+                    {t('car_order_form.requirements_label')}
                   </label>
                   <textarea
                     id="additionalRequirements"
@@ -602,12 +526,8 @@ export function CarOrderForm() {
                     value={formData.additionalRequirements}
                     onChange={(e) => updateFormData('additionalRequirements', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    style={{
-                      backgroundColor: 'var(--input-bg)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--input-text)'
-                    }}
-                    placeholder="Menționează orice alte cerințe sau preferințe (ex: pachet sport, interior piele, sistem audio premium, etc.)"
+                    style={inputStyle}
+                    placeholder={t('car_order_form.requirements_placeholder')}
                   />
                 </div>
               </div>
@@ -617,22 +537,24 @@ export function CarOrderForm() {
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div className="rounded-lg p-6 space-y-4 transition-colors" style={{ backgroundColor: 'var(--summary-bg)' }}>
-                  <h3 className="font-semibold text-lg mb-4 transition-colors" style={{ color: 'var(--card-text)' }}>Verifică Datele Tale:</h3>
+                  <h3 className="font-semibold text-lg mb-4 transition-colors" style={{ color: 'var(--card-text)' }}>
+                    {t('car_order_form.review_title')}
+                  </h3>
 
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Nume:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.name')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.fullName}</p>
                       </div>
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Email:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.email')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.email}</p>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Telefon:</p>
+                      <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.phone')}</p>
                       <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.phone}</p>
                     </div>
 
@@ -640,26 +562,26 @@ export function CarOrderForm() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Marcă:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.brand')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
-                          {formData.brand === 'Altă marcă' ? formData.customBrand : formData.brand}
+                          {formData.brand === OTHER_BRAND ? formData.customBrand : formData.brand}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Model:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.model')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.model}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>An:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.year')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
                           {formData.yearMin}{formData.yearMax && ` - ${formData.yearMax}`}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Buget:</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.budget')}</p>
                         <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
                           €{formatNumber(formData.budgetMin)} - €{formatNumber(formData.budgetMax)}
                         </p>
@@ -668,15 +590,19 @@ export function CarOrderForm() {
 
                     {formData.fuelType && (
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Combustibil:</p>
-                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.fuelType}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.fuel')}</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
+                          {fuelOptions.find(o => o.value === formData.fuelType)?.label ?? formData.fuelType}
+                        </p>
                       </div>
                     )}
 
                     {formData.transmission && (
                       <div>
-                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>Transmisie:</p>
-                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>{formData.transmission}</p>
+                        <p className="text-sm transition-colors" style={{ color: 'var(--card-subtext)' }}>{t('car_order_form.review.transmission')}</p>
+                        <p className="font-medium transition-colors" style={{ color: 'var(--card-text)' }}>
+                          {transmissionOptions.find(o => o.value === formData.transmission)?.label ?? formData.transmission}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -689,17 +615,14 @@ export function CarOrderForm() {
                     checked={formData.agreeToTerms}
                     onChange={(e) => updateFormData('agreeToTerms', e.target.checked)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0 transition-colors"
-                    style={{
-                      borderColor: 'var(--input-border)',
-                      backgroundColor: 'var(--input-bg)'
-                    }}
+                    style={{ borderColor: 'var(--input-border)', backgroundColor: 'var(--input-bg)' }}
                   />
                   <label htmlFor="agreeToTerms" className="text-sm transition-colors" style={{ color: 'var(--card-text)' }}>
-                    Accept{' '}
+                    {t('car_order_form.terms_prefix')}
                     <a href="/politica-de-confidentialitate" className="text-blue-600 hover:underline" target="_blank">
-                      Politica de Confidențialitate
-                    </a>{' '}
-                    și sunt de acord ca AutoMode să mă contacteze cu oferte personalizate pentru mașina dorită.
+                      {t('car_order_form.terms_link')}
+                    </a>
+                    {t('car_order_form.terms_suffix')}
                   </label>
                 </div>
               </div>
@@ -715,7 +638,7 @@ export function CarOrderForm() {
                 className="flex items-center"
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
-                Înapoi
+                {t('car_order_form.back')}
               </Button>
 
               {currentStep < totalSteps ? (
@@ -725,7 +648,7 @@ export function CarOrderForm() {
                   disabled={!isStepValid()}
                   className="flex items-center bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  Continuă
+                  {t('car_order_form.continue')}
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
@@ -734,10 +657,11 @@ export function CarOrderForm() {
                   disabled={!isStepValid() || isSubmitting}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
-                  {isSubmitting ? 'Se trimite...' : 'Trimite Comanda'}
+                  {isSubmitting ? t('car_order_form.submitting') : t('car_order_form.submit')}
                 </Button>
               )}
             </div>
+
           </CardContent>
         </Card>
       </form>

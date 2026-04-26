@@ -6,12 +6,14 @@ import { usePageTitle } from "@/hooks/usePageTitle"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { useTheme } from "@/contexts/ThemeContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs"
 
 export default function CalculatorPage() {
   usePageTitle("Calculator Import Auto | Calculează Costurile de Import")
   const { theme } = useTheme()
-  
+  const { t } = useLanguage()
+
   const [activeTab, setActiveTab] = useState<"fara-tva" | "cu-tva">("fara-tva")
   const [price, setPrice] = useState("")
   const [taxeOpenlane] = useState("600")
@@ -50,8 +52,8 @@ export default function CalculatorPage() {
         <Breadcrumbs className="mb-6" />
 
         <div className="text-center mb-8">
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Calculator Cost</h1>
-          <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Calculează costurile pentru importul mașinii tale</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('calc_page.title')}</h1>
+          <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{t('calc_page.subtitle')}</p>
         </div>
 
         <Card className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
@@ -66,7 +68,7 @@ export default function CalculatorPage() {
                     : `border-transparent ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-50'}`
                 }`}
               >
-                Fără TVA
+                {t('calc_page.tab.without_vat')}
               </Button>
               <Button
                 variant="ghost"
@@ -77,7 +79,7 @@ export default function CalculatorPage() {
                     : `border-transparent ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-50'}`
                 }`}
               >
-                Cu TVA
+                {t('calc_page.tab.with_vat')}
               </Button>
             </div>
           </CardHeader>
@@ -87,12 +89,12 @@ export default function CalculatorPage() {
               <div className="space-y-4 pt-4">
                 <div>
                   <label htmlFor="price" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Preț (EUR)
+                    {t('calc_page.price_label')}
                   </label>
                   <input
                     id="price"
                     type="number"
-                    placeholder="Introdu prețul"
+                    placeholder={t('calc_page.price_placeholder')}
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${theme === 'dark' ? 'border-gray-600 placeholder-gray-400 text-gray-100 bg-gray-700' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white'}`}
@@ -101,7 +103,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="taxe-openlane" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Taxe Licitații (EUR)
+                    {t('calc_page.auction_taxes_label')}
                   </label>
                   <input
                     id="taxe-openlane"
@@ -111,13 +113,13 @@ export default function CalculatorPage() {
                     className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                   <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Prețul este aproximativ deoarece diferă pentru fiecare țară
+                    {t('calc_page.auction_taxes_hint')}
                   </p>
                 </div>
 
                 <div>
                   <label htmlFor="vat" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    TVA 21% (EUR)
+                    {t('calc_page.vat_label')}
                   </label>
                   <input
                     id="vat"
@@ -127,13 +129,13 @@ export default function CalculatorPage() {
                     className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-blue-900/30 text-blue-300' : 'border-gray-300 bg-blue-50 text-blue-700'}`}
                   />
                   <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    TVA se calculează pe baza prețului + taxe OpenLane (21%)
+                    {t('calc_page.vat_hint')}
                   </p>
                 </div>
 
                 <div>
                   <label htmlFor="transport" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Transport (EUR)
+                    {t('calc_page.transport_label')}
                   </label>
                   <input
                     id="transport"
@@ -146,7 +148,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="comision" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Comision (EUR)
+                    {t('calc_page.commission_label')}
                   </label>
                   <input
                     id="comision"
@@ -160,7 +162,7 @@ export default function CalculatorPage() {
                 <div className={`border-t pt-4 mt-6 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}`}>
                   <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Total:</span>
+                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{t('calc_page.total')}</span>
                       <span className={`text-xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
                         {price ? total.toFixed(2) : "0.00"} EUR
                       </span>
@@ -169,10 +171,10 @@ export default function CalculatorPage() {
                     {price && (
                       <div className={`mt-4 p-3 border rounded-lg ${theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700' : 'bg-yellow-50 border-yellow-200'}`}>
                         <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
+                          <strong>{t('calc_page.note_prefix')}</strong> {t('calc_page.advance_note')}
                         </p>
                         <div className="flex justify-between items-center">
-                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Avans necesar (20%):</span>
+                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{t('calc_page.advance_label')}</span>
                           <span className={`text-lg font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>{advance.toFixed(2)} EUR</span>
                         </div>
                       </div>
@@ -186,12 +188,12 @@ export default function CalculatorPage() {
               <div className="space-y-4 pt-4">
                 <div>
                   <label htmlFor="price-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Preț (EUR)
+                    {t('calc_page.price_label')}
                   </label>
                   <input
                     id="price-cu-tva"
                     type="number"
-                    placeholder="Introdu prețul"
+                    placeholder={t('calc_page.price_placeholder')}
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${theme === 'dark' ? 'border-gray-600 placeholder-gray-400 text-gray-100 bg-gray-700' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white'}`}
@@ -200,7 +202,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="taxe-openlane-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Taxe Licitații (EUR)
+                    {t('calc_page.auction_taxes_label')}
                   </label>
                   <input
                     id="taxe-openlane-cu-tva"
@@ -210,13 +212,13 @@ export default function CalculatorPage() {
                     className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-gray-700 text-gray-400' : 'border-gray-300 bg-gray-100 text-gray-500'}`}
                   />
                   <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Prețul este aproximativ deoarece diferă pentru fiecare țară
+                    {t('calc_page.auction_taxes_hint')}
                   </p>
                 </div>
 
                 <div>
                   <label htmlFor="transport-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Transport (EUR)
+                    {t('calc_page.transport_label')}
                   </label>
                   <input
                     id="transport-cu-tva"
@@ -229,7 +231,7 @@ export default function CalculatorPage() {
 
                 <div>
                   <label htmlFor="comision-cu-tva" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Comision (EUR)
+                    {t('calc_page.commission_label')}
                   </label>
                   <input
                     id="comision-cu-tva"
@@ -243,7 +245,7 @@ export default function CalculatorPage() {
                 <div className={`border-t pt-4 mt-6 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}`}>
                   <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Total:</span>
+                      <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{t('calc_page.total')}</span>
                       <span className={`text-xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
                         {price ? (total - calculatedVat).toFixed(2) : "0.00"} EUR
                       </span>
@@ -252,10 +254,10 @@ export default function CalculatorPage() {
                     {price && (
                       <div className={`mt-4 p-3 border rounded-lg ${theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700' : 'bg-yellow-50 border-yellow-200'}`}>
                         <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <strong>Notă:</strong> Dacă doriți să continuați, avansul nostru este de 20% din prima sumă.
+                          <strong>{t('calc_page.note_prefix')}</strong> {t('calc_page.advance_note')}
                         </p>
                         <div className="flex justify-between items-center">
-                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Avans necesar (20%):</span>
+                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{t('calc_page.advance_label')}</span>
                           <span className={`text-lg font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>{advance.toFixed(2)} EUR</span>
                         </div>
                       </div>
@@ -271,10 +273,9 @@ export default function CalculatorPage() {
         <div className="mt-12 max-w-2xl mx-auto">
           <div className={`rounded-2xl p-8 text-white text-center shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-blue-700 to-blue-800' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
             <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-3">Gata să Îți Cumperi Mașina de Vis?</h3>
+              <h3 className="text-2xl font-bold mb-3">{t('calc_page.cta.title')}</h3>
               <p className={`leading-relaxed ${theme === 'dark' ? 'text-blue-200' : 'text-blue-100'}`}>
-                Acum că știi costurile exacte, solicită mașina dorită și începe procesul de comandă.
-                Echipa noastră te va ghida pas cu pas spre mașina perfectă.
+                {t('calc_page.cta.text')}
               </p>
             </div>
 
@@ -285,13 +286,13 @@ export default function CalculatorPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Vreau această mașină.
+                  {t('calc_page.cta.button')}
                 </a>
               </Button>
             </div>
 
             <div className={`mt-6 text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-200'}`}>
-              ✓ Cont gratuit • ✓ Fără obligații • ✓ Suport personalizat
+              {t('calc_page.cta.benefits')}
             </div>
           </div>
         </div>

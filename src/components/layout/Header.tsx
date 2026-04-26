@@ -20,8 +20,8 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
 
   const navigation = [
-    { name: 'Mașini la Comandă', href: "/masini-la-comanda" },
-    { name: 'Stoc', href: "/stoc" },
+    { name: t('header.nav.masini_la_comanda'), href: "/masini-la-comanda" },
+    { name: t('header.nav.stoc'), href: "/stoc" },
     { name: t('header.nav.calculator'), href: "/calculator" },
     // { name: 'Blog', href: "/blog" },
   ]
@@ -202,7 +202,7 @@ export function Header() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">
-                        Bun venit!
+                        {t('header.user.welcome')}
                       </p>
                       <div className="flex items-center text-xs text-blue-100 truncate">
                         <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
@@ -242,7 +242,7 @@ export function Header() {
             {/* Navigation Links */}
             <nav className="flex-1 px-4 py-4">
               <p className="px-3 mb-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                Navigație
+                {t('header.nav.navigation')}
               </p>
               <div className="space-y-1">
                 {navigation.map((item) => (

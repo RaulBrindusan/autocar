@@ -108,7 +108,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
       {/* Lightbox */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/95 z-[9999] flex flex-col items-center justify-center"
+          className="fixed inset-0 bg-black/95 z-[9999] flex flex-col items-center justify-center mb-0"
           onClick={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
           tabIndex={0}
@@ -200,7 +200,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               onClick={(e) => e.stopPropagation()}
             >
               <div
-                className="flex gap-2 overflow-x-auto overflow-y-hidden w-full pb-2 [&::-webkit-scrollbar]:hidden"
+                className="flex gap-2 overflow-x-auto overflow-y-hidden w-full pb-2 [&::-webkit-scrollbar]:hidden pt-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {images.map((image, index) => (
