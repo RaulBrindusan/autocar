@@ -171,6 +171,39 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Chats collection — real-time messaging between users and admin
+    match /chats/{requestId} {
+      // Only signed-in users can read chat metadata (last message, unread counts)
+      allow read: if isSignedIn();
+
+      // Only signed-in users or admins can create/update chat metadata
+      allow create, update: if isSignedIn();
+
+      // Only admins can delete chat threads
+      allow delete: if isAdmin();
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        // Only signed-in users can read messages
+        allow read: if isSignedIn();
+
+        // Only signed-in users can send messages
+        // Enforce that sender fields match the authenticated user
+        allow create: if isSignedIn()
+                      && request.resource.data.keys().hasAll(['text', 'senderId', 'senderName', 'isAdmin', 'timestamp'])
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 2000
+                      && request.resource.data.isAdmin is bool
+                      && request.resource.data.timestamp is int;
+
+        // Messages are immutable once sent — no edits or deletes by users
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
+      }
+    }
+
     // Chats — real-time messaging between users and admin
     match /chats/{requestId} {
       // Only signed-in users can read chat metadata (last message, unread counts)
@@ -202,6 +235,12 @@ service cloud.firestore {
         allow update: if isAdmin();
         allow delete: if isAdmin();
       }
+    }
+
+    // First-party analytics — fully public (aggregate data, non-sensitive; API route rate-limits writes)
+    match /page_views/{docId} {
+      allow read, create: if true;
+      allow update, delete: if false;
     }
 
     // Deny all other requests by default
