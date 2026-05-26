@@ -94,11 +94,13 @@ export default function StocPage() {
                 : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}
           >
-            {cars.map((car) => (
+            {cars.map((car) => {
+              const isVandut = `${car.make} ${car.model}`.toUpperCase().includes('VÂNDUT') || `${car.make} ${car.model}`.toUpperCase().includes('VANDUT')
+              return (
               <div
                 key={car.id}
-                onClick={() => handleCarClick(car)}
-                className="rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                onClick={() => !isVandut && handleCarClick(car)}
+                className={`rounded-xl shadow-lg overflow-hidden transition-all duration-300 ${isVandut ? 'opacity-50 grayscale cursor-default' : 'cursor-pointer transform hover:scale-105 hover:shadow-2xl'}`}
                 style={{ backgroundColor: isDark ? '#1f2937' : '#ffffff' }}
               >
                 {/* Car Image */}
@@ -213,7 +215,8 @@ export default function StocPage() {
                   </button>
                 </div>
               </div>
-            ))}
+              )}
+            )}
           </div>
         ) : null}
 

@@ -67,9 +67,6 @@ export const metadata: Metadata = {
     canonical: "https://automode.ro",
   },
   manifest: "/site.webmanifest",
-  other: {
-    "google-site-verification": "your-google-site-verification-code",
-  },
 };
 
 export default function RootLayout({

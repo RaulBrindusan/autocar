@@ -7,7 +7,7 @@
   --hero-bg: #ffffff;
   --hero-text: #111827;
   --hero-subtext: #6b7280;
-  --section-bg-alt: #F9FAFB;
+  --section-bg-alt: #ffffff;
   --section-text: #000000;
   --section-subtext: #6b7280;
   --card-bg: #ffffff;
@@ -17,7 +17,7 @@
   --warranty-card-bg: #3765F5;
   --warranty-card-text: #ffffff;
   --warranty-card-subtext: #bfdbfe;
-  --cost-estimator-bg: #EDEDED;
+  --cost-estimator-bg: #ffffff;
   --connector-line: #d1d5db;
   --info-tip-bg: #eff6ff;
   --info-tip-text: #2563eb;
@@ -116,6 +116,15 @@ body {
 
 :root {
   color-scheme: light;
+}
+
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
 }
 
 /* CarOrderForm - Light Mode Only (No dark mode support in form) */

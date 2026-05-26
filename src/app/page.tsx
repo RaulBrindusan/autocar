@@ -15,6 +15,12 @@ import { CarOrderForm } from "@/components/forms/CarOrderForm"
 import { onCarsSnapshot } from '@/lib/firebase/firestore'
 import { Car as CarType } from '@/lib/types'
 
+const TICKER_BRANDS = [
+  'Volkswagen', 'Land Rover', 'Volvo', 'Mercedes-Benz', 'BMW', 'Audi',
+  'Porsche', 'Skoda', 'Toyota', 'Honda', 'Ford', 'Renault', 'Peugeot',
+  'Opel', 'Seat', 'Mazda', 'Hyundai', 'Kia', 'Lexus', 'Jaguar',
+]
+
 function ExclusivitySection() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -197,8 +203,8 @@ export default function Home() {
       <section className="relative overflow-hidden transition-colors" style={{ backgroundColor: 'var(--hero-bg)', color: 'var(--hero-text)' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[90vh] py-12">
-            {/* Content */}
-            <div className="text-center sm:text-left lg:pr-12">
+            {/* Left — copy */}
+            <div className="text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight transition-colors" style={{ color: 'var(--hero-text)' }}>
                 {t('hero.title')}
                 <span className="block text-blue-600 mt-2">{t('hero.title.highlight')}</span>
@@ -206,7 +212,7 @@ export default function Home() {
               <p className="text-lg sm:text-xl mb-8 leading-relaxed max-w-xl transition-colors" style={{ color: 'var(--hero-subtext)' }}>
                 {t('hero.subtitle')}
               </p>
-              <div className="flex flex-row gap-4 mb-8 items-center justify-center sm:justify-start">
+              <div className="flex flex-row gap-4 mb-8 items-center justify-center lg:justify-start">
                 <Button asChild size="lg" className="text-base px-6 py-4 h-14 font-semibold bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap">
                   <Link href="/masini-la-comanda">{t('hero.cta.primary')}</Link>
                 </Button>
@@ -215,9 +221,9 @@ export default function Home() {
                 </Button>
               </div>
               {/* App download badges */}
-              <div className="flex gap-3 mb-8 justify-center sm:justify-start">
+              <div className="flex gap-3 mb-8 justify-center lg:justify-start">
                 <a
-                  href="#"
+                  href="https://apps.apple.com/ro/app/automode-import-auto/id6765721640"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md rounded-xl px-3 py-2 transition-all duration-300 hover:scale-105"
@@ -248,23 +254,23 @@ export default function Home() {
                   </div>
                 </a>
               </div>
-              <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+              <div className="flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400 transition-colors justify-center lg:justify-start">
                 <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
+                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
                   <span>{t('hero.features.no_hidden_costs')}</span>
                 </div>
                 <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
+                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
                   <span>{t('hero.features.full_warranty')}</span>
                 </div>
                 <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2" />
+                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
                   <span>{t('hero.features.fast_delivery')}</span>
                 </div>
               </div>
             </div>
 
-            {/* Hero Image */}
+            {/* Right — car image */}
             <div className="relative lg:h-[600px] h-[400px]">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-3xl transition-colors"></div>
               <Image
@@ -275,21 +281,21 @@ export default function Home() {
                 className="object-cover rounded-3xl shadow-2xl"
                 priority
               />
-              <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 max-w-xs transition-colors">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-                    <Car className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">{t('hero.expert')}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('hero.expert.subtitle')}</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Brand Ticker */}
+      <div className="border-y border-gray-200 bg-white overflow-hidden">
+        <div className="flex animate-ticker whitespace-nowrap">
+          {[...TICKER_BRANDS, ...TICKER_BRANDS].map((brand, i) => (
+            <span key={i} className="inline-block px-10 py-4 text-sm font-medium text-gray-500 shrink-0">
+              {brand}
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* Available Cars Section */}
       {!carsLoading && cars.length > 0 && (() => {
@@ -333,12 +339,13 @@ export default function Home() {
                   {displayCars.map((car) => {
                 const profit = parseFloat(car.profit || '0')
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600'
+                const isVandut = `${car.make} ${car.model}`.toUpperCase().includes('VÂNDUT') || `${car.make} ${car.model}`.toUpperCase().includes('VANDUT')
 
                 return (
                   <Link
                     key={car.id}
                     href={`/stoc/${car.id}`}
-                    className="group rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border block cursor-pointer"
+                    className={`group rounded-xl md:rounded-2xl overflow-hidden shadow-lg transition-all duration-500 border block cursor-pointer ${isVandut ? 'opacity-50 grayscale pointer-events-none' : 'hover:shadow-2xl hover:-translate-y-2'}`}
                     style={{
                       backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
                       borderColor: theme === 'dark' ? '#334155' : '#e5e7eb'
