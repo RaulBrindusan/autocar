@@ -1,6 +1,10 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() {
+  const key = process.env.RESEND_API_KEY
+  if (!key) throw new Error('RESEND_API_KEY environment variable is not set')
+  return new Resend(key)
+}
 
 // Feature translation map from English keys to Romanian labels
 const featureTranslations: { [key: string]: string } = {
@@ -158,7 +162,7 @@ export async function sendCarRequestEmail(data: CarRequestEmailData) {
     </div>
   `
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: getSender(),
     to: getRecipients(),
     subject: `Cerere mașină de la ${data.name}: ${data.make} ${data.model} ${data.year}`,
@@ -212,7 +216,7 @@ export async function sendOpenLaneEmail(data: OpenLaneEmailData) {
     </div>
   `
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: getSender(),
     to: getRecipients(),
     subject: `Link OpenLane de la ${data.name}: ${data.carData?.make || 'Mașină'} ${data.carData?.model || ''} ${data.carData?.year || ''}`,
@@ -277,7 +281,7 @@ export async function sendCustomerConfirmationEmail(data: CarRequestEmailData) {
     </div>
   `
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: getSender(),
     to: [data.email],
     subject: `Automode - Confirmarea cererii pentru ${data.make} ${data.model}`,

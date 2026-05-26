@@ -5,7 +5,6 @@ import Script from "next/script";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { CookieConsent } from "@/components/ui/CookieConsent";
-import { MixpanelProvider } from "@/components/analytics/MixpanelProvider";
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -84,7 +83,6 @@ export default function RootLayout({
             <LanguageProvider>
               <PriceNotificationProvider>
                 <Suspense fallback={null}>
-                  <MixpanelProvider />
                   <AnalyticsProvider />
                 </Suspense>
                 <ConditionalLayout>

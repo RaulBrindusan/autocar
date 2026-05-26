@@ -37,22 +37,26 @@ export async function rateLimit(config: RateLimitConfig): Promise<RateLimitResul
   try {
     if (redis) {
       // Use Redis for distributed rate limiting
-      const multi = redis.multi()
+      const pipeline = redis.multi()
       const windowStart = now - windowMs
-      
+
       // Remove old entries outside the window
-      multi.zremrangebyscore(key, 0, windowStart)
-      
+      pipeline.zremrangebyscore(key, 0, windowStart)
+
       // Count current requests in window
-      multi.zcard(key)
-      
+      pipeline.zcard(key)
+
       // Add current request
-      multi.zadd(key, { score: now, member: `${now}-${Math.random()}` })
-      
+      pipeline.zadd(key, { score: now, member: `${now}-${Math.random()}` })
+
       // Set expiration
-      multi.expire(key, window)
-      
-      const results = await multi.exec()
+      pipeline.expire(key, window)
+
+      const redisPromise = pipeline.exec()
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Redis timeout')), 500)
+      )
+      const results = await Promise.race([redisPromise, timeoutPromise])
       const currentCount = (results[1] as number) || 0
       const newCount = currentCount + 1
       
