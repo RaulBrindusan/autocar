@@ -117,7 +117,7 @@ function getRecipients(): string[] {
 }
 
 function getSender(): string {
-  const from = process.env.EMAIL_FROM || 'noreply@codemint.ro'
+  const from = process.env.EMAIL_FROM || 'contact@codemint.ro'
   return `Automode SRL <${from}>`
 }
 

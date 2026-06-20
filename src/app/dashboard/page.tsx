@@ -169,6 +169,14 @@ function CarCard({ car, expenses, onClick, index }: { car: Car; expenses: Expens
             </svg>
           </div>
         )}
+        {/* Sold Badge */}
+        {car.vandut && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <div className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg shadow-2xl transform rotate-[-15deg]">
+              VÂNDUT
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Car Details */}

@@ -95,7 +95,7 @@ export default function StocPage() {
             }`}
           >
             {cars.map((car) => {
-              const isVandut = `${car.make} ${car.model}`.toUpperCase().includes('VÂNDUT') || `${car.make} ${car.model}`.toUpperCase().includes('VANDUT')
+              const isVandut = car.vandut === true
               return (
               <div
                 key={car.id}
@@ -132,6 +132,14 @@ export default function StocPage() {
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
+                    </div>
+                  )}
+                  {/* Sold Badge */}
+                  {isVandut && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-2xl shadow-2xl transform rotate-[-15deg]">
+                        VÂNDUT
+                      </div>
                     </div>
                   )}
                 </div>

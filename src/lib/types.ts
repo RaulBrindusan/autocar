@@ -22,6 +22,7 @@ export interface Car {
   cp?: string;           // CP (Cai Putere / Horsepower)
   co2?: string;          // CO2 Emissions
   vin?: string;          // VIN (Vehicle Identification Number)
+  vandut?: boolean;      // Vândut: true or false
   timestamp: number;     // For sorting
 }
 
@@ -72,6 +73,8 @@ export interface SentRequest {
   pdf_url: string;          // Firebase Storage download URL
   pdf_path: string;         // Firebase Storage path
   timestamp: any;           // Firebase Timestamp
+  agree?: boolean;          // Client accepted the offer
+  disagree?: boolean;       // Client rejected the offer
 }
 
 export interface BlogPost {

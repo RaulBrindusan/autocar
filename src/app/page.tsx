@@ -287,10 +287,20 @@ export default function Home() {
       </section>
 
       {/* Brand Ticker */}
-      <div className="border-y border-gray-200 bg-white overflow-hidden">
+      <div
+        className="border-y overflow-hidden transition-colors"
+        style={{
+          backgroundColor: theme === 'dark' ? '#111827' : '#ffffff',
+          borderColor: theme === 'dark' ? '#1f2937' : '#e5e7eb'
+        }}
+      >
         <div className="flex animate-ticker whitespace-nowrap">
           {[...TICKER_BRANDS, ...TICKER_BRANDS].map((brand, i) => (
-            <span key={i} className="inline-block px-10 py-4 text-sm font-medium text-gray-500 shrink-0">
+            <span
+              key={i}
+              className="inline-block px-10 py-4 text-sm font-medium shrink-0 transition-colors"
+              style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
+            >
               {brand}
             </span>
           ))}
@@ -339,7 +349,7 @@ export default function Home() {
                   {displayCars.map((car) => {
                 const profit = parseFloat(car.profit || '0')
                 const profitColor = profit >= 0 ? 'text-green-600' : 'text-red-600'
-                const isVandut = `${car.make} ${car.model}`.toUpperCase().includes('VÂNDUT') || `${car.make} ${car.model}`.toUpperCase().includes('VANDUT')
+                const isVandut = car.vandut === true
 
                 return (
                   <Link
@@ -381,6 +391,14 @@ export default function Home() {
                       )}
                       {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      {/* Sold Badge */}
+                      {isVandut && (
+                        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start overflow-hidden pointer-events-none">
+                          <div className="bg-red-600 text-white font-bold text-base md:text-xl px-12 md:px-16 py-2 md:py-3 shadow-2xl transform -rotate-45 -translate-x-8 md:-translate-x-10 translate-y-6 md:translate-y-8">
+                            VÂNDUT
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Car Details */}

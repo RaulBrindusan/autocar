@@ -369,29 +369,44 @@ function CerereDetaliuContent() {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Preț</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
                       <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">PDF</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {sentOffers.map((offer, index) => (
-                      <tr key={offer.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-3 text-sm text-gray-500">{index + 1}</td>
-                        <td className="px-6 py-3 text-sm font-semibold text-gray-900">€{offer.price.toLocaleString('ro-RO')}</td>
-                        <td className="px-6 py-3 text-sm text-gray-500">{formatDate(offer.timestamp)}</td>
-                        <td className="px-6 py-3 text-right">
-                          <a
-                            href={offer.pdf_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                          >
-                            <FileText className="w-3.5 h-3.5" />
-                            Vezi PDF
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
+                    {sentOffers.map((offer, index) => {
+                      const getOfferStatus = () => {
+                        if (offer.agree) return { label: 'Acceptat', color: 'bg-green-100 text-green-700' };
+                        if (offer.disagree) return { label: 'Respins', color: 'bg-red-100 text-red-700' };
+                        return { label: 'În Așteptare', color: 'bg-yellow-100 text-yellow-700' };
+                      };
+                      const status = getOfferStatus();
+
+                      return (
+                        <tr key={offer.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-3 text-sm text-gray-500">{index + 1}</td>
+                          <td className="px-6 py-3 text-sm font-semibold text-gray-900">€{offer.price.toLocaleString('ro-RO')}</td>
+                          <td className="px-6 py-3">
+                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${status.color}`}>
+                              {status.label}
+                            </span>
+                          </td>
+                          <td className="px-6 py-3 text-sm text-gray-500">{formatDate(offer.timestamp)}</td>
+                          <td className="px-6 py-3 text-right">
+                            <a
+                              href={offer.pdf_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              Vezi PDF
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

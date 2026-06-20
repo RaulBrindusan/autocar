@@ -27,7 +27,8 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
     inmatriculare: car.inmatriculare || 'Neinmatriculat',
     cp: car.cp || '',
     co2: car.co2 || '',
-    vin: car.vin || ''
+    vin: car.vin || '',
+    vandut: car.vandut || false
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(car.imageUrl || '');
@@ -689,6 +690,23 @@ export default function EditCarDialog({ car, onClose }: EditCarDialogProps) {
                   <option value="Inmatriculat">Înmatriculat</option>
                 </select>
               </div>
+            </div>
+
+            {/* Vândut */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Vândut *
+              </label>
+              <select
+                name="vandut"
+                value={formData.vandut ? 'Da' : 'Nu'}
+                onChange={(e) => setFormData(prev => ({ ...prev, vandut: e.target.value === 'Da' }))}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
+              >
+                <option value="Nu">Nu</option>
+                <option value="Da">Da</option>
+              </select>
             </div>
 
             {/* Prices */}
