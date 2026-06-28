@@ -41,9 +41,28 @@ export default function CalculatorPage() {
     return priceNum * 0.2
   }
 
+  const calculateMarginVat = () => {
+    // TVA la marjă = (sum of all costs - initial price) * 21%
+    const taxeNum = parseFloat(taxeOpenlane) || 0
+    const transportNum = parseFloat(transport) || 0
+    const comisionNum = parseFloat(comision) || 0
+    return (taxeNum + transportNum + comisionNum) * 0.21
+  }
+
+  const calculateTotalWithMarginVat = () => {
+    const priceNum = parseFloat(price) || 0
+    const taxeNum = parseFloat(taxeOpenlane) || 0
+    const transportNum = parseFloat(transport) || 0
+    const comisionNum = parseFloat(comision) || 0
+    const marginVat = calculateMarginVat()
+    return priceNum + taxeNum + transportNum + comisionNum + marginVat
+  }
+
   const total = calculateTotal()
   const advance = calculateAdvance()
   const calculatedVat = calculateVat()
+  const marginVat = calculateMarginVat()
+  const totalWithMarginVat = calculateTotalWithMarginVat()
 
   return (
     <div className={`min-h-screen py-8 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -242,12 +261,28 @@ export default function CalculatorPage() {
                   />
                 </div>
 
+                <div>
+                  <label htmlFor="tva-de-achitat" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    TVA la marjă *
+                  </label>
+                  <input
+                    id="tva-de-achitat"
+                    type="number"
+                    value={marginVat.toFixed(2)}
+                    disabled
+                    className={`w-full px-4 py-2 border rounded-lg cursor-not-allowed ${theme === 'dark' ? 'border-gray-600 bg-blue-900/30 text-blue-300' : 'border-gray-300 bg-blue-50 text-blue-700'}`}
+                  />
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    * TVA la marjă se plătește doar la diferența dintre prețul de vânzare și cel de achiziție (regim special bunuri second-hand)
+                  </p>
+                </div>
+
                 <div className={`border-t pt-4 mt-6 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}`}>
                   <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
                     <div className="flex justify-between items-center mb-2">
                       <span className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>{t('calc_page.total')}</span>
                       <span className={`text-xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
-                        {price ? (total - calculatedVat).toFixed(2) : "0.00"} EUR
+                        {price ? totalWithMarginVat.toFixed(2) : "0.00"} EUR
                       </span>
                     </div>
 

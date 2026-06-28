@@ -135,13 +135,6 @@ export const sendOfferEmail = onDocumentCreated(
                 <td align="center">
                   <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 
-                    <!-- Header -->
-                    <tr>
-                      <td style="background:linear-gradient(135deg,#1D4ED8,#3B82F6);padding:32px 40px;text-align:center;">
-                        <img src="https://automode.ro/logowhite.png" alt="Automode" style="height:250px;width:auto;" />
-                      </td>
-                    </tr>
-
                     <!-- Body -->
                     <tr>
                       <td style="padding:36px 40px;">
@@ -151,12 +144,12 @@ export const sendOfferEmail = onDocumentCreated(
                           Mai jos găsești detaliile ofertei noastre:
                         </p>
 
-                        <!-- Price Box - Prominent -->
-                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                        <!-- Price Box - Minimalistic -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                           <tr>
-                            <td style="background:linear-gradient(135deg,#10B981,#059669);border-radius:8px;padding:24px;text-align:center;">
-                              <p style="margin:0 0 8px;font-size:14px;color:rgba(255,255,255,0.9);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Preț Ofertat</p>
-                              <p style="margin:0;font-size:36px;color:#ffffff;font-weight:700;letter-spacing:-1px;">€${price.toLocaleString('ro-RO')}</p>
+                            <td style="text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB;">
+                              <p style="margin:0 0 8px;font-size:13px;color:#6B7280;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;">Preț Ofertat</p>
+                              <p style="margin:0;font-size:42px;color:#1A1A2E;font-weight:600;letter-spacing:-1px;">€${price.toLocaleString('ro-RO')}</p>
                             </td>
                           </tr>
                         </table>
